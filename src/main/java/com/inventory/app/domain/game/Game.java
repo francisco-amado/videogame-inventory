@@ -10,12 +10,14 @@ public class Game {
     Console console;
     LocalDate releaseDate;
     Region region;
+    String location;
 
-    public Game(String name, Console console, LocalDate releaseDate, Region region) {
+    public Game(String name, Console console, LocalDate releaseDate, Region region, String location) {
 
         this.name = name;
         this.console = console;
         this.region = region;
         this.releaseDate = releaseDate;
+        this.location = location;
     }
 }
