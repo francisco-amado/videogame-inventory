@@ -1,6 +1,7 @@
 package com.inventory.app.domain.game;
 
 import com.inventory.app.domain.valueobjects.Console;
+import com.inventory.app.domain.valueobjects.GameId;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.Objects;
 
 public class Game {
 
+    GameId gameId;
     Name name;
     Console console;
     LocalDate releaseDate;
@@ -15,8 +17,10 @@ public class Game {
     String location;
     String localBought;
 
-    public Game(Name name, Console console, LocalDate releaseDate, Region region, String location, String localBought) {
+    public Game(GameId gameId, Name name, Console console, LocalDate releaseDate,
+                Region region, String location, String localBought) {
 
+        this.gameId = gameId;
         this.name = name;
         this.console = console;
         this.region = region;
@@ -30,7 +34,8 @@ public class Game {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return name.equals(game.name) &&
+        return gameId.equals(game.gameId) &&
+                name.equals(game.name) &&
                 console.equals(game.console) &&
                 releaseDate.equals(game.releaseDate) &&
                 region.equals(game.region) &&

@@ -62,7 +62,8 @@ public class Console {
         MEGADRIVE,
         SATURN,
         DREAMCAST,
-        GAMEGEAR
+        GAMEGEAR,
+        PC
     }
 
 }
