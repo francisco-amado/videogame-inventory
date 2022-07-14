@@ -36,9 +36,9 @@ public class Region {
     public enum RegionEnum{
 
         PAL,
-        NTSC,
-        SECAM,
-        REGIONFREE,
-        UNKNOWN
+        NTSCU,
+        NTSCJ,
+        NTSCC,
+        REGIONFREE
     }
 }
