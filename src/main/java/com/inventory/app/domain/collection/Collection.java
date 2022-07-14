@@ -1,22 +1,23 @@
 package com.inventory.app.domain.collection;
 
 import com.inventory.app.domain.game.Game;
+import com.inventory.app.domain.valueobjects.Name;
 import java.util.List;
 import java.util.Objects;
 
 public class Collection {
 
-    String owner;
+    Name ownerName;
     List<Game> gameList;
 
-    public Collection(String owner) {
+    public Collection(Name ownerName) {
 
-        this.owner = owner;
+        this.ownerName = ownerName;
     }
 
-    public Collection(String owner, List<Game> gameList) {
+    public Collection(Name ownerName, List<Game> gameList) {
 
-        this.owner = owner;
+        this.ownerName = ownerName;
         this.gameList = gameList;
     }
 
@@ -25,11 +26,11 @@ public class Collection {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Collection that = (Collection) o;
-        return owner.equals(that.owner) && Objects.equals(gameList, that.gameList);
+        return ownerName.equals(that.ownerName) && Objects.equals(gameList, that.gameList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(owner, gameList);
+        return Objects.hash(ownerName, gameList);
     }
 }
