@@ -11,6 +11,7 @@ public class GameId {
 
         this.gameId = gameId;
     }
+
     private static final AtomicLong idCounter = new AtomicLong();
 
     public static GameId createGameID() {

@@ -11,6 +11,7 @@ public class CollectionId {
 
         this.collectionId = collectionId;
     }
+
     private static final AtomicLong idCounter = new AtomicLong();
 
     public static CollectionId createCollectionID() {
