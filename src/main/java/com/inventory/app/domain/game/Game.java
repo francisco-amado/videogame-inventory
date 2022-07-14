@@ -13,6 +13,9 @@ public class Game {
 
     public Game(String name, Console console, LocalDate releaseDate, Region region) {
 
-
+        this.name = name;
+        this.console = console;
+        this.region = region;
+        this.releaseDate = releaseDate;
     }
 }
