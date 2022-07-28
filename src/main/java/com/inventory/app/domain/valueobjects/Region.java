@@ -20,6 +20,11 @@ public class Region {
         return new Region(regionEnum.toString());
     }
 
+    public String getRegionDescription() {
+
+        return regionDescription;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
