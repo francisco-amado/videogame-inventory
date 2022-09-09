@@ -42,6 +42,10 @@ test {
 	finalizedBy jacocoTestReport
 }
 
+dependencies {
+	implementation "org.mindrot:jbcrypt:0.4"
+}
+
 jacocoTestReport {
 	dependsOn test
 }
