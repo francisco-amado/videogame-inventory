@@ -12,8 +12,8 @@ import java.time.LocalDate;
 public class GameFactory implements GameFactoryInterface{
 
     public Game createGame(GameId gameId, Name name, Console console, LocalDate releaseDate,
-                           Region region, String location, String localBought) {
+                           Region region, String location, String localBought, Boolean wasGifted) {
 
-        return new Game(gameId, name, console, releaseDate, region, location, localBought);
+        return new Game(gameId, name, console, releaseDate, region, location, localBought, wasGifted);
     }
 }
