@@ -1,24 +1,35 @@
 package com.inventory.app.domain.owner;
 
 import com.inventory.app.domain.valueobjects.*;
-
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Owner {
+@Entity
+@Table(name = "owner")
+public class Owner implements Serializable {
 
+    @EmbeddedId
     OwnerId ownerId;
+    @Embedded
     Name userName;
-    CollectionId collectionId;
+    @Embedded
     Email email;
+    @Embedded
     Password password;
 
-    public Owner(OwnerId ownerId, Name userName, CollectionId collectionId, Email email, Password password) {
+    private static final long serialVersionUID = 3L;
+
+    public Owner(OwnerId ownerId, Name userName, Email email, Password password) {
 
         this.ownerId = ownerId;
         this.userName = userName;
-        this.collectionId = collectionId;
         this.email = email;
         this.password = password;
+    }
+
+    public Owner() {
+
     }
 
     @Override
@@ -28,13 +39,12 @@ public class Owner {
         Owner owner = (Owner) o;
         return Objects.equals(ownerId, owner.ownerId) &&
                 Objects.equals(userName, owner.userName) &&
-                Objects.equals(collectionId, owner.collectionId) &&
                 Objects.equals(email, owner.email) &&
                 Objects.equals(password, owner.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ownerId, userName, collectionId, email, password);
+        return Objects.hash(ownerId, userName, email, password);
     }
 }

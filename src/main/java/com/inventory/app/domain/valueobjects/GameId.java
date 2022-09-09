@@ -1,9 +1,12 @@
 package com.inventory.app.domain.valueobjects;
 
+import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class GameId {
+@Embeddable
+public class GameId implements Serializable {
 
     String gameId;
 
@@ -12,7 +15,13 @@ public class GameId {
         this.gameId = gameId;
     }
 
+    private static final long serialVersionUID = 5L;
+
     private static final AtomicLong idCounter = new AtomicLong();
+
+    public GameId() {
+
+    }
 
     public static GameId createGameId() {
 

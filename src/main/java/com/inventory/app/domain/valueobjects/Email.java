@@ -1,8 +1,10 @@
 package com.inventory.app.domain.valueobjects;
 
+import javax.persistence.Embeddable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Embeddable
 public class Email {
 
     private String email;
@@ -10,6 +12,10 @@ public class Email {
     public Email(String email) {
 
         this.email = email;
+    }
+
+    public Email() {
+
     }
 
     public static Email createEmail(String email) {

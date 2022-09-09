@@ -1,7 +1,9 @@
 package com.inventory.app.domain.valueobjects;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class Console {
 
     public Console() {

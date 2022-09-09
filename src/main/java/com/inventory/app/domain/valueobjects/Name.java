@@ -1,7 +1,9 @@
 package com.inventory.app.domain.valueobjects;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class Name {
 
     String name;
@@ -9,6 +11,10 @@ public class Name {
     public Name(String name) {
 
         this.name = name;
+    }
+
+    public Name() {
+
     }
 
     public Name createName(String name) {

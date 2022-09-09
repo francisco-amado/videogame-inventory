@@ -1,7 +1,9 @@
 package com.inventory.app.domain.valueobjects;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class Region {
 
     public Region() {
@@ -18,11 +20,6 @@ public class Region {
     public static Region createRegion(Region.RegionEnum regionEnum) {
 
         return new Region(regionEnum.toString());
-    }
-
-    public String getRegionDescription() {
-
-        return regionDescription;
     }
 
     @Override

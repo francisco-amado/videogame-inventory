@@ -1,11 +1,16 @@
 package com.inventory.app.domain.valueobjects;
 
+import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class CollectionId {
+@Embeddable
+public class CollectionId implements Serializable {
 
     String collectionId;
+
+    private static final long serialVersionUID = 4L;
 
     public CollectionId(String collectionId){
 
@@ -13,6 +18,10 @@ public class CollectionId {
     }
 
     private static final AtomicLong idCounter = new AtomicLong();
+
+    public CollectionId() {
+
+    }
 
     public static CollectionId createCollectionId() {
 

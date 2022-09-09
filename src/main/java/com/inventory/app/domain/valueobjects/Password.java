@@ -1,8 +1,11 @@
 package com.inventory.app.domain.valueobjects;
 
 import org.mindrot.jbcrypt.BCrypt;
+
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class Password {
 
     private String password;
