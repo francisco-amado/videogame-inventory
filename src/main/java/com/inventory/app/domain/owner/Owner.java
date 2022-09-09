@@ -9,14 +9,14 @@ import java.util.Objects;
 
 public class Owner {
 
-    OwnerId OwnerId;
+    OwnerId ownerId;
     Name userName;
     CollectionId collectionId;
     Email email;
 
     public Owner(OwnerId ownerId, Name userName, CollectionId collectionId, Email email) {
 
-        OwnerId = ownerId;
+        this.ownerId = ownerId;
         this.userName = userName;
         this.collectionId = collectionId;
         this.email = email;
@@ -27,7 +27,7 @@ public class Owner {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Owner owner = (Owner) o;
-        return Objects.equals(OwnerId, owner.OwnerId) &&
+        return Objects.equals(ownerId, owner.ownerId) &&
                 Objects.equals(userName, owner.userName) &&
                 Objects.equals(collectionId, owner.collectionId) &&
                 Objects.equals(email, owner.email);
@@ -35,6 +35,6 @@ public class Owner {
 
     @Override
     public int hashCode() {
-        return Objects.hash(OwnerId, userName, collectionId, email);
+        return Objects.hash(ownerId, userName, collectionId, email);
     }
 }
