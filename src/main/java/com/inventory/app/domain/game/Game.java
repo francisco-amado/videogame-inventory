@@ -1,9 +1,6 @@
 package com.inventory.app.domain.game;
 
-import com.inventory.app.domain.valueobjects.Console;
-import com.inventory.app.domain.valueobjects.GameId;
-import com.inventory.app.domain.valueobjects.Name;
-import com.inventory.app.domain.valueobjects.Region;
+import com.inventory.app.domain.valueobjects.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -17,9 +14,10 @@ public class Game {
     String location;
     String localBought;
     Boolean wasGifted;
+    CollectionId collectionId;
 
     public Game(GameId gameId, Name name, Console console, LocalDate releaseDate,
-                Region region, String location, String localBought, Boolean wasGifted) {
+                Region region, String location, String localBought, Boolean wasGifted, CollectionId collectionId) {
 
         this.gameId = gameId;
         this.name = name;
@@ -29,6 +27,7 @@ public class Game {
         this.location = location;
         this.localBought = localBought;
         this.wasGifted = wasGifted;
+        this.collectionId = collectionId;
     }
 
     @Override
@@ -43,11 +42,13 @@ public class Game {
                 Objects.equals(region, game.region) &&
                 Objects.equals(location, game.location) &&
                 Objects.equals(localBought, game.localBought) &&
-                Objects.equals(wasGifted, game.wasGifted);
+                Objects.equals(wasGifted, game.wasGifted) &&
+                Objects.equals(collectionId, game.collectionId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameId, name, console, releaseDate, region, location, localBought, wasGifted);
+        return Objects.hash(gameId, name, console, releaseDate, region,
+                location, localBought, wasGifted, collectionId);
     }
 }

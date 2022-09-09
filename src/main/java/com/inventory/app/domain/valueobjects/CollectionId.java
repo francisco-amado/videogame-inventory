@@ -14,7 +14,7 @@ public class CollectionId {
 
     private static final AtomicLong idCounter = new AtomicLong();
 
-    public static CollectionId createCollectionID() {
+    public static CollectionId createCollectionId() {
 
         return new CollectionId("COL" + idCounter.getAndIncrement());
     }

@@ -1,10 +1,7 @@
 package com.inventory.app.domain.factories;
 
 import com.inventory.app.domain.game.Game;
-import com.inventory.app.domain.valueobjects.Console;
-import com.inventory.app.domain.valueobjects.GameId;
-import com.inventory.app.domain.valueobjects.Name;
-import com.inventory.app.domain.valueobjects.Region;
+import com.inventory.app.domain.valueobjects.*;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
@@ -12,5 +9,5 @@ import java.time.LocalDate;
 public interface GameFactoryInterface {
 
     Game createGame(GameId gameId, Name name, Console console, LocalDate releaseDate,
-                    Region region, String location, String localBought, Boolean wasGifted);
+                    Region region, String location, String localBought, Boolean wasGifted, CollectionId collectionId);
 }

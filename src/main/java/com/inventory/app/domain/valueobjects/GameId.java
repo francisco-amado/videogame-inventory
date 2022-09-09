@@ -14,7 +14,7 @@ public class GameId {
 
     private static final AtomicLong idCounter = new AtomicLong();
 
-    public static GameId createGameID() {
+    public static GameId createGameId() {
 
         return new GameId("GAME" + idCounter.getAndIncrement());
     }
