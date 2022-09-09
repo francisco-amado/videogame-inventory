@@ -6,7 +6,7 @@ import com.inventory.app.domain.valueobjects.OwnerId;
 
 import java.util.List;
 
-public class CollectionFactory implements CollectionFactoryInterface{
+public class CollectionFactory implements CollectionFactoryInterface {
 
     public Collection createCollection(OwnerId ownerId, List<Game> gameList) {
 

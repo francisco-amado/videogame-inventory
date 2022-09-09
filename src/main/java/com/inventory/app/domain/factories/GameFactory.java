@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 @Service
-public class GameFactory implements GameFactoryInterface{
+public class GameFactory implements GameFactoryInterface {
 
     public Game createGame(GameId gameId, Name name, Console console, LocalDate releaseDate, Region region,
                            String location, String localBought, Boolean wasGifted, CollectionId collectionId) {
