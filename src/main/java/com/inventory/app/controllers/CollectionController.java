@@ -21,14 +21,14 @@ public class CollectionController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Object> createCollection(@RequestBody Collection collection) {
+    public ResponseEntity<Object> saveCollection(@RequestBody Collection collection) {
 
         if (collectionService.existsByOwnerId(collection.getOwnerId())) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner already has a collection");
         }
 
-        collectionService.create(collection.getCollectionId(), collection.getOwnerId(), collection.getGameList());
+        collectionService.save(collection.getCollectionId(), collection.getOwnerId(), collection.getGameList());
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Collection created successfully");
     }
