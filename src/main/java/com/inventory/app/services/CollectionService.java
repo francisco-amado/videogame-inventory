@@ -26,9 +26,9 @@ public class CollectionService {
         this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
-    public Collection save(CollectionId collectionId, OwnerId ownerId, List<Game> gameList) {
+    public Collection save(OwnerId ownerId, List<Game> gameList) {
 
-        Collection newCollection = collectionFactoryInterface.createCollection(collectionId, ownerId, gameList);
+        Collection newCollection = collectionFactoryInterface.createCollection(CollectionId.createCollectionId(), ownerId, gameList);
 
         return collectionRepository.save(newCollection);
     }
