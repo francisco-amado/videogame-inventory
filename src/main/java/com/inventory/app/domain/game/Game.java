@@ -14,10 +14,10 @@ public class Game implements Serializable {
     GameId gameId;
     @Embedded
     Name name;
-    @Embedded
+    @Enumerated(EnumType.STRING)
     Console console;
     LocalDate releaseDate;
-    @Embedded
+    @Enumerated(EnumType.STRING)
     Region region;
     String location;
     String localBought;

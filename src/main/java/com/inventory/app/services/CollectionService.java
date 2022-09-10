@@ -15,13 +15,15 @@ import java.util.Optional;
 @Service
 public class CollectionService {
 
-    CollectionRepository collectionRepository;
-    CollectionFactoryInterface collectionFactoryInterface;
+    private final CollectionRepository collectionRepository;
+    private final CollectionFactoryInterface collectionFactoryInterface;
 
     @Autowired
-    public CollectionService(CollectionRepository collectionRepository) {
+    public CollectionService(CollectionRepository collectionRepository,
+                             CollectionFactoryInterface collectionFactoryInterface) {
 
         this.collectionRepository = collectionRepository;
+        this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
     public Collection create(CollectionId collectionId, OwnerId ownerId, List<Game> gameList) {
@@ -34,6 +36,11 @@ public class CollectionService {
     public Optional<Collection> findById(CollectionId collectionId) {
 
         return collectionRepository.findById(collectionId);
+    }
+
+    public boolean existsByOwnerId(OwnerId ownerId) {
+
+        return collectionRepository.existsByOwnerId(ownerId);
     }
 
     public Optional<Collection> addGame(Game game, CollectionId collectionId) {

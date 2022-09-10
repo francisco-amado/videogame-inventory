@@ -16,7 +16,7 @@ public class Collection implements Serializable {
     CollectionId collectionId;
     @Embedded
     OwnerId ownerId;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "collection")
     List<Game> gameList;
 
     private static final long serialVersionUID = 1L;
@@ -32,8 +32,16 @@ public class Collection implements Serializable {
 
     }
 
+    public CollectionId getCollectionId() {
+        return collectionId;
+    }
+
     public List<Game> getGameList() {
         return gameList;
+    }
+
+    public OwnerId getOwnerId() {
+        return ownerId;
     }
 
     @Override
