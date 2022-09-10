@@ -21,11 +21,6 @@ public class Collection implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Collection(OwnerId ownerId) {
-
-        this.ownerId = ownerId;
-    }
-
     public Collection(CollectionId collectionId, OwnerId ownerId, List<Game> gameList) {
 
         this.collectionId = collectionId;
