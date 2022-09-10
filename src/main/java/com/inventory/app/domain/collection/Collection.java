@@ -32,6 +32,10 @@ public class Collection implements Serializable {
 
     }
 
+    public List<Game> getGameList() {
+        return gameList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
