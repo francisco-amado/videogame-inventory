@@ -22,8 +22,8 @@ public class OwnerId implements Serializable {
 
     }
 
-    public static GameId createOwnerId() {
+    public static OwnerId createOwnerId() {
 
-        return new GameId("OWNER" + idCounter.getAndIncrement());
+        return new OwnerId("OWNER" + idCounter.getAndIncrement());
     }
 }

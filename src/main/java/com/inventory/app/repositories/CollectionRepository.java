@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CollectionRepository extends JpaRepository<Collection, CollectionId> {
 
-    public boolean existsByOwnerId(OwnerId ownerId);
+    boolean existsByOwnerId(OwnerId ownerId);
 }

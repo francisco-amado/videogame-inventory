@@ -1,6 +1,5 @@
 package com.inventory.app.controllers;
 
-import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.valueobjects.OwnerId;
 import com.inventory.app.services.CollectionService;
@@ -32,7 +31,7 @@ public class CollectionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner already has a collection");
         }
 
-        collectionService.save(ownerId, gameList);
+        collectionService.createCollection(ownerId, gameList);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Collection created successfully");
     }
