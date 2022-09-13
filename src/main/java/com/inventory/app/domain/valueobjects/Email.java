@@ -1,10 +1,13 @@
 package com.inventory.app.domain.valueobjects;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.Embeddable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Embeddable
+@Component
 public class Email {
 
     private String email;

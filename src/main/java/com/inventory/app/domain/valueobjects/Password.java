@@ -1,11 +1,13 @@
 package com.inventory.app.domain.valueobjects;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
+@Component
 public class Password {
 
     private String password;

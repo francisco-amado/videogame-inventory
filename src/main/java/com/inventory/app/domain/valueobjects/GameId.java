@@ -1,11 +1,14 @@
 package com.inventory.app.domain.valueobjects;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Embeddable
+@Component
 public class GameId implements Serializable {
 
     String gameId;

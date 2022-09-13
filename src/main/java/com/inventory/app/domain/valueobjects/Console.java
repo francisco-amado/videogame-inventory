@@ -1,9 +1,12 @@
 package com.inventory.app.domain.valueobjects;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
+@Component
 public class Console {
 
     public Console() {
