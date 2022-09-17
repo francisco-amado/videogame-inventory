@@ -5,10 +5,11 @@ import com.inventory.app.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-
+@RestController
+@RequestMapping("/owners")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class OwnerController {
 
     private final OwnerService ownerService;
