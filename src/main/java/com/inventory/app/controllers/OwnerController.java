@@ -19,17 +19,4 @@ public class OwnerController {
 
         this.ownerService = ownerService;
     }
-
-//    @PostMapping("/create")
-//    public ResponseEntity<Object> createOwner(@RequestBody Owner) {
-//
-//        if (ownerService.existsByEmail(Owner)) {
-//
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner already has a collection");
-//        }
-//
-//        ownerService.createOwner(Owner);
-//
-//        return ResponseEntity.status(HttpStatus.CREATED).body("Collection created successfully");
-//    }
 }
