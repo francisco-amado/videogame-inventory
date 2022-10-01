@@ -8,9 +8,8 @@ import java.time.LocalDate;
 @Service
 public class GameFactory implements GameFactoryInterface {
 
-    public Game createGame(GameId gameId, Name name, Console console, LocalDate releaseDate, Region region,
-                           String location, String localBought, Boolean wasGifted, CollectionId collectionId) {
+    public Game createGame(GameId gameId, Name name, Console console, LocalDate releaseDate, Region region) {
 
-        return new Game(gameId, name, console, releaseDate, region, location, localBought, wasGifted, collectionId);
+        return new Game(gameId, name, console, region, releaseDate);
     }
 }

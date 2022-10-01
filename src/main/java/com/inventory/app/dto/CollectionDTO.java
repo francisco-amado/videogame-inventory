@@ -7,6 +7,9 @@ import java.util.List;
 @Component
 public class CollectionDTO {
 
-    public String ownerId;
-    public List<Game> gameList;
+    private List<Game> gameList;
+
+    public List<Game> getGameList() {
+        return gameList;
+    }
 }

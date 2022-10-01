@@ -9,5 +9,5 @@ import java.time.LocalDate;
 public interface GameFactoryInterface {
 
     Game createGame(GameId gameId, Name name, Console console, LocalDate releaseDate,
-                    Region region, String location, String localBought, Boolean wasGifted, CollectionId collectionId);
+                    Region region);
 }

@@ -41,6 +41,15 @@ public class Game implements Serializable {
         this.collectionId = collectionId;
     }
 
+    public Game(GameId gameId, Name name, Console console, Region region, LocalDate releaseDate) {
+
+        this.gameId = gameId;
+        this.name = name;
+        this.console = console;
+        this.region = region;
+        this.releaseDate = releaseDate;
+    }
+
     public Game() {
 
     }
