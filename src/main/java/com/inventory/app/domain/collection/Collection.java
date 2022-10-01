@@ -32,10 +32,6 @@ public class Collection implements Serializable {
 
     }
 
-    public CollectionId getCollectionId() {
-        return collectionId;
-    }
-
     public List<Game> getGameList() {
         return gameList;
     }

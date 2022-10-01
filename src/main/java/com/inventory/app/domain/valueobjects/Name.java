@@ -20,7 +20,7 @@ public class Name {
 
     }
 
-    public Name createName(String name) {
+    public static Name createName(String name) {
 
         if (Objects.equals(name, "")) {
 

@@ -3,6 +3,7 @@ package com.inventory.app.domain.valueobjects;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,5 +50,18 @@ public class Email {
         isValid = matcher.matches();
 
         return isValid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Email email1 = (Email) o;
+        return Objects.equals(email, email1.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
     }
 }

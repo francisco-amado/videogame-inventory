@@ -2,7 +2,9 @@ package com.inventory.app.controllers;
 
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.valueobjects.OwnerId;
+import com.inventory.app.dto.CollectionDTO;
 import com.inventory.app.services.CollectionService;
+import com.inventory.app.utils.StringToIdConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +25,17 @@ public class CollectionController {
         this.collectionService = collectionService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Object> saveCollection(@RequestParam OwnerId ownerId, @RequestParam List<Game> gameList) {
+    @PostMapping(path = "/create", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> createCollection(@RequestBody CollectionDTO collectionDTO) {
 
-        if (collectionService.existsByOwnerId(ownerId)) {
+
+        if (collectionService.existsByOwnerId(StringToIdConverter.stringToOwnerIdConverter(collectionDTO.ownerId))) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner already has a collection");
         }
 
-        collectionService.createCollection(ownerId, gameList);
+        collectionService.createCollection(StringToIdConverter.stringToOwnerIdConverter(collectionDTO.ownerId),
+                collectionDTO.gameList);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Collection created successfully");
     }

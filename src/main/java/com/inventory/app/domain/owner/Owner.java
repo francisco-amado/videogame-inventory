@@ -32,6 +32,10 @@ public class Owner implements Serializable {
 
     }
 
+    public OwnerId getOwnerId() {
+        return ownerId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

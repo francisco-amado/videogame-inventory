@@ -21,7 +21,7 @@ public class OwnerService {
         this.ownerFactoryInterface = ownerFactoryInterface;
     }
 
-    public Owner createOwner(OwnerId ownerId, Name userName, Email email, Password password) {
+    public Owner createOwner(Name userName, Email email, Password password) {
 
         Owner newOwner = ownerFactoryInterface.createOwner(OwnerId.createOwnerId(), userName, email, password);
 

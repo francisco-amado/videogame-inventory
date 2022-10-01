@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Embeddable
@@ -28,5 +29,18 @@ public class OwnerId implements Serializable {
     public static OwnerId createOwnerId() {
 
         return new OwnerId("OWNER" + idCounter.getAndIncrement());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OwnerId ownerId1 = (OwnerId) o;
+        return Objects.equals(ownerId, ownerId1.ownerId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ownerId);
     }
 }
