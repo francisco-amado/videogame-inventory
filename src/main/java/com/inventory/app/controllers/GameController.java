@@ -1,6 +1,8 @@
 package com.inventory.app.controllers;
 
+import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.valueobjects.Console;
+import com.inventory.app.domain.valueobjects.GameId;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import com.inventory.app.dto.GameDTO;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/games")
@@ -33,5 +37,24 @@ public class GameController {
        gameService.createGame(name, console, gameDTO.getReleaseDate(), region);
 
        return ResponseEntity.status(HttpStatus.CREATED).body("Game created successfully");
+    }
+
+    @DeleteMapping(path = "/delete/{id}", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> createGame(@PathVariable(value=("id")) GameId gameId) {
+
+        Optional<Game> gameToDelete = gameService.findGameById(gameId);
+
+        if (gameToDelete.isEmpty()) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
+
+        } else if (gameToDelete.get().getCollectionId() != null) {
+
+            throw new UnsupportedOperationException("Game cannot be deleted if it belongs to a collection");
+        }
+
+        gameService.deleteGame(gameId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Game deleted successfully");
     }
 }

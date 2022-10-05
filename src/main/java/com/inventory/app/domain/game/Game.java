@@ -54,6 +54,10 @@ public class Game implements Serializable {
 
     }
 
+    public CollectionId getCollectionId() {
+        return collectionId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

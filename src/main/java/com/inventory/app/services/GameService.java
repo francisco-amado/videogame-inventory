@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class GameService {
@@ -30,5 +31,22 @@ public class GameService {
         Game game = gameFactoryInterface.createGame(GameId.createGameId(), name, console, releaseDate, region);
 
         return gameRepository.save(game);
+    }
+
+    public boolean existsById(GameId gameId) {
+
+        return gameRepository.existsById(gameId);
+    }
+
+    public Optional<Game> findGameById (GameId gameId) {
+
+        return gameRepository.findById(gameId);
+    }
+
+    public void deleteGame(GameId gameId) {
+
+        Optional<Game> gameToDelete = gameRepository.findById(gameId);
+
+        gameToDelete.ifPresent(gameRepository::delete);
     }
 }
