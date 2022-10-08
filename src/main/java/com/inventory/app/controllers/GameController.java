@@ -2,7 +2,6 @@ package com.inventory.app.controllers;
 
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.valueobjects.Console;
-import com.inventory.app.domain.valueobjects.GameId;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import com.inventory.app.dto.GameDTO;
@@ -13,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/games")
@@ -40,7 +40,7 @@ public class GameController {
     }
 
     @DeleteMapping(path = "/delete/{id}", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> createGame(@PathVariable(value=("id")) GameId gameId) {
+    public ResponseEntity<Object> deleteGame(@PathVariable(value=("id")) UUID gameId) {
 
         Optional<Game> gameToDelete = gameService.findGameById(gameId);
 

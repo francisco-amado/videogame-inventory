@@ -5,13 +5,15 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "game")
 public class Game implements Serializable {
 
-    @EmbeddedId
-    GameId gameId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    UUID gameId;
     @Embedded
     Name name;
     @Enumerated(EnumType.STRING)
@@ -22,15 +24,13 @@ public class Game implements Serializable {
     String location;
     String localBought;
     Boolean wasGifted;
-    @Embedded
-    CollectionId collectionId;
+    UUID collectionId;
 
     private static final long serialVersionUID = 2L;
 
-    public Game(GameId gameId, Name name, Console console, LocalDate releaseDate,
-                Region region, String location, String localBought, Boolean wasGifted, CollectionId collectionId) {
+    public Game(Name name, Console console, LocalDate releaseDate,
+                Region region, String location, String localBought, Boolean wasGifted, UUID collectionId) {
 
-        this.gameId = gameId;
         this.name = name;
         this.console = console;
         this.region = region;
@@ -41,9 +41,8 @@ public class Game implements Serializable {
         this.collectionId = collectionId;
     }
 
-    public Game(GameId gameId, Name name, Console console, Region region, LocalDate releaseDate) {
+    public Game(Name name, Console console, Region region, LocalDate releaseDate) {
 
-        this.gameId = gameId;
         this.name = name;
         this.console = console;
         this.region = region;
@@ -54,7 +53,7 @@ public class Game implements Serializable {
 
     }
 
-    public CollectionId getCollectionId() {
+    public UUID getCollectionId() {
         return collectionId;
     }
 

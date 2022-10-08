@@ -1,30 +1,28 @@
 package com.inventory.app.domain.collection;
 
 import com.inventory.app.domain.game.Game;
-import com.inventory.app.domain.valueobjects.CollectionId;
-import com.inventory.app.domain.valueobjects.OwnerId;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "collection")
 public class Collection implements Serializable {
 
-    @EmbeddedId
-    CollectionId collectionId;
-    @Embedded
-    OwnerId ownerId;
-    @OneToMany(cascade = CascadeType.ALL)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    UUID collectionId;
+    UUID ownerId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "collectionId")
     List<Game> gameList;
 
     private static final long serialVersionUID = 1L;
 
-    public Collection(CollectionId collectionId, OwnerId ownerId, List<Game> gameList) {
+    public Collection(List<Game> gameList) {
 
-        this.collectionId = collectionId;
-        this.ownerId = ownerId;
         this.gameList = gameList;
     }
 
@@ -36,7 +34,7 @@ public class Collection implements Serializable {
         return gameList;
     }
 
-    public OwnerId getOwnerId() {
+    public UUID getOwnerId() {
         return ownerId;
     }
 

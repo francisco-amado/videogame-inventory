@@ -1,9 +1,7 @@
 package com.inventory.app.controllers;
 
+import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.game.Game;
-import com.inventory.app.domain.valueobjects.CollectionId;
-import com.inventory.app.domain.valueobjects.GameId;
-import com.inventory.app.domain.valueobjects.OwnerId;
 import com.inventory.app.dto.CollectionDTO;
 import com.inventory.app.services.CollectionService;
 import com.inventory.app.services.GameService;
@@ -13,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/collections")
@@ -29,8 +28,23 @@ public class CollectionController {
         this.gameService = gameService;
     }
 
+    @GetMapping(path = "/get/{id}", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> getCollection(@PathVariable(value="id") UUID collectionId) {
+
+        Optional<Collection> collection = collectionService.findById(collectionId);
+
+        if (collection.isEmpty()) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
+
+        } else {
+
+            return ResponseEntity.status(HttpStatus.OK).body("");
+        }
+    }
+
     @PostMapping(path = "/create/{id}", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> createCollection(@PathVariable(value="id") OwnerId id,
+    public ResponseEntity<Object> createCollection(@PathVariable(value="id") UUID id,
                                                    @RequestBody CollectionDTO collectionDTO) {
 
         if (collectionService.existsByOwnerId(id)) {
@@ -45,8 +59,8 @@ public class CollectionController {
 
     @PostMapping(path = "/add/{collectionid}/{gameid}",
             headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")CollectionId collectionId,
-                                                      @PathVariable(value="gameid") GameId gameId) {
+    public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")UUID collectionId,
+                                                      @PathVariable(value="gameid") UUID gameId) {
 
         if (!collectionService.existsById(collectionId)) {
 
@@ -67,8 +81,8 @@ public class CollectionController {
 
     @DeleteMapping(path = "/remove/{collectionid}/{gameid}",
             headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid")CollectionId collectionId,
-                                                      @PathVariable(value="gameid") GameId gameId) {
+    public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid")UUID collectionId,
+                                                      @PathVariable(value="gameid") UUID gameId) {
 
         if (!collectionService.existsById(collectionId)) {
 

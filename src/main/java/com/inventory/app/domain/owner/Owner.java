@@ -4,13 +4,15 @@ import com.inventory.app.domain.valueobjects.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "owner")
 public class Owner implements Serializable {
 
-    @EmbeddedId
-    OwnerId ownerId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    UUID ownerId;
     @Embedded
     Name userName;
     @Embedded
@@ -20,9 +22,8 @@ public class Owner implements Serializable {
 
     private static final long serialVersionUID = 3L;
 
-    public Owner(OwnerId ownerId, Name userName, Email email, Password password) {
+    public Owner(Name userName, Email email, Password password) {
 
-        this.ownerId = ownerId;
         this.userName = userName;
         this.email = email;
         this.password = password;
@@ -32,7 +33,7 @@ public class Owner implements Serializable {
 
     }
 
-    public OwnerId getOwnerId() {
+    public UUID getOwnerId() {
         return ownerId;
     }
 

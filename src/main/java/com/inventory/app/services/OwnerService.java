@@ -23,7 +23,7 @@ public class OwnerService {
 
     public Owner createOwner(Name userName, Email email, Password password) {
 
-        Owner newOwner = ownerFactoryInterface.createOwner(OwnerId.createOwnerId(), userName, email, password);
+        Owner newOwner = ownerFactoryInterface.createOwner(userName, email, password);
 
         return ownerRepository.save(newOwner);
     }

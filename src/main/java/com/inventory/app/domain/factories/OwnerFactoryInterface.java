@@ -4,8 +4,10 @@ import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.valueobjects.*;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public interface OwnerFactoryInterface {
 
-    Owner createOwner(OwnerId ownerId, Name userName, Email email, Password password);
+    Owner createOwner(Name userName, Email email, Password password);
 }

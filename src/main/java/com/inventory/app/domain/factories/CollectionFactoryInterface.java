@@ -2,13 +2,13 @@ package com.inventory.app.domain.factories;
 
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.game.Game;
-import com.inventory.app.domain.valueobjects.CollectionId;
-import com.inventory.app.domain.valueobjects.OwnerId;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface CollectionFactoryInterface {
 
-    Collection createCollection(CollectionId collectionId, OwnerId ownerId, List<Game> gameList);
+    Collection createCollection(UUID ownerId, List<Game> gameList);
 }

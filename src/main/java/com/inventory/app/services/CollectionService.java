@@ -3,14 +3,13 @@ package com.inventory.app.services;
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.factories.CollectionFactoryInterface;
 import com.inventory.app.domain.game.Game;
-import com.inventory.app.domain.valueobjects.CollectionId;
-import com.inventory.app.domain.valueobjects.OwnerId;
 import com.inventory.app.repositories.CollectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CollectionService {
@@ -26,29 +25,28 @@ public class CollectionService {
         this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
-    public Collection createCollection(OwnerId ownerId, List<Game> gameList) {
+    public Collection createCollection(UUID ownerId, List<Game> gameList) {
 
-        Collection newCollection = collectionFactoryInterface.createCollection(CollectionId.createCollectionId(),
-                ownerId, gameList);
+        Collection newCollection = collectionFactoryInterface.createCollection(ownerId, gameList);
 
         return collectionRepository.save(newCollection);
     }
 
-    public Optional<Collection> findById(CollectionId collectionId) {
+    public Optional<Collection> findById(UUID collectionId) {
 
         return collectionRepository.findById(collectionId);
     }
 
-    public boolean existsByOwnerId(OwnerId ownerId) {
+    public boolean existsByOwnerId(UUID ownerId) {
 
         return collectionRepository.existsByOwnerId(ownerId);
     }
-    public boolean existsById(CollectionId collectionId) {
+    public boolean existsById(UUID collectionId) {
 
         return collectionRepository.existsById(collectionId);
     }
 
-    public Optional<Collection> addGame(Game game, CollectionId collectionId) {
+    public Optional<Collection> addGame(Game game, UUID collectionId) {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
@@ -57,7 +55,7 @@ public class CollectionService {
         return collection;
     }
 
-    public Optional<Collection> removeGame(Game game, CollectionId collectionId) {
+    public Optional<Collection> removeGame(Game game, UUID collectionId) {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
