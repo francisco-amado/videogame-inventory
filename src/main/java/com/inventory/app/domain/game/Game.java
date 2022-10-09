@@ -1,7 +1,10 @@
 package com.inventory.app.domain.game;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.app.domain.collection.Collection;
-import com.inventory.app.domain.valueobjects.*;
+import com.inventory.app.domain.valueobjects.Console;
+import com.inventory.app.domain.valueobjects.Name;
+import com.inventory.app.domain.valueobjects.Region;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -29,6 +32,7 @@ public class Game implements Serializable {
     Boolean wasGifted;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "collectionId")
+    @JsonIgnore
     Collection collection;
 
     private static final long serialVersionUID = 2L;
@@ -55,6 +59,38 @@ public class Game implements Serializable {
 
     public Game() {
 
+    }
+
+    public UUID getGameId() {
+        return gameId;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public Console getConsole() {
+        return console;
+    }
+
+    public LocalDate getReleaseDate() {
+        return releaseDate;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getLocalBought() {
+        return localBought;
+    }
+
+    public Boolean getWasGifted() {
+        return wasGifted;
     }
 
     public Collection getCollection() {

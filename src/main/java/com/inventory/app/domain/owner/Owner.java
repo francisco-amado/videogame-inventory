@@ -1,7 +1,10 @@
 package com.inventory.app.domain.owner;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.app.domain.collection.Collection;
-import com.inventory.app.domain.valueobjects.*;
+import com.inventory.app.domain.valueobjects.Email;
+import com.inventory.app.domain.valueobjects.Name;
+import com.inventory.app.domain.valueobjects.Password;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -23,6 +26,7 @@ public class Owner implements Serializable {
     @Embedded
     Password password;
     @OneToOne(mappedBy = "owner")
+    @JsonIgnore
     Collection collection;
 
     private static final long serialVersionUID = 3L;
@@ -45,6 +49,26 @@ public class Owner implements Serializable {
 
     }
 
+    public UUID getOwnerId() {
+        return ownerId;
+    }
+
+    public Name getUserName() {
+        return userName;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public Password getPassword() {
+        return password;
+    }
+
+    public Collection getCollection() {
+        return collection;
+    }
+
     public void setCollection(Collection collection) {
         this.collection = collection;
     }
@@ -63,6 +87,6 @@ public class Owner implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ownerId, userName, email, password, collection);
+        return Objects.hash(ownerId, userName, email, password);
     }
 }

@@ -22,6 +22,14 @@ public class Email {
 
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public static Email createEmail(String email) {
 
         if (email == null || email.isEmpty() || email.isBlank()) {

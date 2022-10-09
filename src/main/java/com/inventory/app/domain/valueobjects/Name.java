@@ -20,6 +20,14 @@ public class Name {
 
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public static Name createName(String name) {
 
         if (Objects.equals(name, "")) {

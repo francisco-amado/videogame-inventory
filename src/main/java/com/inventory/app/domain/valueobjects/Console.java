@@ -33,6 +33,14 @@ public class Console {
         return consoleDescription.equals(console.consoleDescription);
     }
 
+    public String getConsoleDescription() {
+        return consoleDescription;
+    }
+
+    public void setConsoleDescription(String consoleDescription) {
+        this.consoleDescription = consoleDescription;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(consoleDescription);

@@ -40,6 +40,14 @@ public class Collection implements Serializable {
         return gameList;
     }
 
+    public UUID getCollectionId() {
+        return collectionId;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
     public void addGameToList(Game game) {
 
         gameList.add(game);
