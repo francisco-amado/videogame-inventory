@@ -48,7 +48,7 @@ public class GameController {
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
 
-        } else if (gameToDelete.get().getCollectionId() != null) {
+        } else if (gameToDelete.get().getCollection() != null) {
 
             throw new UnsupportedOperationException("Game cannot be deleted if it belongs to a collection");
         }

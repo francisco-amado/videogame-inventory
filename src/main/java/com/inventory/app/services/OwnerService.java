@@ -7,6 +7,9 @@ import com.inventory.app.repositories.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class OwnerService {
 
@@ -36,5 +39,10 @@ public class OwnerService {
     public boolean existsByEmail(Email email) {
 
         return ownerRepository.existsByEmail(email);
+    }
+
+    public Optional<Owner> findById(UUID ownerId) {
+
+        return ownerRepository.findById(ownerId);
     }
 }

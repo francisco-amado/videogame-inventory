@@ -3,6 +3,7 @@ package com.inventory.app.services;
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.factories.CollectionFactoryInterface;
 import com.inventory.app.domain.game.Game;
+import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.repositories.CollectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,9 @@ public class CollectionService {
         this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
-    public Collection createCollection(UUID ownerId, List<Game> gameList) {
+    public Collection createCollection(Owner owner, List<Game> gameList) {
 
-        Collection newCollection = collectionFactoryInterface.createCollection(ownerId, gameList);
+        Collection newCollection = collectionFactoryInterface.createCollection(owner, gameList);
 
         return collectionRepository.save(newCollection);
     }
@@ -37,9 +38,9 @@ public class CollectionService {
         return collectionRepository.findById(collectionId);
     }
 
-    public boolean existsByOwnerId(UUID ownerId) {
+    public boolean existsByOwner(Owner owner) {
 
-        return collectionRepository.existsByOwnerId(ownerId);
+        return collectionRepository.existsByOwner(owner);
     }
     public boolean existsById(UUID collectionId) {
 
@@ -50,7 +51,12 @@ public class CollectionService {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
-        collection.ifPresent(value -> value.getGameList().add(game));
+        if(collection.isPresent()) {
+
+            collection.get().addGameToList(game);
+            game.setCollection(collection.get());
+            collectionRepository.save(collection.get());
+        }
 
         return collection;
     }
@@ -59,7 +65,12 @@ public class CollectionService {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
-        collection.ifPresent(value -> value.getGameList().remove(game));
+        if(collection.isPresent()) {
+
+            collection.get().getGameList().remove(game);
+            game.setCollection(null);
+            collectionRepository.save(collection.get());
+        }
 
         return collection;
     }

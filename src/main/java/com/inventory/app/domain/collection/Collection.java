@@ -1,6 +1,8 @@
 package com.inventory.app.domain.collection;
 
 import com.inventory.app.domain.game.Game;
+import com.inventory.app.domain.owner.Owner;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,16 +15,20 @@ import java.util.UUID;
 public class Collection implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID collectionId;
-    UUID ownerId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "collectionId")
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    UUID collectionId = UUID.randomUUID();
+    @OneToOne
+    @JoinColumn(name = "ownerId", unique = true,  nullable = false)
+    Owner owner;
+    @OneToMany
+    @JoinColumn(name = "collectionId")
     List<Game> gameList;
 
     private static final long serialVersionUID = 1L;
 
-    public Collection(List<Game> gameList) {
+    public Collection(Owner owner, List<Game> gameList) {
 
+        this.owner = owner;
         this.gameList = gameList;
     }
 
@@ -34,8 +40,9 @@ public class Collection implements Serializable {
         return gameList;
     }
 
-    public UUID getOwnerId() {
-        return ownerId;
+    public void addGameToList(Game game) {
+
+        gameList.add(game);
     }
 
     @Override
@@ -44,12 +51,12 @@ public class Collection implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Collection that = (Collection) o;
         return Objects.equals(collectionId, that.collectionId) &&
-                Objects.equals(ownerId, that.ownerId) &&
+                Objects.equals(owner, that.owner) &&
                 Objects.equals(gameList, that.gameList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(collectionId, ownerId, gameList);
+        return Objects.hash(collectionId, owner, gameList);
     }
 }

@@ -1,6 +1,9 @@
 package com.inventory.app.domain.owner;
 
+import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.valueobjects.*;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,16 +14,25 @@ import java.util.UUID;
 public class Owner implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID ownerId;
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    UUID ownerId = UUID.randomUUID();
     @Embedded
     Name userName;
     @Embedded
     Email email;
     @Embedded
     Password password;
+    @OneToOne(mappedBy = "owner")
+    Collection collection;
 
     private static final long serialVersionUID = 3L;
+
+    public Owner(Name userName, Email email, Password password, Collection collection) {
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.collection = collection;
+    }
 
     public Owner(Name userName, Email email, Password password) {
 
@@ -33,8 +45,8 @@ public class Owner implements Serializable {
 
     }
 
-    public UUID getOwnerId() {
-        return ownerId;
+    public void setCollection(Collection collection) {
+        this.collection = collection;
     }
 
     @Override
@@ -45,11 +57,12 @@ public class Owner implements Serializable {
         return Objects.equals(ownerId, owner.ownerId) &&
                 Objects.equals(userName, owner.userName) &&
                 Objects.equals(email, owner.email) &&
-                Objects.equals(password, owner.password);
+                Objects.equals(password, owner.password) &&
+                Objects.equals(collection, owner.collection);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ownerId, userName, email, password);
+        return Objects.hash(ownerId, userName, email, password, collection);
     }
 }

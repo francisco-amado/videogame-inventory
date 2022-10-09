@@ -2,11 +2,15 @@ package com.inventory.app.controllers;
 
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.game.Game;
+import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.dto.CollectionDTO;
+import com.inventory.app.repositories.OwnerRepository;
 import com.inventory.app.services.CollectionService;
 import com.inventory.app.services.GameService;
+import com.inventory.app.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,15 +24,20 @@ public class CollectionController {
 
     private final CollectionService collectionService;
     private final GameService gameService;
+    private final OwnerService ownerService;
+    private final OwnerRepository ownerRepository;
 
     @Autowired
-    public CollectionController(CollectionService collectionService, GameService gameService) {
+    public CollectionController(CollectionService collectionService, GameService gameService,
+                                OwnerService ownerService, OwnerRepository ownerRepository) {
 
         this.collectionService = collectionService;
         this.gameService = gameService;
+        this.ownerService = ownerService;
+        this.ownerRepository = ownerRepository;
     }
 
-    @GetMapping(path = "/get/{id}", headers = "Accept=application/json", produces = "application/json")
+    @GetMapping(path = "/get/{id}", produces = "application/json")
     public ResponseEntity<Object> getCollection(@PathVariable(value="id") UUID collectionId) {
 
         Optional<Collection> collection = collectionService.findById(collectionId);
@@ -39,22 +48,33 @@ public class CollectionController {
 
         } else {
 
-            return ResponseEntity.status(HttpStatus.OK).body("");
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(collection.get());
         }
     }
 
     @PostMapping(path = "/create/{id}", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> createCollection(@PathVariable(value="id") UUID id,
+    public ResponseEntity<Object> createCollection(@PathVariable(value="id") UUID ownerId,
                                                    @RequestBody CollectionDTO collectionDTO) {
 
-        if (collectionService.existsByOwnerId(id)) {
+        Optional<Owner> owner = ownerService.findById(ownerId);
+
+        if (owner.isPresent() && collectionService.existsByOwner(owner.get())) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner already has a collection");
         }
 
-        collectionService.createCollection(id, collectionDTO.getGameList());
+        if (owner.isEmpty()) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Collection created successfully");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner does not exist");
+
+        } else {
+
+            Collection collection = collectionService.createCollection(owner.get(), collectionDTO.getGameList());
+            owner.get().setCollection(collection);
+            ownerRepository.save(owner.get());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Collection created successfully");
+        }
     }
 
     @PostMapping(path = "/add/{collectionid}/{gameid}",
@@ -76,7 +96,7 @@ public class CollectionController {
 
         collectionService.addGame(gameToAdd.get(), collectionId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Game added successfully");
+        return ResponseEntity.status(HttpStatus.OK).body("Game added successfully");
     }
 
     @DeleteMapping(path = "/remove/{collectionid}/{gameid}",

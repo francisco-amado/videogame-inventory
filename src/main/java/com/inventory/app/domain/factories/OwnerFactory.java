@@ -9,6 +9,6 @@ public class OwnerFactory implements OwnerFactoryInterface {
 
     public Owner createOwner(Name userName, Email email, Password password) {
 
-        return new Owner(userName, email, password);
+        return new Owner(userName, email, password, null);
     }
 }

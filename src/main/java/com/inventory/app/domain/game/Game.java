@@ -1,6 +1,9 @@
 package com.inventory.app.domain.game;
 
+import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.valueobjects.*;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -12,8 +15,8 @@ import java.util.UUID;
 public class Game implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID gameId;
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    UUID gameId = UUID.randomUUID();
     @Embedded
     Name name;
     @Enumerated(EnumType.STRING)
@@ -24,12 +27,14 @@ public class Game implements Serializable {
     String location;
     String localBought;
     Boolean wasGifted;
-    UUID collectionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "collectionId")
+    Collection collection;
 
     private static final long serialVersionUID = 2L;
 
     public Game(Name name, Console console, LocalDate releaseDate,
-                Region region, String location, String localBought, Boolean wasGifted, UUID collectionId) {
+                Region region, String location, String localBought, Boolean wasGifted) {
 
         this.name = name;
         this.console = console;
@@ -38,7 +43,6 @@ public class Game implements Serializable {
         this.location = location;
         this.localBought = localBought;
         this.wasGifted = wasGifted;
-        this.collectionId = collectionId;
     }
 
     public Game(Name name, Console console, Region region, LocalDate releaseDate) {
@@ -53,8 +57,12 @@ public class Game implements Serializable {
 
     }
 
-    public UUID getCollectionId() {
-        return collectionId;
+    public Collection getCollection() {
+        return collection;
+    }
+
+    public void setCollection(Collection collection) {
+        this.collection = collection;
     }
 
     @Override
@@ -70,12 +78,11 @@ public class Game implements Serializable {
                 Objects.equals(location, game.location) &&
                 Objects.equals(localBought, game.localBought) &&
                 Objects.equals(wasGifted, game.wasGifted) &&
-                Objects.equals(collectionId, game.collectionId);
+                Objects.equals(collection, game.collection);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameId, name, console, releaseDate, region,
-                location, localBought, wasGifted, collectionId);
+        return Objects.hash(gameId, name, console, releaseDate, region, location, localBought, wasGifted, collection);
     }
 }
