@@ -33,11 +33,6 @@ public class CollectionService {
         return collectionRepository.save(newCollection);
     }
 
-    public Optional<Collection> findById(UUID collectionId) {
-
-        return collectionRepository.findById(collectionId);
-    }
-
     public boolean existsByOwner(Owner owner) {
 
         return collectionRepository.existsByOwner(owner);

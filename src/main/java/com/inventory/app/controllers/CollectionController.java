@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,16 +41,9 @@ public class CollectionController {
     @GetMapping(path = "/get/{id}", produces = "application/json")
     public ResponseEntity<Object> getCollection(@PathVariable(value="id") UUID collectionId) {
 
-        Optional<Collection> collection = collectionService.findById(collectionId);
+        List<Game> gameList = gameService.findGamesByCollectionId(collectionId);
 
-        if (collection.isEmpty()) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
-
-        } else {
-
-            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(collection.get());
-        }
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(gameList);
     }
 
     @PostMapping(path = "/create/{id}", headers = "Accept=application/json", produces = "application/json")
