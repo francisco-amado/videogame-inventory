@@ -8,6 +8,7 @@ import com.inventory.app.dto.GameDTO;
 import com.inventory.app.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class GameController {
 
         if (game.isPresent()) {
 
-            return ResponseEntity.status(HttpStatus.OK).body("");
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(game.get());
 
         } else {
 
