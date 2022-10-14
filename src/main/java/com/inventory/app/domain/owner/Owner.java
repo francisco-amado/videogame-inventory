@@ -23,6 +23,7 @@ public class Owner implements Serializable {
     Name userName;
     @Embedded
     Email email;
+    @JsonIgnore
     @Embedded
     Password password;
     @OneToOne(mappedBy = "owner")

@@ -27,6 +27,21 @@ public class GameController {
         this.gameService = gameService;
     }
 
+    @GetMapping(path = "/get/{id}", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> getGame(@PathVariable(value=("id")) UUID gameId) {
+
+        Optional<Game> game = gameService.findGameById(gameId);
+
+        if (game.isPresent()) {
+
+            return ResponseEntity.status(HttpStatus.OK).body("");
+
+        } else {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
+        }
+    }
+
     @PostMapping(path = "/create", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> createGame(@RequestBody GameDTO gameDTO) {
 
