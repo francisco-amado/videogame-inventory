@@ -33,14 +33,9 @@ public class GameController {
 
         Optional<Game> game = gameService.findGameById(gameId);
 
-        if (game.isPresent()) {
-
-            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(game.get());
-
-        } else {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
-        }
+        return game.<ResponseEntity<Object>>map
+                (value -> ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(value))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist"));
     }
 
     @PostMapping(path = "/create", headers = "Accept=application/json", produces = "application/json")
