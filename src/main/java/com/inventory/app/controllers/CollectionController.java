@@ -95,7 +95,7 @@ public class CollectionController {
 
     @DeleteMapping(path = "/remove/{collectionid}/{gameid}",
             headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid")UUID collectionId,
+    public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid") UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
 
         if (!collectionService.existsById(collectionId)) {
