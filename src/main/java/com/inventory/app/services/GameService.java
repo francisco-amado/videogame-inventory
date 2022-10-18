@@ -6,6 +6,7 @@ import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.valueobjects.Console;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
+import com.inventory.app.dto.EditGameDTO;
 import com.inventory.app.repositories.CollectionRepository;
 import com.inventory.app.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,52 @@ public class GameService {
         } else {
 
             return gameRepository.findAllByCollection(collection.get());
+        }
+    }
+
+    public void editGame(UUID gameId, EditGameDTO editGameDTO) {
+
+        Optional<Game> gameToEditOpt = gameRepository.findById(gameId);
+
+        if (gameToEditOpt.isEmpty()) {
+
+            throw new NoSuchElementException("The requested game does not exist");
+
+        } else {
+
+            Game gameToEdit = gameToEditOpt.get();
+
+            if (editGameDTO.getName() != null) {
+
+                Name newName = Name.createName(editGameDTO.getName());
+                gameToEdit.setName(newName);
+
+            } else if (editGameDTO.getConsole() != null) {
+
+                Console newConsole = Console.createConsole(Console.ConsoleEnum.valueOf(editGameDTO.getConsole()));
+                gameToEdit.setConsole(newConsole);
+
+            } else if (editGameDTO.getReleaseDate() != null) {
+
+                gameToEdit.setReleaseDate(editGameDTO.getReleaseDate());
+
+            } else if (editGameDTO.getRegion() != null) {
+
+                Region newRegion = Region.createRegion(Region.RegionEnum.valueOf(editGameDTO.getRegion()));
+                gameToEdit.setRegion(newRegion);
+
+            } else if (editGameDTO.getLocation() != null) {
+
+                gameToEdit.setLocation(editGameDTO.getLocation());
+
+            } else if (editGameDTO.getLocalBought() != null) {
+
+                gameToEdit.setLocalBought(editGameDTO.getLocalBought());
+
+            } else if (editGameDTO.getWasGifted() != null) {
+
+                gameToEdit.setWasGifted(editGameDTO.getWasGifted());
+            }
         }
     }
 

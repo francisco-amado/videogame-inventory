@@ -101,6 +101,34 @@ public class Game implements Serializable {
         this.collection = collection;
     }
 
+    public void setName(Name name) {
+        this.name = name;
+    }
+
+    public void setConsole(Console console) {
+        this.console = console;
+    }
+
+    public void setReleaseDate(LocalDate releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setLocalBought(String localBought) {
+        this.localBought = localBought;
+    }
+
+    public void setWasGifted(Boolean wasGifted) {
+        this.wasGifted = wasGifted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

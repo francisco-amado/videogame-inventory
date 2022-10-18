@@ -4,6 +4,7 @@ import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.valueobjects.Console;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
+import com.inventory.app.dto.EditGameDTO;
 import com.inventory.app.dto.GameDTO;
 import com.inventory.app.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,24 @@ public class GameController {
        gameService.createGame(name, console, gameDTO.getReleaseDate(), region);
 
        return ResponseEntity.status(HttpStatus.CREATED).body("Game created successfully");
+    }
+
+    @PatchMapping(path = "/edit/{id}", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> editGame(@PathVariable(value=("id")) UUID gameId,
+                                           @RequestBody EditGameDTO editGameDTO) {
+
+        Optional<Game> gameToEdit = gameService.findGameById(gameId);
+
+        if (gameToEdit.isEmpty()) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
+
+        } else {
+
+            gameService.editGame(gameId, editGameDTO);
+
+            return ResponseEntity.status(HttpStatus.OK).body(gameToEdit);
+        }
     }
 
     @DeleteMapping(path = "/delete/{id}", headers = "Accept=application/json", produces = "application/json")
