@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "game")
 public class Game implements Serializable {
 
     @Id
@@ -31,7 +30,6 @@ public class Game implements Serializable {
     String localBought;
     Boolean wasGifted;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collectionId")
     @JsonIgnore
     Collection collection;
 

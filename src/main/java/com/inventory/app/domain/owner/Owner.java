@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "owner")
 public class Owner implements Serializable {
 
     @Id

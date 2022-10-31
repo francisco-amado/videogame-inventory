@@ -11,17 +11,14 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "collection")
 public class Collection implements Serializable {
 
     @Id
     @Type(type = "org.hibernate.type.UUIDCharType")
     UUID collectionId = UUID.randomUUID();
     @OneToOne
-    @JoinColumn(name = "ownerId", unique = true,  nullable = false)
     Owner owner;
-    @OneToMany
-    @JoinColumn(name = "collectionId")
+    @OneToMany(mappedBy = "collection")
     List<Game> gameList;
 
     private static final long serialVersionUID = 1L;
