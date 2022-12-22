@@ -30,11 +30,15 @@ public class OwnerService implements UserDetailsService {
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
     private final static String USER_NOT_FOUND = "User with email %s not found";
+    private final static String TOKEN_RESPONSE = "Confirmed";
 
     @Autowired
-    public OwnerService(OwnerRepository ownerRepository, OwnerFactoryInterface ownerFactoryInterface,
+    public OwnerService(OwnerRepository ownerRepository,
+                        OwnerFactoryInterface ownerFactoryInterface,
                         ConfirmationTokenFactoryInterface confirmationTokenFactoryInterface,
-                        BCryptPasswordEncoder bCryptPasswordEncoder, ConfirmationTokenService confirmationTokenService, EmailSender emailSender) {
+                        BCryptPasswordEncoder bCryptPasswordEncoder,
+                        ConfirmationTokenService confirmationTokenService,
+                        EmailSender emailSender) {
 
         this.ownerRepository = ownerRepository;
         this.ownerFactoryInterface = ownerFactoryInterface;
@@ -52,45 +56,52 @@ public class OwnerService implements UserDetailsService {
 
         String encodedPassword =  bCryptPasswordEncoder.encode(password);
         Owner newOwner = ownerFactoryInterface.createOwner(userName, email, password);
+        String token = createConfirmationToken(newOwner).getToken();
+
         newOwner.setOwnerRole(OwnerRole.USER);
         newOwner.setPassword(encodedPassword);
-        String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = confirmationTokenFactoryInterface.createConfirmationToken(
-                token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), newOwner);
         ownerRepository.save(newOwner);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-        String link = "http://localhost:8080/owners/confirm?token=" + token;
-        emailSender.send(email.getEmail(), emailSender.buildEmail(userName.getName(), link));
+        sendEmail(token, userName, email);
 
         return token;
     }
 
-    public boolean existsByUsername(Name userName) {
+    public ConfirmationToken createConfirmationToken(Owner newOwner) {
 
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = confirmationTokenFactoryInterface.createConfirmationToken(
+                token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), newOwner);
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+
+        return confirmationToken;
+    }
+
+    public void sendEmail(String token, Name userName, Email email) {
+        String link = "http://localhost:8080/owners/confirm?token=" + token;
+        emailSender.send(email.getEmail(), emailSender.buildEmail(userName.getName(), link));
+    }
+
+    public boolean existsByUsername(Name userName) {
         return ownerRepository.existsByUserName(userName);
     }
 
     public boolean existsByEmail(Email email) {
-
         return ownerRepository.existsByEmail(email);
     }
 
     public Optional<Owner> findById(UUID ownerId) {
-
         return ownerRepository.findById(ownerId);
     }
 
-    public int enableOwner(Email email) {
-
-        return ownerRepository.enableAppUser(email);
+    public void enableOwner(Email email) {
+        ownerRepository.enableAppUser(email);
     }
 
     @Transactional
     public String confirmToken(String token) {
-        ConfirmationToken confirmationToken =
-                confirmationTokenService.getToken(token)
-                        .orElseThrow(() ->
-                                new IllegalStateException("Token not found"));
+
+        ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
+                        .orElseThrow(() -> new IllegalStateException("Token not found"));
 
         if (confirmationToken.getConfirmed() != null) {
             throw new IllegalStateException("E-mail already confirmed");
@@ -105,7 +116,7 @@ public class OwnerService implements UserDetailsService {
         confirmationTokenService.setConfirmed(token);
         enableOwner(confirmationToken.getOwner().getEmail());
 
-        return "Confirmed";
+        return TOKEN_RESPONSE;
     }
 
     @Override

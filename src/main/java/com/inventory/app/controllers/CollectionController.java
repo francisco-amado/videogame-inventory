@@ -53,16 +53,12 @@ public class CollectionController {
         Optional<Owner> owner = ownerService.findById(ownerId);
 
         if (owner.isPresent() && collectionService.existsByOwner(owner.get())) {
-
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner already has a collection");
         }
 
         if (owner.isEmpty()) {
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner does not exist");
-
         } else {
-
             Collection collection = collectionService.createCollection(owner.get(), collectionDTO.getGameList());
             owner.get().setCollection(collection);
             ownerRepository.save(owner.get());
@@ -77,14 +73,12 @@ public class CollectionController {
                                                       @PathVariable(value="gameid") UUID gameId) {
 
         if (!collectionService.existsById(collectionId)) {
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 
         Optional<Game> gameToAdd = gameService.findGameById(gameId);
 
         if (gameToAdd.isEmpty()) {
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
         }
 
@@ -99,14 +93,12 @@ public class CollectionController {
                                                       @PathVariable(value="gameid") UUID gameId) {
 
         if (!collectionService.existsById(collectionId)) {
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 
         Optional<Game> gameToRemove = gameService.findGameById(gameId);
 
         if (gameToRemove.isEmpty()) {
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
         }
 

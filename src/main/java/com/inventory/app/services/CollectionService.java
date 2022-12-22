@@ -27,18 +27,15 @@ public class CollectionService {
     }
 
     public Collection createCollection(Owner owner, List<Game> gameList) {
-
         Collection newCollection = collectionFactoryInterface.createCollection(owner, gameList);
-
         return collectionRepository.save(newCollection);
     }
 
     public boolean existsByOwner(Owner owner) {
-
         return collectionRepository.existsByOwner(owner);
     }
-    public boolean existsById(UUID collectionId) {
 
+    public boolean existsById(UUID collectionId) {
         return collectionRepository.existsById(collectionId);
     }
 
@@ -47,7 +44,6 @@ public class CollectionService {
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
         if(collection.isPresent()) {
-
             collection.get().addGameToList(game);
             game.setCollection(collection.get());
             collectionRepository.save(collection.get());
@@ -61,7 +57,6 @@ public class CollectionService {
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
         if(collection.isPresent()) {
-
             collection.get().getGameList().remove(game);
             game.setCollection(null);
             collectionRepository.save(collection.get());

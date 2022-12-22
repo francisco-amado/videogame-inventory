@@ -58,13 +58,9 @@ public class GameController {
         Optional<Game> gameToEdit = gameService.findGameById(gameId);
 
         if (gameToEdit.isEmpty()) {
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
-
         } else {
-
             gameService.editGame(gameId, editGameDTO);
-
             return ResponseEntity.status(HttpStatus.OK).body(gameToEdit);
         }
     }
@@ -75,11 +71,8 @@ public class GameController {
         Optional<Game> gameToDelete = gameService.findGameById(gameId);
 
         if (gameToDelete.isEmpty()) {
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
-
         } else if (gameToDelete.get().getCollection() != null) {
-
             throw new UnsupportedOperationException("Game cannot be deleted if it belongs to a collection");
         }
 

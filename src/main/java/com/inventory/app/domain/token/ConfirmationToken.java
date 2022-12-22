@@ -5,6 +5,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -27,8 +28,7 @@ public class ConfirmationToken {
         this.owner = owner;
     }
 
-    public ConfirmationToken() {
-    }
+    public ConfirmationToken() {}
 
     public UUID getTokenId() {
         return tokenId;
@@ -52,5 +52,23 @@ public class ConfirmationToken {
 
     public Owner getOwner() {
         return owner;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConfirmationToken that = (ConfirmationToken) o;
+        return Objects.equals(tokenId, that.tokenId) &&
+                Objects.equals(token, that.token) &&
+                Objects.equals(created, that.created) &&
+                Objects.equals(expires, that.expires) &&
+                Objects.equals(confirmed, that.confirmed) &&
+                Objects.equals(owner, that.owner);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tokenId, token, created, expires, confirmed, owner);
     }
 }

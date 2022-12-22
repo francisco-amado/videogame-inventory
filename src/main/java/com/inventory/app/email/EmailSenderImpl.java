@@ -25,6 +25,7 @@ public class EmailSenderImpl implements EmailSender {
     @Override
     @Async
     public void send(String to, String email) {
+
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");

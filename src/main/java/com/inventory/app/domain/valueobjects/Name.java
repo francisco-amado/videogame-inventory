@@ -16,9 +16,7 @@ public class Name {
         this.name = name;
     }
 
-    public Name() {
-
-    }
+    public Name() {}
 
     public String getName() {
         return name;
@@ -31,12 +29,10 @@ public class Name {
     public static Name createName(String name) {
 
         if (Objects.equals(name, "")) {
-
             throw new IllegalArgumentException("Name field must not be empty");
         }
 
         if (name == null) {
-
             throw new NullPointerException("Null value cannot be passed");
         }
 

@@ -23,6 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public WebSecurityConfig(@Lazy OwnerService ownerService, @Lazy BCryptPasswordEncoder bCryptPasswordEncoder) {
+
         this.ownerService = ownerService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }

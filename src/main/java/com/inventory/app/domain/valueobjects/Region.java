@@ -9,9 +9,7 @@ import java.util.Objects;
 @Component
 public class Region {
 
-    public Region() {
-
-    }
+    public Region() {}
 
     private String regionDescription;
 
@@ -47,7 +45,6 @@ public class Region {
     }
 
     public enum RegionEnum{
-
         PAL,
         NTSCU,
         NTSCJ,

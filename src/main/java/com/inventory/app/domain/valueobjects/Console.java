@@ -9,9 +9,7 @@ import java.util.Objects;
 @Component
 public class Console {
 
-    public Console() {
-
-    }
+    public Console() {}
 
     private String consoleDescription;
 
@@ -47,7 +45,6 @@ public class Console {
     }
 
     public enum ConsoleEnum {
-
         PLAYSTATION,
         PLAYSTATION2,
         PLAYSTATION3,

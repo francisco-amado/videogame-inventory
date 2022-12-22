@@ -55,9 +55,7 @@ public class Owner implements Serializable, UserDetails {
         this.password = password;
     }
 
-    public Owner() {
-
-    }
+    public Owner() {}
 
     public UUID getOwnerId() {
         return ownerId;

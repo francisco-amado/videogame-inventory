@@ -55,9 +55,7 @@ public class Game implements Serializable {
         this.releaseDate = releaseDate;
     }
 
-    public Game() {
-
-    }
+    public Game() {}
 
     public UUID getGameId() {
         return gameId;

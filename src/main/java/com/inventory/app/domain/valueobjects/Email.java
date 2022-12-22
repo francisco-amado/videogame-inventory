@@ -18,9 +18,7 @@ public class Email {
         this.email = email;
     }
 
-    public Email() {
-
-    }
+    public Email() {}
 
     public String getEmail() {
         return email;
@@ -33,16 +31,12 @@ public class Email {
     public static Email createEmail(String email) {
 
         if (email == null || email.isEmpty() || email.isBlank()) {
-
             throw new IllegalArgumentException("E-mail cannot be null or empty");
         }
 
         if (!emailRegexPatternValidation(email)) {
-
             throw new IllegalArgumentException("E-mail does not meet correct format");
-
         } else {
-
             return new Email(email);
         }
     }
