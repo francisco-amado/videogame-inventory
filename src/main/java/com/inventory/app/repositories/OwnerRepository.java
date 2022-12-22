@@ -25,5 +25,5 @@ public interface OwnerRepository extends JpaRepository<Owner, UUID> {
     @Transactional
     @Modifying
     @Query("UPDATE Owner o SET o.enabled = TRUE WHERE o.email = ?1")
-    int enableAppUser(String email);
+    int enableAppUser(Email email);
 }
