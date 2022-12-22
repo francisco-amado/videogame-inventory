@@ -18,20 +18,20 @@ public class Game implements Serializable {
 
     @Id
     @Type(type = "org.hibernate.type.UUIDCharType")
-    UUID gameId = UUID.randomUUID();
+    private final UUID gameId = UUID.randomUUID();
     @Embedded
-    Name name;
+    private Name name;
     @Enumerated(EnumType.STRING)
-    Console console;
-    LocalDate releaseDate;
+    private Console console;
+    private LocalDate releaseDate;
     @Enumerated(EnumType.STRING)
-    Region region;
-    String location;
-    String localBought;
-    Boolean wasGifted;
+    private Region region;
+    private String location;
+    private String localBought;
+    private Boolean wasGifted;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    Collection collection;
+    private Collection collection;
 
     private static final long serialVersionUID = 2L;
 

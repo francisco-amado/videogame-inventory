@@ -6,7 +6,6 @@ import com.inventory.app.domain.owner.Owner;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class CollectionFactory implements CollectionFactoryInterface {

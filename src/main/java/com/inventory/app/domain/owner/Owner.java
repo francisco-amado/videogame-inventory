@@ -4,41 +4,51 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
-import com.inventory.app.domain.valueobjects.Password;
 import org.hibernate.annotations.Type;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Owner implements Serializable {
+public class Owner implements Serializable, UserDetails {
 
     @Id
     @Type(type = "org.hibernate.type.UUIDCharType")
-    UUID ownerId = UUID.randomUUID();
+    private final UUID ownerId = UUID.randomUUID();
     @Embedded
-    Name userName;
+    private Name userName;
     @Embedded
-    Email email;
+    private Email email;
     @JsonIgnore
-    @Embedded
-    Password password;
+    private String password;
     @OneToOne(mappedBy = "owner")
     @JsonIgnore
-    Collection collection;
+    private Collection collection;
+    @Enumerated(EnumType.STRING)
+    private OwnerRole ownerRole;
+    private boolean locked = false;
+    private boolean enabled = false;
 
     private static final long serialVersionUID = 3L;
 
-    public Owner(Name userName, Email email, Password password, Collection collection) {
+    public Owner(Name userName, Email email, String password, Collection collection,
+                 OwnerRole ownerRole, boolean locked, boolean enabled) {
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.collection = collection;
+        this.ownerRole = ownerRole;
+        this.locked = locked;
+        this.enabled = enabled;
     }
 
-    public Owner(Name userName, Email email, Password password) {
+    public Owner(Name userName, Email email, String password) {
 
         this.userName = userName;
         this.email = email;
@@ -53,16 +63,64 @@ public class Owner implements Serializable {
         return ownerId;
     }
 
-    public Name getUserName() {
-        return userName;
-    }
-
     public Email getEmail() {
         return email;
     }
 
-    public Password getPassword() {
-        return password;
+    public Name getUserName() {
+        return userName;
+    }
+
+    public OwnerRole getOwnerRole() {
+        return ownerRole;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setOwnerRole(OwnerRole ownerRole) {
+        this.ownerRole = ownerRole;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public java.util.Collection<? extends GrantedAuthority> getAuthorities() {
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(ownerRole.name());
+        return Collections.singletonList(authority);
+    }
+
+    @Override
+    public String getPassword() {
+        return password.toString();
+    }
+
+    @Override
+    public String getUsername() {
+        return userName.getName();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !locked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public Collection getCollection() {

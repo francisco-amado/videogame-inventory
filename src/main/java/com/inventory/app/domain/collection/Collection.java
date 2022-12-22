@@ -15,11 +15,11 @@ public class Collection implements Serializable {
 
     @Id
     @Type(type = "org.hibernate.type.UUIDCharType")
-    UUID collectionId = UUID.randomUUID();
+    private final UUID collectionId = UUID.randomUUID();
     @OneToOne
-    Owner owner;
+    private Owner owner;
     @OneToMany(mappedBy = "collection")
-    List<Game> gameList;
+    private List<Game> gameList;
 
     private static final long serialVersionUID = 1L;
 

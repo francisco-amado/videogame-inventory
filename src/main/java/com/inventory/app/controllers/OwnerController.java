@@ -3,8 +3,8 @@ package com.inventory.app.controllers;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
-import com.inventory.app.domain.valueobjects.Password;
 import com.inventory.app.dto.OwnerDTO;
+import com.inventory.app.services.ConfirmationTokenService;
 import com.inventory.app.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,11 +21,13 @@ import java.util.UUID;
 public class OwnerController {
 
     private final OwnerService ownerService;
+    private final ConfirmationTokenService confirmationTokenService;
 
     @Autowired
-    public OwnerController(OwnerService ownerService) {
+    public OwnerController(OwnerService ownerService, ConfirmationTokenService confirmationTokenService) {
 
         this.ownerService = ownerService;
+        this.confirmationTokenService = confirmationTokenService;
     }
 
     @GetMapping(path = "/get/{id}", headers = "Accept=application/json", produces = "application/json")
@@ -42,15 +44,23 @@ public class OwnerController {
     @PostMapping(path = "/create", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> createOwner(@RequestBody OwnerDTO ownerDTO) {
 
-        if (ownerService.existsByEmail(Email.createEmail(ownerDTO.getEmail())) ||
-                ownerService.existsByUsername(Name.createName(ownerDTO.getUserName()))) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner already exists");
+        try{
+            String token = ownerService.createOwner(Name.createName(ownerDTO.getUserName()),
+                    Email.createEmail(ownerDTO.getEmail()), ownerDTO.getPassword());
+            return ResponseEntity.status(HttpStatus.CREATED).body(token);
+        } catch (IllegalStateException ise) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ise.getMessage());
         }
+    }
 
-        ownerService.createOwner(Name.createName(ownerDTO.getUserName()), Email.createEmail(ownerDTO.getEmail()),
-                Password.createPassword(ownerDTO.getPassword()));
+    @GetMapping(path = "/confirm", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> confirmOwner(@RequestParam("token") String token) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Owner created successfully");
+        try{
+            String confirmed = confirmationTokenService.confirmToken(token);
+            return ResponseEntity.status(HttpStatus.OK).body(confirmed);
+        } catch (IllegalStateException ise) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ise.getMessage());
+        }
     }
 }
