@@ -1,3 +1,3 @@
 # videogame-inventory
 
-Spring webapp to manage videogame collections.
+Spring Boot REST API to manage videogame collections.
