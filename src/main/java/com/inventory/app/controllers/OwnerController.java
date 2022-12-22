@@ -50,7 +50,7 @@ public class OwnerController {
         }
     }
 
-    @GetMapping(path = "/confirm", headers = "Accept=application/json", produces = "application/json")
+    @GetMapping(path = "/confirm")
     public ResponseEntity<Object> confirmOwner(@RequestParam("token") String token) {
 
         try{

@@ -59,7 +59,7 @@ public class OwnerService implements UserDetailsService {
                 token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), newOwner);
         ownerRepository.save(newOwner);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-        String link = "http://localhost:8080/owners/confirm?token" + token;
+        String link = "http://localhost:8080/owners/confirm?token=" + token;
         emailSender.send(email.getEmail(), emailSender.buildEmail(userName.getName(), link));
 
         return token;
