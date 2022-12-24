@@ -36,10 +36,10 @@ public class CollectionService {
     }
 
     public boolean existsById(UUID collectionId) {
-        return collectionRepository.existsById(collectionId);
+        return !collectionRepository.existsById(collectionId);
     }
 
-    public Optional<Collection> addGame(Game game, UUID collectionId) {
+    public void addGame(Game game, UUID collectionId) {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
@@ -49,10 +49,9 @@ public class CollectionService {
             collectionRepository.save(collection.get());
         }
 
-        return collection;
     }
 
-    public Optional<Collection> removeGame(Game game, UUID collectionId) {
+    public void removeGame(Game game, UUID collectionId) {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
@@ -61,7 +60,5 @@ public class CollectionService {
             game.setCollection(null);
             collectionRepository.save(collection.get());
         }
-
-        return collection;
     }
 }

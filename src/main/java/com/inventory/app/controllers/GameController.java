@@ -25,7 +25,6 @@ public class GameController {
 
     @Autowired
     public GameController(GameService gameService) {
-
         this.gameService = gameService;
     }
 

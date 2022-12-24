@@ -72,7 +72,7 @@ public class CollectionController {
     public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
 
-        if (!collectionService.existsById(collectionId)) {
+        if (collectionService.existsById(collectionId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 
@@ -92,7 +92,7 @@ public class CollectionController {
     public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid") UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
 
-        if (!collectionService.existsById(collectionId)) {
+        if (collectionService.existsById(collectionId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 

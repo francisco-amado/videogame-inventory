@@ -31,6 +31,7 @@ public class OwnerService implements UserDetailsService {
     private final EmailSender emailSender;
     private final static String USER_NOT_FOUND = "User with email %s not found";
     private final static String TOKEN_RESPONSE = "Confirmed";
+    private final static String EMAIL_LINK = "http://localhost:8080/owners/confirm?token=";
 
     @Autowired
     public OwnerService(OwnerRepository ownerRepository,
@@ -77,7 +78,7 @@ public class OwnerService implements UserDetailsService {
     }
 
     public void sendEmail(String token, Name userName, Email email) {
-        String link = "http://localhost:8080/owners/confirm?token=" + token;
+        String link = EMAIL_LINK + token;
         emailSender.send(email.getEmail(), emailSender.buildEmail(userName.getName(), link));
     }
 
