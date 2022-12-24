@@ -26,16 +26,14 @@ public class CollectionController {
     private final CollectionService collectionService;
     private final GameService gameService;
     private final OwnerService ownerService;
-    private final OwnerRepository ownerRepository;
 
     @Autowired
     public CollectionController(CollectionService collectionService, GameService gameService,
-                                OwnerService ownerService, OwnerRepository ownerRepository) {
+                                OwnerService ownerService) {
 
         this.collectionService = collectionService;
         this.gameService = gameService;
         this.ownerService = ownerService;
-        this.ownerRepository = ownerRepository;
     }
 
     @GetMapping(path = "/get/{id}", produces = "application/json")
@@ -60,8 +58,7 @@ public class CollectionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner does not exist");
         } else {
             Collection collection = collectionService.createCollection(owner.get(), collectionDTO.getGameList());
-            owner.get().setCollection(collection);
-            ownerRepository.save(owner.get());
+            ownerService.updateOwnerCollection(owner.get(), collection);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Collection created successfully");
         }

@@ -1,5 +1,6 @@
 package com.inventory.app.services;
 
+import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.factories.ConfirmationTokenFactoryInterface;
 import com.inventory.app.domain.factories.OwnerFactoryInterface;
 import com.inventory.app.domain.owner.Owner;
@@ -80,6 +81,11 @@ public class OwnerService implements UserDetailsService {
     public void sendEmail(String token, Name userName, Email email) {
         String link = EMAIL_LINK + token;
         emailSender.send(email.getEmail(), emailSender.buildEmail(userName.getName(), link));
+    }
+
+    public void updateOwnerCollection(Owner owner, Collection collection) {
+        owner.setCollection(collection);
+        ownerRepository.save(owner);
     }
 
     public boolean existsByUsername(Name userName) {

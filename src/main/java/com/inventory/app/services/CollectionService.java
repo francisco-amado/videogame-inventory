@@ -39,6 +39,10 @@ public class CollectionService {
         return !collectionRepository.existsById(collectionId);
     }
 
+    public Optional<Collection> findCollectionById(UUID collectionID) {
+        return collectionRepository.findById(collectionID);
+    }
+
     public void addGame(Game game, UUID collectionId) {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);

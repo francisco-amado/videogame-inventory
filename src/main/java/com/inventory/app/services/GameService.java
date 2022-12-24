@@ -22,15 +22,15 @@ import java.util.UUID;
 public class GameService {
 
     private final GameRepository gameRepository;
-    private final CollectionRepository collectionRepository;
+    private final CollectionService collectionService;
     private final GameFactoryInterface gameFactoryInterface;
 
     @Autowired
-    public GameService(GameRepository gameRepository, CollectionRepository collectionRepository,
+    public GameService(GameRepository gameRepository, CollectionService collectionService,
                        GameFactoryInterface gameFactoryInterface) {
 
         this.gameRepository = gameRepository;
-        this.collectionRepository = collectionRepository;
+        this.collectionService = collectionService;
         this.gameFactoryInterface = gameFactoryInterface;
     }
 
@@ -45,7 +45,7 @@ public class GameService {
 
     public List<Game> findGamesByCollectionId(UUID collectionId) {
 
-        Optional<Collection> collection = collectionRepository.findById(collectionId);
+        Optional<Collection> collection = collectionService.findCollectionById(collectionId);
 
         if (collection.isEmpty()) {
             throw new NoSuchElementException("The requested collection does not exist");
