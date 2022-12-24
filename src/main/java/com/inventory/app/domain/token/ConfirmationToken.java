@@ -4,12 +4,13 @@ import com.inventory.app.domain.owner.Owner;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class ConfirmationToken {
+public class ConfirmationToken implements Serializable {
 
     @Id
     @Type(type = "org.hibernate.type.UUIDCharType")
