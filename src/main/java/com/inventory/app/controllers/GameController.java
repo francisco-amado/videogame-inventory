@@ -71,11 +71,13 @@ public class GameController {
 
         if (gameToDelete.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
-        } else if (gameToDelete.get().getCollection() != null) {
-            throw new UnsupportedOperationException("Game cannot be deleted if it belongs to a collection");
         }
 
-        gameService.deleteGame(gameId);
+        try{
+            gameService.deleteGame(gameId);
+        } catch (UnsupportedOperationException uoe) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(uoe.getMessage());
+        }
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Game deleted successfully");
     }

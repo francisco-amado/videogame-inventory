@@ -85,7 +85,13 @@ public class GameService {
     }
 
     public void deleteGame(UUID gameId) {
+
         Optional<Game> gameToDelete = gameRepository.findById(gameId);
+
+        if (gameToDelete.isPresent() && gameToDelete.get().getCollection() != null) {
+            throw new UnsupportedOperationException("Game cannot be deleted if it belongs to a collection");
+        }
+
         gameToDelete.ifPresent(gameRepository::delete);
     }
 }
