@@ -1,5 +1,6 @@
 package com.inventory.app.domain.token;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.app.domain.owner.Owner;
 import org.hibernate.annotations.Type;
 
@@ -20,6 +21,7 @@ public class ConfirmationToken implements Serializable {
     private LocalDateTime expires;
     private LocalDateTime confirmed;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Owner owner;
 
     public ConfirmationToken(String token, LocalDateTime created, LocalDateTime expires, Owner owner) {
