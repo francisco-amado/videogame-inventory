@@ -32,7 +32,7 @@ public class EmailSenderImpl implements EmailSender {
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm e-mail");
-            helper.setFrom("no-reply@inventory.com");
+            helper.setFrom("no-reply@game-inventory.com");
             mailSender.send(message);
         } catch(MessagingException me) {
             LOG.error("Failed to send email", me);
