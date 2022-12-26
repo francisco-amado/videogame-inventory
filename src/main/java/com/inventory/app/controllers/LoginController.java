@@ -4,10 +4,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class OwnerController {
+public class LoginController {
 
-    @GetMapping("/home/inventory")
-    public String viewCollectionPage() {
-        return "owner/inventory";
+    @GetMapping("/home")
+    public String viewHomePage() {
+        return "home";
     }
 }

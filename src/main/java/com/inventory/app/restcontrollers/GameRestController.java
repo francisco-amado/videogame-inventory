@@ -1,4 +1,4 @@
-package com.inventory.app.controllers;
+package com.inventory.app.restcontrollers;
 
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.valueobjects.Console;
@@ -19,12 +19,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/games")
 @CrossOrigin(origins = "*", maxAge = 3600)
-public class GameController {
+public class GameRestController {
 
     private final GameService gameService;
 
     @Autowired
-    public GameController(GameService gameService) {
+    public GameRestController(GameService gameService) {
         this.gameService = gameService;
     }
 

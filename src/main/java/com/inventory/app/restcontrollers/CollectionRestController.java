@@ -1,10 +1,9 @@
-package com.inventory.app.controllers;
+package com.inventory.app.restcontrollers;
 
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.dto.CollectionDTO;
-import com.inventory.app.repositories.OwnerRepository;
 import com.inventory.app.services.CollectionService;
 import com.inventory.app.services.GameService;
 import com.inventory.app.services.OwnerService;
@@ -21,15 +20,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/collections")
 @CrossOrigin(origins = "*", maxAge = 3600)
-public class CollectionController {
+public class CollectionRestController {
 
     private final CollectionService collectionService;
     private final GameService gameService;
     private final OwnerService ownerService;
 
     @Autowired
-    public CollectionController(CollectionService collectionService, GameService gameService,
-                                OwnerService ownerService) {
+    public CollectionRestController(CollectionService collectionService, GameService gameService,
+                                    OwnerService ownerService) {
 
         this.collectionService = collectionService;
         this.gameService = gameService;
