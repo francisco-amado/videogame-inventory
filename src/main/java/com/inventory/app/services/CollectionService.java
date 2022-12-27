@@ -4,6 +4,7 @@ import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.factories.CollectionFactoryInterface;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
+import com.inventory.app.dto.CollectionDTO;
 import com.inventory.app.repositories.CollectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,8 @@ public class CollectionService {
         this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
-    public Collection createCollection(Owner owner, List<Game> gameList) {
-        Collection newCollection = collectionFactoryInterface.createCollection(owner, gameList);
+    public Collection createCollection(Owner owner, CollectionDTO collectionDTO) {
+        Collection newCollection = collectionFactoryInterface.createCollection(owner, collectionDTO);
         return collectionRepository.save(newCollection);
     }
 

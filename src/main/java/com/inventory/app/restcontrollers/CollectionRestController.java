@@ -44,8 +44,8 @@ public class CollectionRestController {
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(gameList);
     }
 
-    @PostMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> createCollection(@PathVariable(value="id") UUID ownerId,
+    @PostMapping(path = "/{ownerId}", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> createCollection(@PathVariable(value="ownerId") UUID ownerId,
                                                    @RequestBody CollectionDTO collectionDTO,
                                                    UriComponentsBuilder ucBuilder) {
 
@@ -58,7 +58,7 @@ public class CollectionRestController {
         if (owner.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner does not exist");
         } else {
-            Collection collection = collectionService.createCollection(owner.get(), collectionDTO.getGameList());
+            Collection collection = collectionService.createCollection(owner.get(), collectionDTO);
             ownerService.updateOwnerCollection(owner.get(), collection);
 
             HttpHeaders headers = new HttpHeaders();
