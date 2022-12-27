@@ -8,10 +8,12 @@ import com.inventory.app.services.CollectionService;
 import com.inventory.app.services.GameService;
 import com.inventory.app.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,17 +37,17 @@ public class CollectionRestController {
         this.ownerService = ownerService;
     }
 
-    @GetMapping(path = "/{id}", produces = "application/json")
+    @GetMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> getCollection(@PathVariable(value="id") UUID collectionId) {
 
         List<Game> gameList = gameService.findGamesByCollectionId(collectionId);
-
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(gameList);
     }
 
     @PostMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> createCollection(@PathVariable(value="id") UUID ownerId,
-                                                   @RequestBody CollectionDTO collectionDTO) {
+                                                   @RequestBody CollectionDTO collectionDTO,
+                                                   UriComponentsBuilder ucBuilder) {
 
         Optional<Owner> owner = ownerService.findById(ownerId);
 
@@ -59,7 +61,16 @@ public class CollectionRestController {
             Collection collection = collectionService.createCollection(owner.get(), collectionDTO.getGameList());
             ownerService.updateOwnerCollection(owner.get(), collection);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("Collection created successfully");
+            HttpHeaders headers = new HttpHeaders();
+            headers
+                    .setLocation(ucBuilder.path("/collections/{id}")
+                            .buildAndExpand(collection.getCollectionId())
+                            .toUri());
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .headers(headers)
+                    .body("Collection created successfully");
         }
     }
 
@@ -79,7 +90,6 @@ public class CollectionRestController {
         }
 
         collectionService.addGame(gameToAdd.get(), collectionId);
-
         return ResponseEntity.status(HttpStatus.OK).body("Game added successfully");
     }
 
@@ -99,7 +109,6 @@ public class CollectionRestController {
         }
 
         collectionService.removeGame(gameToRemove.get(), collectionId);
-
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Game removed successfully");
     }
 

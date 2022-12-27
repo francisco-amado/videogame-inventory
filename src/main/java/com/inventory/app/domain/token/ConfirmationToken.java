@@ -2,6 +2,7 @@ package com.inventory.app.domain.token;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.app.domain.owner.Owner;
+import com.sun.istack.NotNull;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -14,13 +15,18 @@ import java.util.UUID;
 public class ConfirmationToken implements Serializable {
 
     @Id
+    @Column(name = "uuid")
     @Type(type = "org.hibernate.type.UUIDCharType")
     private final UUID tokenId = UUID.randomUUID();
+    @NotNull
     private String token;
+    @NotNull
     private LocalDateTime created;
+    @NotNull
     private LocalDateTime expires;
     private LocalDateTime confirmed;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner", referencedColumnName = "uuid", nullable = false)
     @JsonIgnore
     private Owner owner;
 

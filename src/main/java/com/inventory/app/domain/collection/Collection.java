@@ -2,6 +2,7 @@ package com.inventory.app.domain.collection;
 
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
+import com.sun.istack.NotNull;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -14,11 +15,14 @@ import java.util.UUID;
 public class Collection implements Serializable {
 
     @Id
+    @Column(name = "uuid")
     @Type(type = "org.hibernate.type.UUIDCharType")
     private final UUID collectionId = UUID.randomUUID();
-    @OneToOne
+    @OneToOne(optional = false)
+    @JoinColumn(name = "owner", referencedColumnName = "uuid", nullable = false)
     private Owner owner;
     @OneToMany(mappedBy = "collection")
+    @NotNull
     private List<Game> gameList;
 
     private static final long serialVersionUID = 1L;

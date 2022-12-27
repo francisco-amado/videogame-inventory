@@ -23,7 +23,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-	implementation 'com.h2database:h2:2.1.214'
+	implementation 'com.h2database:h2:1.4.200'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.mockito:mockito-core:4.6.1'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

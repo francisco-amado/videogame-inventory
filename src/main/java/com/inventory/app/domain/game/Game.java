@@ -5,6 +5,7 @@ import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.valueobjects.Console;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
+import com.sun.istack.NotNull;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -17,19 +18,25 @@ import java.util.UUID;
 public class Game implements Serializable {
 
     @Id
+    @Column(name = "uuid")
     @Type(type = "org.hibernate.type.UUIDCharType")
     private final UUID gameId = UUID.randomUUID();
     @Embedded
+    @NotNull
     private Name name;
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Console console;
+    @NotNull
     private LocalDate releaseDate;
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Region region;
     private String location;
     private String localBought;
     private Boolean wasGifted;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "collection", referencedColumnName = "uuid")
     @JsonIgnore
     private Collection collection;
 

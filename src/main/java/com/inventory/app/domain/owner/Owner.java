@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
+import com.sun.istack.NotNull;
 import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,19 +20,26 @@ import java.util.UUID;
 public class Owner implements Serializable, UserDetails {
 
     @Id
+    @Column(name = "uuid")
     @Type(type = "org.hibernate.type.UUIDCharType")
     private final UUID ownerId = UUID.randomUUID();
     @Embedded
+    @NotNull
     private Name userName;
+    @NotNull
     private String email;
     @JsonIgnore
+    @NotNull
     private String password;
     @OneToOne(mappedBy = "owner")
     @JsonIgnore
     private Collection collection;
     @Enumerated(EnumType.STRING)
+    @NotNull
     private OwnerRole ownerRole;
+    @NotNull
     private boolean locked = false;
+    @NotNull
     private boolean enabled = false;
 
     private static final long serialVersionUID = 3L;

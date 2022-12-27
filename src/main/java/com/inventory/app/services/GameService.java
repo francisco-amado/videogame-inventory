@@ -34,9 +34,10 @@ public class GameService {
         this.gameFactoryInterface = gameFactoryInterface;
     }
 
-    public void createGame(Name name, Console console, LocalDate releaseDate, Region region) {
+    public UUID createGame(Name name, Console console, LocalDate releaseDate, Region region) {
         Game game = gameFactoryInterface.createGame(name, console, releaseDate, region);
         gameRepository.save(game);
+        return game.getGameId();
     }
 
     public Optional<Game> findGameById (UUID gameId) {

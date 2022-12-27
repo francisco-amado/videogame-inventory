@@ -32,7 +32,7 @@ public class OwnerService implements UserDetailsService {
     private final EmailSender emailSender;
     private final static String USER_NOT_FOUND = "User with email %s not found";
     private final static String TOKEN_RESPONSE = "Confirmed";
-    private final static String EMAIL_LINK = "http://localhost:8080/owners/confirm?token=";
+    private final static String EMAIL_LINK = "http://localhost:8080/api/v1/owners/confirm?token=";
 
     @Autowired
     public OwnerService(OwnerRepository ownerRepository,
@@ -96,6 +96,10 @@ public class OwnerService implements UserDetailsService {
         return ownerRepository.existsByEmail(email);
     }
 
+    public Optional<Owner> findByEmail(String email) {
+        return ownerRepository.findByEmail(email);
+    }
+
     public Optional<Owner> findById(UUID ownerId) {
         return ownerRepository.findById(ownerId);
     }
@@ -128,9 +132,7 @@ public class OwnerService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        return ownerRepository.findByEmail(email)
-                .orElseThrow(() ->
+        return findByEmail(email).orElseThrow(() ->
                         new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
     }
 }
