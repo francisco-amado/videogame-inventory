@@ -39,7 +39,7 @@ public class CollectionRestController {
     @GetMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> getCollection(@PathVariable(value="id") UUID collectionId) {
 
-        Optional<Collection> collectionFound = collectionService.findCollectionById(collectionId);
+        Optional<Collection> collectionFound = collectionService.findById(collectionId);
 
         return collectionFound.<ResponseEntity<Object>>map(
                 collection -> ResponseEntity
@@ -57,16 +57,16 @@ public class CollectionRestController {
                                                    @RequestBody CollectionDTO collectionDTO,
                                                    UriComponentsBuilder ucBuilder) {
 
-        Optional<Owner> owner = ownerService.findById(ownerId);
+        Owner owner = ownerService.getReferenceById(ownerId);
 
-        if (owner.isPresent() && collectionService.existsByOwner(owner.get())) {
+        if (owner != null && collectionService.existsByOwner(owner)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner already has a collection");
         }
 
-        if (owner.isEmpty()) {
+        if (owner == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner does not exist");
         } else {
-            Collection collection = collectionService.createCollection(owner.get(), collectionDTO);
+            Collection collection = collectionService.createCollection(owner, collectionDTO);
 
             HttpHeaders headers = new HttpHeaders();
             headers
@@ -90,7 +90,7 @@ public class CollectionRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 
-        Optional<Game> gameToAdd = gameService.findGameById(gameId);
+        Optional<Game> gameToAdd = gameService.findById(gameId);
 
         if (gameToAdd.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
@@ -109,7 +109,7 @@ public class CollectionRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 
-        Optional<Game> gameToRemove = gameService.findGameById(gameId);
+        Optional<Game> gameToRemove = gameService.findById(gameId);
 
         if (gameToRemove.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
@@ -118,5 +118,4 @@ public class CollectionRestController {
         collectionService.removeGame(gameToRemove.get(), collectionId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Game removed successfully");
     }
-
 }

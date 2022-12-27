@@ -100,8 +100,8 @@ public class OwnerService implements UserDetailsService {
         return ownerRepository.findByEmail(email);
     }
 
-    public Optional<Owner> findById(UUID ownerId) {
-        return ownerRepository.findById(ownerId);
+    public Owner getReferenceById(UUID ownerId) {
+        return ownerRepository.getReferenceById(ownerId);
     }
 
     public void enableOwner(String email) {

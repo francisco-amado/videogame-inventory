@@ -18,14 +18,17 @@ public class CollectionService {
 
     private final CollectionRepository collectionRepository;
     private final OwnerService ownerService;
+    private final GameService gameService;
     private final CollectionFactoryInterface collectionFactoryInterface;
 
     @Autowired
     public CollectionService(CollectionRepository collectionRepository,
-                             OwnerService ownerService, CollectionFactoryInterface collectionFactoryInterface) {
+                             OwnerService ownerService, GameService gameService,
+                             CollectionFactoryInterface collectionFactoryInterface) {
 
         this.collectionRepository = collectionRepository;
         this.ownerService = ownerService;
+        this.gameService = gameService;
         this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
@@ -44,10 +47,11 @@ public class CollectionService {
         return !collectionRepository.existsById(collectionId);
     }
 
-    public Optional<Collection> findCollectionById(UUID collectionID) {
+    public Optional<Collection> findById(UUID collectionID) {
         return collectionRepository.findById(collectionID);
     }
 
+    @Transactional
     public void addGame(Game game, UUID collectionId) {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
@@ -55,11 +59,12 @@ public class CollectionService {
         if(collection.isPresent()) {
             collection.get().addGameToList(game);
             game.setCollection(collection.get());
+            gameService.save(game);
             collectionRepository.save(collection.get());
         }
-
     }
 
+    @Transactional
     public void removeGame(Game game, UUID collectionId) {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
@@ -67,6 +72,7 @@ public class CollectionService {
         if(collection.isPresent()) {
             collection.get().getGameList().remove(game);
             game.setCollection(null);
+            gameService.save(game);
             collectionRepository.save(collection.get());
         }
     }

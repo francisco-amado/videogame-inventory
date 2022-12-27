@@ -7,7 +7,6 @@ import com.inventory.app.domain.valueobjects.Console;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import com.inventory.app.dto.EditGameDTO;
-import com.inventory.app.repositories.CollectionRepository;
 import com.inventory.app.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +21,11 @@ import java.util.UUID;
 public class GameService {
 
     private final GameRepository gameRepository;
-    private final CollectionService collectionService;
     private final GameFactoryInterface gameFactoryInterface;
 
     @Autowired
-    public GameService(GameRepository gameRepository, CollectionService collectionService,
-                       GameFactoryInterface gameFactoryInterface) {
-
+    public GameService(GameRepository gameRepository, GameFactoryInterface gameFactoryInterface) {
         this.gameRepository = gameRepository;
-        this.collectionService = collectionService;
         this.gameFactoryInterface = gameFactoryInterface;
     }
 
@@ -40,19 +35,12 @@ public class GameService {
         return game.getGameId();
     }
 
-    public Optional<Game> findGameById (UUID gameId) {
+    public Optional<Game> findById(UUID gameId) {
         return gameRepository.findById(gameId);
     }
 
-    public List<Game> findGamesByCollectionId(UUID collectionId) {
-
-        Optional<Collection> collection = collectionService.findCollectionById(collectionId);
-
-        if (collection.isEmpty()) {
-            throw new NoSuchElementException("The requested collection does not exist");
-        } else {
-            return gameRepository.findAllByCollection(collection.get());
-        }
+    public void save(Game game) {
+        gameRepository.save(game);
     }
 
     public void editGame(UUID gameId, EditGameDTO editGameDTO) {

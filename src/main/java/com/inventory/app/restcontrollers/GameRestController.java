@@ -8,7 +8,6 @@ import com.inventory.app.dto.EditGameDTO;
 import com.inventory.app.dto.GameDTO;
 import com.inventory.app.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +19,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/games")
@@ -37,7 +35,7 @@ public class GameRestController {
     @GetMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> getGame(@PathVariable(value=("id")) UUID gameId) {
 
-        Optional<Game> gameFound = gameService.findGameById(gameId);
+        Optional<Game> gameFound = gameService.findById(gameId);
 
         return gameFound.<ResponseEntity<Object>>map(
                 game -> ResponseEntity
@@ -74,7 +72,7 @@ public class GameRestController {
     public ResponseEntity<Object> editGame(@PathVariable(value=("id")) UUID gameId,
                                            @RequestBody EditGameDTO editGameDTO) {
 
-        Optional<Game> gameToEdit = gameService.findGameById(gameId);
+        Optional<Game> gameToEdit = gameService.findById(gameId);
 
         if (gameToEdit.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
@@ -87,7 +85,7 @@ public class GameRestController {
     @DeleteMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> deleteGame(@PathVariable(value=("id")) UUID gameId) {
 
-        Optional<Game> gameToDelete = gameService.findGameById(gameId);
+        Optional<Game> gameToDelete = gameService.findById(gameId);
 
         if (gameToDelete.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
