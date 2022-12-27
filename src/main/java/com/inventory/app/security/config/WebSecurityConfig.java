@@ -12,37 +12,39 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
     private final OwnerService ownerService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public WebSecurityConfig(@Lazy OwnerService ownerService, @Lazy BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public WebSecurityConfig(OwnerService ownerService, BCryptPasswordEncoder bCryptPasswordEncoder) {
 
         this.ownerService = ownerService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/owners/**")
-                    .permitAll()
+                    .antMatchers("/owners/**").permitAll()
                     .anyRequest().authenticated()
                     .and()
-                .formLogin();
-    }
+                .formLogin()
+                    .and()
+                .logout()
+                    .permitAll()
+                    .and()
+                .httpBasic();
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(daoAuthenticationProvider());
+        return http.build();
     }
 
     @Bean
