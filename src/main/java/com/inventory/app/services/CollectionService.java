@@ -8,8 +8,8 @@ import com.inventory.app.dto.CollectionDTO;
 import com.inventory.app.repositories.CollectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,18 +17,22 @@ import java.util.UUID;
 public class CollectionService {
 
     private final CollectionRepository collectionRepository;
+    private final OwnerService ownerService;
     private final CollectionFactoryInterface collectionFactoryInterface;
 
     @Autowired
     public CollectionService(CollectionRepository collectionRepository,
-                             CollectionFactoryInterface collectionFactoryInterface) {
+                             OwnerService ownerService, CollectionFactoryInterface collectionFactoryInterface) {
 
         this.collectionRepository = collectionRepository;
+        this.ownerService = ownerService;
         this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
+    @Transactional
     public Collection createCollection(Owner owner, CollectionDTO collectionDTO) {
         Collection newCollection = collectionFactoryInterface.createCollection(owner, collectionDTO);
+        ownerService.setCollection(owner, newCollection);
         return collectionRepository.save(newCollection);
     }
 

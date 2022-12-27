@@ -34,8 +34,12 @@ public class OwnerRestController {
         Optional<Owner> ownerFound = ownerService.findByEmail(email);
 
         return ownerFound.<ResponseEntity<Object>>map(
-                owner -> ResponseEntity.status(HttpStatus.OK).body(owner))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner does not exist"));
+                owner -> ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(owner))
+                .orElseGet(() -> ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body("Owner does not exist"));
     }
 
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")

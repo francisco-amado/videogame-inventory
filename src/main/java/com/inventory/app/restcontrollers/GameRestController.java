@@ -40,8 +40,13 @@ public class GameRestController {
         Optional<Game> gameFound = gameService.findGameById(gameId);
 
         return gameFound.<ResponseEntity<Object>>map(
-                game -> ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(game))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist"));
+                game -> ResponseEntity
+                        .status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(game))
+                .orElseGet(() -> ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body("Game does not exist"));
     }
 
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")

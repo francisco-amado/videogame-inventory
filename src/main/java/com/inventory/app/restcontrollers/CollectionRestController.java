@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,8 +39,17 @@ public class CollectionRestController {
     @GetMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> getCollection(@PathVariable(value="id") UUID collectionId) {
 
-        List<Game> gameList = gameService.findGamesByCollectionId(collectionId);
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(gameList);
+        Optional<Collection> collectionFound = collectionService.findCollectionById(collectionId);
+
+        return collectionFound.<ResponseEntity<Object>>map(
+                collection -> ResponseEntity
+                        .status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(collection)).
+                orElseGet(() -> ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body("Collection does not exist"));
     }
 
     @PostMapping(path = "/{ownerId}", headers = "Accept=application/json", produces = "application/json")
@@ -59,7 +67,6 @@ public class CollectionRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner does not exist");
         } else {
             Collection collection = collectionService.createCollection(owner.get(), collectionDTO);
-            ownerService.updateOwnerCollection(owner.get(), collection);
 
             HttpHeaders headers = new HttpHeaders();
             headers
@@ -74,7 +81,7 @@ public class CollectionRestController {
         }
     }
 
-    @PostMapping(path = "/{collectionid}/game/{gameid}",
+    @PatchMapping(path = "/{collectionid}/game/{gameid}/add",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
@@ -93,7 +100,7 @@ public class CollectionRestController {
         return ResponseEntity.status(HttpStatus.OK).body("Game added successfully");
     }
 
-    @DeleteMapping(path = "/{collectionid}/game/{gameid}",
+    @PatchMapping(path = "/{collectionid}/game/{gameid}/remove",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid") UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {

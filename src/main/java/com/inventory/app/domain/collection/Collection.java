@@ -4,6 +4,7 @@ import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.sun.istack.NotNull;
 import org.hibernate.annotations.Type;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,7 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Collection implements Serializable {
+public class Collection extends RepresentationModel<Collection> implements Serializable {
 
     @Id
     @Column(name = "uuid")

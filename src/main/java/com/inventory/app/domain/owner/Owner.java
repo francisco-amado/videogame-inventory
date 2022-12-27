@@ -6,6 +6,7 @@ import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
 import com.sun.istack.NotNull;
 import org.hibernate.annotations.Type;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Owner implements Serializable, UserDetails {
+public class Owner extends RepresentationModel<Owner> implements Serializable, UserDetails {
 
     @Id
     @Column(name = "uuid")

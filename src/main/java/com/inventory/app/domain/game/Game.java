@@ -7,6 +7,7 @@ import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import com.sun.istack.NotNull;
 import org.hibernate.annotations.Type;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Game implements Serializable {
+public class Game extends RepresentationModel<Game> implements Serializable {
 
     @Id
     @Column(name = "uuid")

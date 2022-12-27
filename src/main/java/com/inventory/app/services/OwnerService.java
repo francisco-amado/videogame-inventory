@@ -83,7 +83,7 @@ public class OwnerService implements UserDetailsService {
         emailSender.send(email, emailSender.buildEmail(userName.getName(), link));
     }
 
-    public void updateOwnerCollection(Owner owner, Collection collection) {
+    public void setCollection(Owner owner, Collection collection) {
         owner.setCollection(collection);
         ownerRepository.save(owner);
     }
