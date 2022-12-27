@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface OwnerFactoryInterface {
 
-    Owner createOwner(Name userName, Email email, String password);
+    Owner createOwner(Name userName, String email, String password);
 }

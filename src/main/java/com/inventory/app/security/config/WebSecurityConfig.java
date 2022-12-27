@@ -33,20 +33,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/owners/**", "/home/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated().and()
-                .formLogin()
-                .loginPage("/home")
-                .usernameParameter("email")
-                .loginProcessingUrl("/home")
-                .defaultSuccessUrl("/home/inventory")
-                .permitAll()
-                .and()
-                .logout()
-                .logoutUrl("/home/logout")
-                .logoutSuccessUrl("/home");
+                    .antMatchers("/owners/**")
+                    .permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                .formLogin();
     }
 
     @Override

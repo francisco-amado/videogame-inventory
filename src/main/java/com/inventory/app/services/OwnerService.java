@@ -50,7 +50,8 @@ public class OwnerService implements UserDetailsService {
         this.emailSender = emailSender;
     }
 
-    public String createOwner(Name userName, Email email, String password) throws IllegalStateException {
+    @Transactional
+    public String createOwner(Name userName, String email, String password) throws IllegalStateException {
 
         if (existsByEmail(email) || existsByUsername(userName)) {
             throw new IllegalStateException("Owner already exists");
@@ -58,11 +59,10 @@ public class OwnerService implements UserDetailsService {
 
         String encodedPassword =  bCryptPasswordEncoder.encode(password);
         Owner newOwner = ownerFactoryInterface.createOwner(userName, email, password);
-        String token = createConfirmationToken(newOwner).getToken();
-
         newOwner.setOwnerRole(OwnerRole.USER);
         newOwner.setPassword(encodedPassword);
         ownerRepository.save(newOwner);
+        String token = createConfirmationToken(newOwner).getToken();
         sendEmail(token, userName, email);
 
         return token;
@@ -78,9 +78,9 @@ public class OwnerService implements UserDetailsService {
         return confirmationToken;
     }
 
-    public void sendEmail(String token, Name userName, Email email) {
+    public void sendEmail(String token, Name userName, String email) {
         String link = EMAIL_LINK + token;
-        emailSender.send(email.getEmail(), emailSender.buildEmail(userName.getName(), link));
+        emailSender.send(email, emailSender.buildEmail(userName.getName(), link));
     }
 
     public void updateOwnerCollection(Owner owner, Collection collection) {
@@ -92,7 +92,7 @@ public class OwnerService implements UserDetailsService {
         return ownerRepository.existsByUserName(userName);
     }
 
-    public boolean existsByEmail(Email email) {
+    public boolean existsByEmail(String email) {
         return ownerRepository.existsByEmail(email);
     }
 
@@ -100,8 +100,8 @@ public class OwnerService implements UserDetailsService {
         return ownerRepository.findById(ownerId);
     }
 
-    public void enableOwner(Email email) {
-        ownerRepository.enableAppUser(email);
+    public void enableOwner(String email) {
+        ownerRepository.enableOwner(email);
     }
 
     @Transactional
@@ -129,9 +129,7 @@ public class OwnerService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Email emailToFind = Email.createEmail(email);
-
-        return ownerRepository.findByEmail(emailToFind)
+        return ownerRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
     }

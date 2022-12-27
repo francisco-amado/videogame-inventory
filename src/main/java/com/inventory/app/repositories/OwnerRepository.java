@@ -18,12 +18,12 @@ public interface OwnerRepository extends JpaRepository<Owner, UUID> {
 
     boolean existsByUserName(Name userName);
 
-    boolean existsByEmail(Email email);
+    boolean existsByEmail(String email);
 
-    Optional<Owner> findByEmail(Email email);
+    Optional<Owner> findByEmail(String email);
 
     @Transactional
     @Modifying
     @Query("UPDATE Owner o SET o.enabled = TRUE WHERE o.email = ?1")
-    void enableAppUser(Email email);
+    void enableOwner(String email);
 }

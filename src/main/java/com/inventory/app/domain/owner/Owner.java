@@ -23,8 +23,7 @@ public class Owner implements Serializable, UserDetails {
     private final UUID ownerId = UUID.randomUUID();
     @Embedded
     private Name userName;
-    @Embedded
-    private Email email;
+    private String email;
     @JsonIgnore
     private String password;
     @OneToOne(mappedBy = "owner")
@@ -37,7 +36,7 @@ public class Owner implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 3L;
 
-    public Owner(Name userName, Email email, String password, Collection collection,
+    public Owner(Name userName, String email, String password, Collection collection,
                  OwnerRole ownerRole, boolean locked, boolean enabled) {
         this.userName = userName;
         this.email = email;
@@ -48,7 +47,7 @@ public class Owner implements Serializable, UserDetails {
         this.enabled = enabled;
     }
 
-    public Owner(Name userName, Email email, String password) {
+    public Owner(Name userName, String email, String password) {
 
         this.userName = userName;
         this.email = email;
@@ -61,7 +60,7 @@ public class Owner implements Serializable, UserDetails {
         return ownerId;
     }
 
-    public Email getEmail() {
+    public String getEmail() {
         return email;
     }
 
@@ -93,7 +92,7 @@ public class Owner implements Serializable, UserDetails {
 
     @Override
     public String getPassword() {
-        return password.toString();
+        return password;
     }
 
     @Override
@@ -143,6 +142,6 @@ public class Owner implements Serializable, UserDetails {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ownerId, userName, email, password);
+        return Objects.hash(ownerId, userName, email, password, collection);
     }
 }
