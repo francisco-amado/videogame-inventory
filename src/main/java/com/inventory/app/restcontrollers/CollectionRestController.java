@@ -63,7 +63,7 @@ public class CollectionRestController {
         }
     }
 
-    @PostMapping(path = "/addgame/{collectionid}/{gameid}",
+    @PostMapping(path = "/{collectionid}/game/{gameid}",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
@@ -83,7 +83,7 @@ public class CollectionRestController {
         return ResponseEntity.status(HttpStatus.OK).body("Game added successfully");
     }
 
-    @DeleteMapping(path = "/removegame/{collectionid}/{gameid}",
+    @DeleteMapping(path = "/{collectionid}/game/{gameid}",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid") UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
