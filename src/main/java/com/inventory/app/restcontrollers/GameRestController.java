@@ -28,7 +28,7 @@ public class GameRestController {
         this.gameService = gameService;
     }
 
-    @GetMapping(path = "/get/{id}", headers = "Accept=application/json", produces = "application/json")
+    @GetMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> getGame(@PathVariable(value=("id")) UUID gameId) {
 
         Optional<Game> game = gameService.findGameById(gameId);
@@ -38,7 +38,7 @@ public class GameRestController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist"));
     }
 
-    @PostMapping(path = "/create", headers = "Accept=application/json", produces = "application/json")
+    @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> createGame(@RequestBody GameDTO gameDTO) {
 
        Name name = Name.createName(gameDTO.getName());
@@ -50,7 +50,7 @@ public class GameRestController {
        return ResponseEntity.status(HttpStatus.CREATED).body("Game created successfully");
     }
 
-    @PatchMapping(path = "/edit/{id}", headers = "Accept=application/json", produces = "application/json")
+    @PatchMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> editGame(@PathVariable(value=("id")) UUID gameId,
                                            @RequestBody EditGameDTO editGameDTO) {
 
@@ -64,7 +64,7 @@ public class GameRestController {
         }
     }
 
-    @DeleteMapping(path = "/delete/{id}", headers = "Accept=application/json", produces = "application/json")
+    @DeleteMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> deleteGame(@PathVariable(value=("id")) UUID gameId) {
 
         Optional<Game> gameToDelete = gameService.findGameById(gameId);

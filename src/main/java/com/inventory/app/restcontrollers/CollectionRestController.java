@@ -35,7 +35,7 @@ public class CollectionRestController {
         this.ownerService = ownerService;
     }
 
-    @GetMapping(path = "/get/{id}", produces = "application/json")
+    @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<Object> getCollection(@PathVariable(value="id") UUID collectionId) {
 
         List<Game> gameList = gameService.findGamesByCollectionId(collectionId);
@@ -43,7 +43,7 @@ public class CollectionRestController {
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(gameList);
     }
 
-    @PostMapping(path = "/create/{id}", headers = "Accept=application/json", produces = "application/json")
+    @PostMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> createCollection(@PathVariable(value="id") UUID ownerId,
                                                    @RequestBody CollectionDTO collectionDTO) {
 
@@ -63,7 +63,7 @@ public class CollectionRestController {
         }
     }
 
-    @PostMapping(path = "/add/{collectionid}/{gameid}",
+    @PostMapping(path = "/addgame/{collectionid}/{gameid}",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
@@ -83,7 +83,7 @@ public class CollectionRestController {
         return ResponseEntity.status(HttpStatus.OK).body("Game added successfully");
     }
 
-    @DeleteMapping(path = "/remove/{collectionid}/{gameid}",
+    @DeleteMapping(path = "/removegame/{collectionid}/{gameid}",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid") UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {

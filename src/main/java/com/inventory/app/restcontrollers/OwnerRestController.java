@@ -21,7 +21,7 @@ public class OwnerRestController {
         this.ownerService = ownerService;
     }
 
-    @PostMapping(path = "/create", headers = "Accept=application/json", produces = "application/json")
+    @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> createOwner(@RequestBody OwnerDTO ownerDTO) {
 
         try{
