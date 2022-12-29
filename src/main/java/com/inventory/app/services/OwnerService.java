@@ -57,6 +57,10 @@ public class OwnerService implements UserDetailsService {
             throw new IllegalStateException("Owner already exists");
         }
 
+        if (password == null) {
+            throw new IllegalStateException("Password not valid");
+        }
+
         String encodedPassword =  bCryptPasswordEncoder.encode(password);
         Owner newOwner = ownerFactoryInterface.createOwner(userName, email, password);
         newOwner.setOwnerRole(OwnerRole.USER);
@@ -100,8 +104,8 @@ public class OwnerService implements UserDetailsService {
         return ownerRepository.findByEmail(email);
     }
 
-    public Owner getReferenceById(UUID ownerId) {
-        return ownerRepository.getReferenceById(ownerId);
+    public Optional<Owner> findById(UUID ownerId) {
+        return ownerRepository.findById(ownerId);
     }
 
     public void enableOwner(String email) {
@@ -109,7 +113,7 @@ public class OwnerService implements UserDetailsService {
     }
 
     @Transactional
-    public String confirmToken(String token) {
+    public String confirmToken(String token) throws IllegalStateException {
 
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                         .orElseThrow(() -> new IllegalStateException("Token not found"));

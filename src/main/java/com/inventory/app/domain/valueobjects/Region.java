@@ -1,5 +1,7 @@
 package com.inventory.app.domain.valueobjects;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
@@ -9,26 +11,16 @@ import java.util.Objects;
 @Component
 public class Region {
 
-    public Region() {}
-
-    private String regionDescription;
+    private @Getter @Setter String regionDescription;
 
     private Region(String regionDescription) {
-
         this.regionDescription = regionDescription;
     }
+
+    public Region() {}
 
     public static Region createRegion(Region.RegionEnum regionEnum) {
-
         return new Region(regionEnum.toString());
-    }
-
-    public String getRegionDescription() {
-        return regionDescription;
-    }
-
-    public void setRegionDescription(String regionDescription) {
-        this.regionDescription = regionDescription;
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
 import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,23 +25,30 @@ public class Owner extends RepresentationModel<Owner> implements Serializable, U
     @Id
     @Column(name = "uuid")
     @Type(type = "org.hibernate.type.UUIDCharType")
-    private final UUID ownerId = UUID.randomUUID();
+    private final @Getter UUID ownerId = UUID.randomUUID();
+
     @Embedded
     @NotNull
-    private Name userName;
+    private @Setter Name userName;
+
     @NotNull
-    private String email;
+    private @Getter @Setter String email;
+
     @JsonIgnore
     @NotNull
-    private String password;
+    private @Setter String password;
+
     @OneToOne(mappedBy = "owner")
     @JsonIgnore
-    private Collection collection;
+    private @Getter @Setter Collection collection;
+
     @Enumerated(EnumType.STRING)
     @NotNull
-    private OwnerRole ownerRole;
+    private @Getter @Setter OwnerRole ownerRole;
+
     @NotNull
     private boolean locked = false;
+
     @NotNull
     private boolean enabled = false;
 
@@ -47,6 +56,7 @@ public class Owner extends RepresentationModel<Owner> implements Serializable, U
 
     public Owner(Name userName, String email, String password, Collection collection,
                  OwnerRole ownerRole, boolean locked, boolean enabled) {
+
         this.userName = userName;
         this.email = email;
         this.password = password;
@@ -57,41 +67,12 @@ public class Owner extends RepresentationModel<Owner> implements Serializable, U
     }
 
     public Owner(Name userName, String email, String password) {
-
         this.userName = userName;
         this.email = email;
         this.password = password;
     }
 
     public Owner() {}
-
-    public UUID getOwnerId() {
-        return ownerId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Name getUserName() {
-        return userName;
-    }
-
-    public OwnerRole getOwnerRole() {
-        return ownerRole;
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public void setOwnerRole(OwnerRole ownerRole) {
-        this.ownerRole = ownerRole;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @Override
     public java.util.Collection<? extends GrantedAuthority> getAuthorities() {
@@ -127,14 +108,6 @@ public class Owner extends RepresentationModel<Owner> implements Serializable, U
     @Override
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public Collection getCollection() {
-        return collection;
-    }
-
-    public void setCollection(Collection collection) {
-        this.collection = collection;
     }
 
     @Override

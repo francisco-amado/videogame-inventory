@@ -15,10 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping("/games")
@@ -50,22 +49,23 @@ public class GameRestController {
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> createGame(@RequestBody GameDTO gameDTO, UriComponentsBuilder ucBuilder) {
 
-       Name name = Name.createName(gameDTO.getName());
-       Console console = Console.createConsole(Console.ConsoleEnum.valueOf(gameDTO.getConsole()));
-       Region region = Region.createRegion(Region.RegionEnum.valueOf(gameDTO.getRegion()));
+        try{
+            UUID gameUUID = gameService.createGame(gameDTO);
 
-       UUID gameUUID = gameService.createGame(name, console, gameDTO.getReleaseDate(), region);
+            HttpHeaders headers = new HttpHeaders();
+            headers
+                    .setLocation(ucBuilder.path("/games/{id}")
+                            .buildAndExpand(gameUUID)
+                            .toUri());
 
-       HttpHeaders headers = new HttpHeaders();
-       headers
-               .setLocation(ucBuilder.path("/games/{id}")
-                       .buildAndExpand(gameUUID)
-                       .toUri());
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .headers(headers)
+                    .body("Game successfully created");
 
-       return ResponseEntity
-               .status(HttpStatus.CREATED)
-               .headers(headers)
-               .body("Game successfully created");
+        } catch (IllegalStateException ise) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ise.getMessage());
+        }
     }
 
     @PatchMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
@@ -76,9 +76,12 @@ public class GameRestController {
 
         if (gameToEdit.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
-        } else {
+        }
+        try {
             gameService.editGame(gameId, editGameDTO);
             return ResponseEntity.status(HttpStatus.OK).body(gameToEdit);
+        } catch (NoSuchElementException nse) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(nse.getMessage());
         }
     }
 
@@ -90,13 +93,11 @@ public class GameRestController {
         if (gameToDelete.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
         }
-
         try{
             gameService.deleteGame(gameId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Game deleted successfully");
         } catch (UnsupportedOperationException uoe) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(uoe.getMessage());
         }
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Game deleted successfully");
     }
 }

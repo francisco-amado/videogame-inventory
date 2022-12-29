@@ -7,6 +7,7 @@ import com.inventory.app.domain.valueobjects.Console;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import com.inventory.app.dto.EditGameDTO;
+import com.inventory.app.dto.GameDTO;
 import com.inventory.app.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,24 @@ public class GameService {
         this.gameFactoryInterface = gameFactoryInterface;
     }
 
-    public UUID createGame(Name name, Console console, LocalDate releaseDate, Region region) {
-        Game game = gameFactoryInterface.createGame(name, console, releaseDate, region);
+    public UUID createGame(GameDTO gameDTO) throws IllegalStateException {
+
+        if (gameDTO == null) {
+            throw new IllegalStateException("Invalid entry data");
+        }
+
+        boolean anyParameterNull = gameDTO.getConsole() == null || gameDTO.getRegion() == null ||
+                gameDTO.getReleaseDate() == null || gameDTO.getName() == null;
+
+        if (anyParameterNull) {
+            throw new IllegalStateException("Invalid entry data");
+        }
+
+        Name name = Name.createName(gameDTO.getName());
+        Console console = Console.createConsole(Console.ConsoleEnum.valueOf(gameDTO.getConsole()));
+        Region region = Region.createRegion(Region.RegionEnum.valueOf(gameDTO.getRegion()));
+
+        Game game = gameFactoryInterface.createGame(name, console, gameDTO.getReleaseDate(), region);
         gameRepository.save(game);
         return game.getGameId();
     }
@@ -43,7 +60,7 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    public void editGame(UUID gameId, EditGameDTO editGameDTO) {
+    public void editGame(UUID gameId, EditGameDTO editGameDTO) throws NoSuchElementException {
 
         Optional<Game> gameToEditOpt = gameRepository.findById(gameId);
 
@@ -73,7 +90,7 @@ public class GameService {
         }
     }
 
-    public void deleteGame(UUID gameId) {
+    public void deleteGame(UUID gameId) throws UnsupportedOperationException {
 
         Optional<Game> gameToDelete = gameRepository.findById(gameId);
 

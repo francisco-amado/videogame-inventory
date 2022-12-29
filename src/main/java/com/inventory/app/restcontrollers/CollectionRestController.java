@@ -57,27 +57,32 @@ public class CollectionRestController {
                                                    @RequestBody CollectionDTO collectionDTO,
                                                    UriComponentsBuilder ucBuilder) {
 
-        Owner owner = ownerService.getReferenceById(ownerId);
+        Optional<Owner> owner = ownerService.findById(ownerId);
 
-        if (owner != null && collectionService.existsByOwner(owner)) {
+        if (owner.isPresent() && collectionService.existsByOwner(owner.get())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner already has a collection");
         }
 
-        if (owner == null) {
+        if (owner.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner does not exist");
         } else {
-            Collection collection = collectionService.createCollection(owner, collectionDTO);
+            try {
+                Collection collection = collectionService.createCollection(owner.get(), collectionDTO);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers
-                    .setLocation(ucBuilder.path("/collections/{id}")
-                            .buildAndExpand(collection.getCollectionId())
-                            .toUri());
+                HttpHeaders headers = new HttpHeaders();
+                headers
+                        .setLocation(ucBuilder.path("/collections/{id}")
+                                .buildAndExpand(collection.getCollectionId())
+                                .toUri());
 
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .headers(headers)
-                    .body("Collection created successfully");
+                return ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .headers(headers)
+                        .body("Collection created successfully");
+
+            } catch (IllegalStateException ise) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ise.getMessage());
+            }
         }
     }
 
@@ -86,7 +91,7 @@ public class CollectionRestController {
     public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
 
-        if (collectionService.existsById(collectionId)) {
+        if (!collectionService.existsById(collectionId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 
@@ -105,7 +110,7 @@ public class CollectionRestController {
     public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid") UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
 
-        if (collectionService.existsById(collectionId)) {
+        if (!collectionService.existsById(collectionId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 

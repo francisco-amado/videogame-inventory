@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.owner.Owner;
 import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -19,18 +21,25 @@ public class ConfirmationToken extends RepresentationModel<ConfirmationToken> im
     @Id
     @Column(name = "uuid")
     @Type(type = "org.hibernate.type.UUIDCharType")
-    private final UUID tokenId = UUID.randomUUID();
+    private final @Getter UUID tokenId = UUID.randomUUID();
+
     @NotNull
-    private String token;
+    private @Getter @Setter String token;
+
     @NotNull
-    private LocalDateTime created;
+    private @Getter @Setter LocalDateTime created;
+
     @NotNull
-    private LocalDateTime expires;
-    private LocalDateTime confirmed;
+    private @Getter @Setter LocalDateTime expires;
+
+    private @Getter @Setter LocalDateTime confirmed;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner", referencedColumnName = "uuid", nullable = false)
     @JsonIgnore
-    private Owner owner;
+    private @Getter @Setter Owner owner;
+
+    private static final long serialVersionUID = 4L;
 
     public ConfirmationToken(String token, LocalDateTime created, LocalDateTime expires, Owner owner) {
         this.token = token;
@@ -40,30 +49,6 @@ public class ConfirmationToken extends RepresentationModel<ConfirmationToken> im
     }
 
     public ConfirmationToken() {}
-
-    public UUID getTokenId() {
-        return tokenId;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-    public LocalDateTime getExpires() {
-        return expires;
-    }
-
-    public LocalDateTime getConfirmed() {
-        return confirmed;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
 
     @Override
     public boolean equals(Object o) {

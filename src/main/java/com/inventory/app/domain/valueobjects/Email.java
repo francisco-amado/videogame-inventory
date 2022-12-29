@@ -1,5 +1,7 @@
 package com.inventory.app.domain.valueobjects;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
@@ -11,17 +13,9 @@ import java.util.regex.Pattern;
 @Component
 public class Email {
 
-    private String email;
+    private @Getter @Setter String email;
 
     public Email() {}
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public static String createEmail(String email) {
 

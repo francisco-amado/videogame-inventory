@@ -1,5 +1,7 @@
 package com.inventory.app.domain.valueobjects;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
@@ -9,17 +11,15 @@ import java.util.Objects;
 @Component
 public class Console {
 
-    public Console() {}
-
-    private String consoleDescription;
+    private @Getter @Setter String consoleDescription;
 
     private Console(String consoleDescription) {
-
         this.consoleDescription = consoleDescription;
     }
 
-    public static Console createConsole(ConsoleEnum consoleEnum) {
+    public Console() {}
 
+    public static Console createConsole(ConsoleEnum consoleEnum) {
         return new Console(consoleEnum.toString());
     }
 
@@ -29,14 +29,6 @@ public class Console {
         if (o == null || getClass() != o.getClass()) return false;
         Console console = (Console) o;
         return consoleDescription.equals(console.consoleDescription);
-    }
-
-    public String getConsoleDescription() {
-        return consoleDescription;
-    }
-
-    public void setConsoleDescription(String consoleDescription) {
-        this.consoleDescription = consoleDescription;
     }
 
     @Override

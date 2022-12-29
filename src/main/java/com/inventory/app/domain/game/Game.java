@@ -6,6 +6,8 @@ import com.inventory.app.domain.valueobjects.Console;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -21,25 +23,33 @@ public class Game extends RepresentationModel<Game> implements Serializable {
     @Id
     @Column(name = "uuid")
     @Type(type = "org.hibernate.type.UUIDCharType")
-    private final UUID gameId = UUID.randomUUID();
+    private final @Getter UUID gameId = UUID.randomUUID();
+
     @Embedded
     @NotNull
-    private Name name;
+    private @Getter @Setter Name name;
+
     @Enumerated(EnumType.STRING)
     @NotNull
-    private Console console;
+    private @Getter @Setter Console console;
+
     @NotNull
-    private LocalDate releaseDate;
+    private @Getter @Setter LocalDate releaseDate;
+
     @Enumerated(EnumType.STRING)
     @NotNull
-    private Region region;
-    private String location;
-    private String localBought;
-    private Boolean wasGifted;
+    private @Getter @Setter Region region;
+
+    private @Getter @Setter String location;
+
+    private @Getter @Setter String localBought;
+
+    private @Getter @Setter Boolean wasGifted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "collection", referencedColumnName = "uuid")
     @JsonIgnore
-    private Collection collection;
+    private @Getter @Setter Collection collection;
 
     private static final long serialVersionUID = 2L;
 
@@ -56,7 +66,6 @@ public class Game extends RepresentationModel<Game> implements Serializable {
     }
 
     public Game(Name name, Console console, Region region, LocalDate releaseDate) {
-
         this.name = name;
         this.console = console;
         this.region = region;
@@ -64,74 +73,6 @@ public class Game extends RepresentationModel<Game> implements Serializable {
     }
 
     public Game() {}
-
-    public UUID getGameId() {
-        return gameId;
-    }
-
-    public Name getName() {
-        return name;
-    }
-
-    public Console getConsole() {
-        return console;
-    }
-
-    public LocalDate getReleaseDate() {
-        return releaseDate;
-    }
-
-    public Region getRegion() {
-        return region;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public String getLocalBought() {
-        return localBought;
-    }
-
-    public Boolean getWasGifted() {
-        return wasGifted;
-    }
-
-    public Collection getCollection() {
-        return collection;
-    }
-
-    public void setCollection(Collection collection) {
-        this.collection = collection;
-    }
-
-    public void setName(Name name) {
-        this.name = name;
-    }
-
-    public void setConsole(Console console) {
-        this.console = console;
-    }
-
-    public void setReleaseDate(LocalDate releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public void setRegion(Region region) {
-        this.region = region;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setLocalBought(String localBought) {
-        this.localBought = localBought;
-    }
-
-    public void setWasGifted(Boolean wasGifted) {
-        this.wasGifted = wasGifted;
-    }
 
     @Override
     public boolean equals(Object o) {

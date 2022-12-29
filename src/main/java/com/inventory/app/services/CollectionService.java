@@ -33,10 +33,16 @@ public class CollectionService {
     }
 
     @Transactional
-    public Collection createCollection(Owner owner, CollectionDTO collectionDTO) {
+    public Collection createCollection(Owner owner, CollectionDTO collectionDTO) throws IllegalStateException {
+
+        if (collectionDTO == null) {
+            throw new IllegalStateException("Invalid entry data");
+        }
+
         Collection newCollection = collectionFactoryInterface.createCollection(owner, collectionDTO);
+        collectionRepository.save(newCollection);
         ownerService.setCollection(owner, newCollection);
-        return collectionRepository.save(newCollection);
+        return newCollection;
     }
 
     public boolean existsByOwner(Owner owner) {
@@ -44,7 +50,7 @@ public class CollectionService {
     }
 
     public boolean existsById(UUID collectionId) {
-        return !collectionRepository.existsById(collectionId);
+        return collectionRepository.existsById(collectionId);
     }
 
     public Optional<Collection> findById(UUID collectionID) {
@@ -56,8 +62,8 @@ public class CollectionService {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
-        if(collection.isPresent()) {
-            collection.get().addGameToList(game);
+        if (collection.isPresent()) {
+            collection.get().getGameList().add(game);
             game.setCollection(collection.get());
             gameService.save(game);
             collectionRepository.save(collection.get());
@@ -69,7 +75,7 @@ public class CollectionService {
 
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
-        if(collection.isPresent()) {
+        if (collection.isPresent()) {
             collection.get().getGameList().remove(game);
             game.setCollection(null);
             gameService.save(game);

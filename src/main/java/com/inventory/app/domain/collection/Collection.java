@@ -3,6 +3,8 @@ package com.inventory.app.domain.collection;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -18,42 +20,24 @@ public class Collection extends RepresentationModel<Collection> implements Seria
     @Id
     @Column(name = "uuid")
     @Type(type = "org.hibernate.type.UUIDCharType")
-    private final UUID collectionId = UUID.randomUUID();
+    private final @Getter UUID collectionId = UUID.randomUUID();
+
     @OneToOne(optional = false)
     @JoinColumn(name = "owner", referencedColumnName = "uuid", nullable = false)
-    private Owner owner;
+    private @Getter @Setter Owner owner;
+
     @OneToMany(mappedBy = "collection")
     @NotNull
-    private List<Game> gameList;
+    private @Getter @Setter List<Game> gameList;
 
     private static final long serialVersionUID = 1L;
 
     public Collection(Owner owner, List<Game> gameList) {
-
         this.owner = owner;
         this.gameList = gameList;
     }
 
-    public Collection() {
-
-    }
-
-    public List<Game> getGameList() {
-        return gameList;
-    }
-
-    public UUID getCollectionId() {
-        return collectionId;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public void addGameToList(Game game) {
-
-        gameList.add(game);
-    }
+    public Collection() {}
 
     @Override
     public boolean equals(Object o) {

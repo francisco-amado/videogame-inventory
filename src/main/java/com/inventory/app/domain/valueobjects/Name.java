@@ -1,5 +1,7 @@
 package com.inventory.app.domain.valueobjects;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
@@ -9,22 +11,13 @@ import java.util.Objects;
 @Component
 public class Name {
 
-    String name;
+    private @Getter @Setter String name;
 
     public Name(String name) {
-
         this.name = name;
     }
 
     public Name() {}
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public static Name createName(String name) {
 
