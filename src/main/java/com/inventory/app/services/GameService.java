@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class GameService {
@@ -69,24 +66,44 @@ public class GameService {
         } else {
             Game gameToEdit = gameToEditOpt.get();
 
-            if (editGameDTO.getName() != null) {
+            if (editGameDTO.getName() != null && !Objects.equals(editGameDTO.getName(),
+                    gameToEditOpt.get().getName().getName())) {
                 Name newName = Name.createName(editGameDTO.getName());
                 gameToEdit.setName(newName);
-            } else if (editGameDTO.getConsole() != null) {
+            }
+
+            if (editGameDTO.getConsole() != null && !Objects.equals(editGameDTO.getConsole(),
+                    gameToEditOpt.get().getConsole().getConsoleDescription())) {
                 Console newConsole = Console.createConsole(Console.ConsoleEnum.valueOf(editGameDTO.getConsole()));
                 gameToEdit.setConsole(newConsole);
-            } else if (editGameDTO.getReleaseDate() != null) {
+            }
+
+            if (editGameDTO.getReleaseDate() != null && !Objects.equals(editGameDTO.getReleaseDate(),
+                    gameToEditOpt.get().getReleaseDate())) {
                 gameToEdit.setReleaseDate(editGameDTO.getReleaseDate());
-            } else if (editGameDTO.getRegion() != null) {
+            }
+
+            if (editGameDTO.getRegion() != null && !Objects.equals(editGameDTO.getRegion(),
+                    gameToEditOpt.get().getRegion().getRegionDescription())) {
                 Region newRegion = Region.createRegion(Region.RegionEnum.valueOf(editGameDTO.getRegion()));
                 gameToEdit.setRegion(newRegion);
-            } else if (editGameDTO.getLocation() != null) {
+            }
+            if (editGameDTO.getLocation() != null && !Objects.equals(editGameDTO.getLocation(),
+                    gameToEditOpt.get().getLocation())) {
                 gameToEdit.setLocation(editGameDTO.getLocation());
-            } else if (editGameDTO.getLocalBought() != null) {
+            }
+
+            if (editGameDTO.getLocalBought() != null && !Objects.equals(editGameDTO.getLocalBought(),
+                    gameToEditOpt.get().getLocalBought())) {
                 gameToEdit.setLocalBought(editGameDTO.getLocalBought());
-            } else if (editGameDTO.getWasGifted() != null) {
+            }
+
+            if (editGameDTO.getWasGifted() != null && !Objects.equals(editGameDTO.getWasGifted(),
+                    gameToEditOpt.get().getWasGifted())) {
                 gameToEdit.setWasGifted(editGameDTO.getWasGifted());
             }
+
+            gameRepository.save(gameToEdit);
         }
     }
 

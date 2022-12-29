@@ -17,22 +17,18 @@ import java.util.UUID;
 public class CollectionService {
 
     private final CollectionRepository collectionRepository;
-    private final OwnerService ownerService;
     private final GameService gameService;
     private final CollectionFactoryInterface collectionFactoryInterface;
 
     @Autowired
-    public CollectionService(CollectionRepository collectionRepository,
-                             OwnerService ownerService, GameService gameService,
+    public CollectionService(CollectionRepository collectionRepository, GameService gameService,
                              CollectionFactoryInterface collectionFactoryInterface) {
 
         this.collectionRepository = collectionRepository;
-        this.ownerService = ownerService;
         this.gameService = gameService;
         this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
-    @Transactional
     public Collection createCollection(Owner owner, CollectionDTO collectionDTO) throws IllegalStateException {
 
         if (collectionDTO == null) {
@@ -41,7 +37,6 @@ public class CollectionService {
 
         Collection newCollection = collectionFactoryInterface.createCollection(owner, collectionDTO);
         collectionRepository.save(newCollection);
-        ownerService.setCollection(owner, newCollection);
         return newCollection;
     }
 

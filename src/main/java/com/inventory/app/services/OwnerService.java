@@ -87,11 +87,6 @@ public class OwnerService implements UserDetailsService {
         emailSender.send(email, emailSender.buildEmail(userName.getName(), link));
     }
 
-    public void setCollection(Owner owner, Collection collection) {
-        owner.setCollection(collection);
-        ownerRepository.save(owner);
-    }
-
     public boolean existsByUsername(Name userName) {
         return ownerRepository.existsByUserName(userName);
     }
