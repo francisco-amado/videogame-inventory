@@ -102,7 +102,7 @@ public class CollectionRestController {
         }
 
         collectionService.addGame(gameToAdd.get(), collectionId);
-        return ResponseEntity.status(HttpStatus.OK).body("Game added successfully");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
     }
 
     @PatchMapping(path = "/{collectionid}/game/{gameid}/remove",
@@ -121,6 +121,6 @@ public class CollectionRestController {
         }
 
         collectionService.removeGame(gameToRemove.get(), collectionId);
-        return ResponseEntity.status(HttpStatus.OK).body("Game removed successfully");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
     }
 }

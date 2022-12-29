@@ -79,7 +79,7 @@ public class GameRestController {
         }
         try {
             gameService.editGame(gameId, editGameDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(gameToEdit);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
         } catch (NoSuchElementException nse) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(nse.getMessage());
         }
