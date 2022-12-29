@@ -95,7 +95,7 @@ public class GameRestController {
         }
         try{
             gameService.deleteGame(gameId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
+            return ResponseEntity.status(HttpStatus.OK).body("Game deleted successfully");
         } catch (UnsupportedOperationException uoe) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(uoe.getMessage());
         }
