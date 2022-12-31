@@ -4,6 +4,7 @@ import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.dto.OwnerDTO;
+import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -72,8 +75,8 @@ public class OwnerRestController {
                     .headers(headers)
                     .body(token);
 
-        } catch (IllegalStateException ise) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ise.getMessage());
+        } catch (BusinessRulesException bre) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bre.getMessage());
         }
     }
 
@@ -83,8 +86,8 @@ public class OwnerRestController {
         try{
             String confirmed = ownerService.confirmToken(token);
             return ResponseEntity.status(HttpStatus.OK).body(confirmed);
-        } catch (IllegalStateException ise) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ise.getMessage());
+        } catch (BusinessRulesException | NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }

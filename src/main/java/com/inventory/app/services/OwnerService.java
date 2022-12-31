@@ -8,6 +8,7 @@ import com.inventory.app.domain.owner.OwnerRole;
 import com.inventory.app.domain.token.ConfirmationToken;
 import com.inventory.app.domain.valueobjects.*;
 import com.inventory.app.email.EmailSender;
+import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.repositories.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,14 +53,14 @@ public class OwnerService implements UserDetailsService {
     }
 
     @Transactional
-    public String createOwner(Name userName, String email, String password) throws IllegalStateException {
+    public String createOwner(Name userName, String email, String password) throws BusinessRulesException {
 
         if (existsByEmail(email) || existsByUsername(userName)) {
-            throw new IllegalStateException("Owner already exists");
+            throw new BusinessRulesException("Owner already exists");
         }
 
         if (password == null || password.length() < 10) {
-            throw new IllegalStateException("Password not valid");
+            throw new BusinessRulesException("Password not valid");
         }
 
         String encodedPassword =  bCryptPasswordEncoder.encode(password);
@@ -108,19 +110,19 @@ public class OwnerService implements UserDetailsService {
     }
 
     @Transactional
-    public String confirmToken(String token) throws IllegalStateException {
+    public String confirmToken(String token) throws BusinessRulesException, NoSuchElementException {
 
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
-                        .orElseThrow(() -> new IllegalStateException("Token not found"));
+                        .orElseThrow(() -> new NoSuchElementException("Token not found"));
 
         if (confirmationToken.getConfirmed() != null) {
-            throw new IllegalStateException("E-mail already confirmed");
+            throw new BusinessRulesException("E-mail already confirmed");
         }
 
         LocalDateTime expired = confirmationToken.getExpires();
 
         if (expired.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("Token expired");
+            throw new BusinessRulesException("Token expired");
         }
 
         confirmationTokenService.setConfirmed(token);

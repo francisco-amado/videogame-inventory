@@ -8,6 +8,8 @@ import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import com.inventory.app.dto.EditGameDTO;
 import com.inventory.app.dto.GameDTO;
+import com.inventory.app.exceptions.BusinessRulesException;
+import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,17 +30,17 @@ public class GameService {
         this.gameFactoryInterface = gameFactoryInterface;
     }
 
-    public Game createGame(GameDTO gameDTO) throws IllegalStateException {
+    public Game createGame(GameDTO gameDTO) throws InvalidEntryDataException {
 
         if (gameDTO == null) {
-            throw new IllegalStateException("Invalid entry data");
+            throw new InvalidEntryDataException("Invalid entry data");
         }
 
         boolean anyParameterNull = gameDTO.getConsole() == null || gameDTO.getRegion() == null ||
                 gameDTO.getReleaseDate() == null || gameDTO.getName() == null;
 
         if (anyParameterNull) {
-            throw new IllegalStateException("Invalid entry data");
+            throw new InvalidEntryDataException("Invalid entry data");
         }
 
         Name name = Name.createName(gameDTO.getName());
@@ -118,12 +120,12 @@ public class GameService {
         }
     }
 
-    public void deleteGame(UUID gameId) throws UnsupportedOperationException {
+    public void deleteGame(UUID gameId) throws BusinessRulesException {
 
         Optional<Game> gameToDelete = gameRepository.findById(gameId);
 
         if (gameToDelete.isPresent() && gameToDelete.get().getCollection() != null) {
-            throw new UnsupportedOperationException("Game cannot be deleted if it belongs to a collection");
+            throw new BusinessRulesException("Game cannot be deleted if it belongs to a collection");
         }
 
         gameToDelete.ifPresent(gameRepository::delete);

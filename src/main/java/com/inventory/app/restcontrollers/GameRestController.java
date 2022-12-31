@@ -6,6 +6,8 @@ import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import com.inventory.app.dto.EditGameDTO;
 import com.inventory.app.dto.GameDTO;
+import com.inventory.app.exceptions.BusinessRulesException;
+import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -103,8 +105,8 @@ public class GameRestController {
                     .status(HttpStatus.CREATED)
                     .body("Game successfully created");
 
-        } catch (IllegalStateException ise) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ise.getMessage());
+        } catch (InvalidEntryDataException ide) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ide.getMessage());
         }
     }
 
@@ -154,8 +156,8 @@ public class GameRestController {
         try{
             gameService.deleteGame(gameId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
-        } catch (UnsupportedOperationException uoe) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(uoe.getMessage());
+        } catch (BusinessRulesException bre) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bre.getMessage());
         }
     }
 }

@@ -4,6 +4,7 @@ import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.dto.CollectionDTO;
+import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.services.CollectionService;
 import com.inventory.app.services.GameService;
 import com.inventory.app.services.OwnerService;
@@ -19,6 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -119,8 +121,8 @@ public class CollectionRestController {
                         .status(HttpStatus.CREATED)
                         .body(collection);
 
-            } catch (IllegalStateException ise) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ise.getMessage());
+            } catch (InvalidEntryDataException | NoSuchElementException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
             }
         }
     }
