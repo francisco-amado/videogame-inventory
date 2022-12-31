@@ -8,6 +8,7 @@ import com.inventory.app.dto.EditGameDTO;
 import com.inventory.app.dto.GameDTO;
 import com.inventory.app.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +19,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/games")
@@ -36,31 +40,67 @@ public class GameRestController {
 
         Optional<Game> gameFound = gameService.findById(gameId);
 
-        return gameFound.<ResponseEntity<Object>>map(
-                game -> ResponseEntity
-                        .status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(game))
-                .orElseGet(() -> ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body("Game does not exist"));
+        if(gameFound.isPresent()) {
+
+            Link selfLink =
+                    linkTo(methodOn(GameRestController.class)
+                            .getGame(gameFound.get().getGameId()))
+                            .withSelfRel()
+                            .withType("GET");
+
+            Link editGameLink =
+                    linkTo(methodOn(GameRestController.class)
+                            .editGame(gameFound.get().getGameId(), null))
+                            .withRel("editGame")
+                            .withType("PATCH");
+
+            Link deleteGameLink =
+                    linkTo(methodOn(GameRestController.class)
+                            .deleteGame(gameFound.get().getGameId()))
+                            .withRel("deleteGame")
+                            .withType("DELETE");
+
+            gameFound.get().add(selfLink, editGameLink, deleteGameLink);
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(gameFound.get());
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("Game does not exist");
     }
 
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> createGame(@RequestBody GameDTO gameDTO, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<Object> createGame(@RequestBody GameDTO gameDTO) {
 
         try{
-            UUID gameUUID = gameService.createGame(gameDTO);
+            Game game = gameService.createGame(gameDTO);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers
-                    .setLocation(ucBuilder.path("/games/{id}")
-                            .buildAndExpand(gameUUID)
-                            .toUri());
+            Link selfLink =
+                    linkTo(methodOn(GameRestController.class)
+                            .getGame(game.getGameId()))
+                            .withSelfRel()
+                            .withType("GET");
+
+            Link editGameLink =
+                    linkTo(methodOn(GameRestController.class)
+                            .editGame(game.getGameId(), null))
+                            .withRel("editGame")
+                            .withType("PATCH");
+
+            Link deleteGameLink =
+                    linkTo(methodOn(GameRestController.class)
+                            .deleteGame(game.getGameId()))
+                            .withRel("deleteGame")
+                            .withType("DELETE");
+
+            game.add(selfLink, editGameLink, deleteGameLink);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .headers(headers)
                     .body("Game successfully created");
 
         } catch (IllegalStateException ise) {
@@ -70,8 +110,7 @@ public class GameRestController {
 
     @PatchMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> editGame(@PathVariable(value=("id")) UUID gameId,
-                                           @RequestBody EditGameDTO editGameDTO,
-                                           UriComponentsBuilder ucBuilder) {
+                                           @RequestBody EditGameDTO editGameDTO) {
 
         Optional<Game> gameToEdit = gameService.findById(gameId);
 
@@ -81,16 +120,23 @@ public class GameRestController {
         try {
             gameService.editGame(gameId, editGameDTO);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers
-                    .setLocation(ucBuilder.path("/games/{id}")
-                            .buildAndExpand(gameToEdit.get().getGameId())
-                            .toUri());
+            Link selfLink =
+                    linkTo(methodOn(GameRestController.class)
+                            .getGame(gameToEdit.get().getGameId()))
+                            .withSelfRel()
+                            .withType("GET");
+
+            Link deleteGameLink =
+                    linkTo(methodOn(GameRestController.class)
+                            .deleteGame(gameToEdit.get().getGameId()))
+                            .withRel("deleteGame")
+                            .withType("DELETE");
+
+            gameToEdit.get().add(selfLink, deleteGameLink);
 
             return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
-                    .headers(headers)
-                    .body("");
+                    .status(HttpStatus.OK)
+                    .body(gameToEdit.get());
 
         } catch (NoSuchElementException nse) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(nse.getMessage());

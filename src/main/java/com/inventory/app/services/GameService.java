@@ -28,7 +28,7 @@ public class GameService {
         this.gameFactoryInterface = gameFactoryInterface;
     }
 
-    public UUID createGame(GameDTO gameDTO) throws IllegalStateException {
+    public Game createGame(GameDTO gameDTO) throws IllegalStateException {
 
         if (gameDTO == null) {
             throw new IllegalStateException("Invalid entry data");
@@ -47,7 +47,7 @@ public class GameService {
 
         Game game = gameFactoryInterface.createGame(name, console, gameDTO.getReleaseDate(), region);
         gameRepository.save(game);
-        return game.getGameId();
+        return game;
     }
 
     public Optional<Game> findById(UUID gameId) {

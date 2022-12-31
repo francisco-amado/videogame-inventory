@@ -8,13 +8,17 @@ import com.inventory.app.services.CollectionService;
 import com.inventory.app.services.GameService;
 import com.inventory.app.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,21 +45,43 @@ public class CollectionRestController {
 
         Optional<Collection> collectionFound = collectionService.findById(collectionId);
 
-        return collectionFound.<ResponseEntity<Object>>map(
-                collection -> ResponseEntity
-                        .status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(collection)).
-                orElseGet(() -> ResponseEntity
+        if (collectionFound.isPresent()) {
+
+            Link selfLink =
+                    linkTo(methodOn(CollectionRestController.class)
+                            .getCollection(collectionFound.get().getCollectionId()))
+                            .withSelfRel()
+                            .withType("GET");
+
+            Link addGameLink =
+                    linkTo(methodOn(CollectionRestController.class)
+                            .addGameToCollection(collectionFound.get().getCollectionId(), null))
+                            .withRel("addGame")
+                            .withType("PATCH");
+
+            Link removeGameLink =
+                    linkTo(methodOn(CollectionRestController.class)
+                            .removeGameFromCollection(collectionFound.get().getCollectionId(), null))
+                            .withRel("removeGame")
+                            .withType("PATCH");
+
+            collectionFound.get().add(selfLink, addGameLink, removeGameLink);
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(collectionFound);
+        }
+
+        return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body("Collection does not exist"));
+                        .body("Collection does not exist");
     }
 
     @PostMapping(path = "/{ownerId}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> createCollection(@PathVariable(value="ownerId") UUID ownerId,
-                                                   @RequestBody CollectionDTO collectionDTO,
-                                                   UriComponentsBuilder ucBuilder) {
+                                                   @RequestBody CollectionDTO collectionDTO) {
 
         Optional<Owner> owner = ownerService.findById(ownerId);
 
@@ -69,16 +95,29 @@ public class CollectionRestController {
             try {
                 Collection collection = collectionService.createCollection(owner.get(), collectionDTO);
 
-                HttpHeaders headers = new HttpHeaders();
-                headers
-                        .setLocation(ucBuilder.path("/collections/{id}")
-                                .buildAndExpand(collection.getCollectionId())
-                                .toUri());
+                Link selfLink =
+                        linkTo(methodOn(CollectionRestController.class)
+                                .getCollection(collection.getCollectionId()))
+                                .withSelfRel()
+                                .withType("GET");
+
+                Link addGameLink =
+                        linkTo(methodOn(CollectionRestController.class)
+                                .addGameToCollection(collection.getCollectionId(), null))
+                                .withRel("addGame")
+                                .withType("PATCH");
+
+                Link removeGameLink =
+                        linkTo(methodOn(CollectionRestController.class)
+                                .removeGameFromCollection(collection.getCollectionId(), null))
+                                .withRel("removeGame")
+                                .withType("PATCH");
+
+                collection.add(selfLink, addGameLink, removeGameLink);
 
                 return ResponseEntity
                         .status(HttpStatus.CREATED)
-                        .headers(headers)
-                        .body("Collection created successfully");
+                        .body(collection);
 
             } catch (IllegalStateException ise) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ise.getMessage());
@@ -89,8 +128,7 @@ public class CollectionRestController {
     @PatchMapping(path = "/{collectionid}/game/{gameid}/add",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")UUID collectionId,
-                                                      @PathVariable(value="gameid") UUID gameId,
-                                                      UriComponentsBuilder ucBuilder) {
+                                                      @PathVariable(value="gameid") UUID gameId) {
 
         Optional<Collection> collection = collectionService.findById(collectionId);
 
@@ -106,23 +144,23 @@ public class CollectionRestController {
 
         collectionService.addGame(gameToAdd.get(), collectionId);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers
-                .setLocation(ucBuilder.path("/collections/{id}")
-                        .buildAndExpand(collection.get().getCollectionId())
-                        .toUri());
+        Link selfLink =
+                linkTo(methodOn(CollectionRestController.class)
+                        .getCollection(collection.get().getCollectionId()))
+                        .withSelfRel()
+                        .withType("GET");
+
+        collection.get().add(selfLink);
 
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .headers(headers)
-                .body("");
+                .status(HttpStatus.OK)
+                .body(collection);
     }
 
     @PatchMapping(path = "/{collectionid}/game/{gameid}/remove",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid") UUID collectionId,
-                                                      @PathVariable(value="gameid") UUID gameId,
-                                                           UriComponentsBuilder ucBuilder) {
+                                                      @PathVariable(value="gameid") UUID gameId) {
 
         Optional<Collection> collection = collectionService.findById(collectionId);
 
@@ -138,15 +176,16 @@ public class CollectionRestController {
 
         collectionService.removeGame(gameToRemove.get(), collectionId);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers
-                .setLocation(ucBuilder.path("/collections/{id}")
-                        .buildAndExpand(collection.get().getCollectionId())
-                        .toUri());
+        Link selfLink =
+                linkTo(methodOn(CollectionRestController.class)
+                        .getCollection(collection.get().getCollectionId()))
+                        .withSelfRel()
+                        .withType("GET");
+
+        collection.get().add(selfLink);
 
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .headers(headers)
-                .body("");
+                .status(HttpStatus.OK)
+                .body(collection);
     }
 }
