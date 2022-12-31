@@ -29,6 +29,7 @@ public class CollectionService {
         this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
+    @Transactional
     public Collection createCollection(Owner owner, CollectionDTO collectionDTO) throws IllegalStateException {
 
         if (collectionDTO == null) {
@@ -37,6 +38,7 @@ public class CollectionService {
 
         Collection newCollection = collectionFactoryInterface.createCollection(owner, collectionDTO);
         collectionRepository.save(newCollection);
+        gameService.setCollection(collectionDTO.getGameList(), newCollection);
         return newCollection;
     }
 

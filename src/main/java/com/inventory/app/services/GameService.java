@@ -11,6 +11,7 @@ import com.inventory.app.dto.GameDTO;
 import com.inventory.app.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -51,6 +52,23 @@ public class GameService {
 
     public Optional<Game> findById(UUID gameId) {
         return gameRepository.findById(gameId);
+    }
+
+    @Transactional
+    public void setCollection(List<Game> gameList, Collection collection) throws IllegalStateException {
+
+        if (gameList == null) {
+            throw new IllegalStateException("Invalid game list");
+        }
+
+        for(Game game : gameList) {
+            if(gameRepository.findById(game.getGameId()).isEmpty()) {
+                throw new IllegalStateException("Game does not exist");
+            }
+            game.setCollection(collection);
+        }
+
+        gameRepository.saveAll(gameList);
     }
 
     public void save(Game game) {
