@@ -62,7 +62,7 @@ public class GameService {
         }
 
         for(Game game : gameList) {
-            if(gameRepository.findById(game.getGameId()).isEmpty()) {
+            if(!gameRepository.existsById(game.getGameId())) {
                 throw new IllegalStateException("Game does not exist");
             }
             game.setCollection(collection);
