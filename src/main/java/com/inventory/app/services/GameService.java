@@ -55,16 +55,9 @@ public class GameService {
     }
 
     @Transactional
-    public void setCollection(List<Game> gameList, Collection collection) throws IllegalStateException {
-
-        if (gameList == null) {
-            throw new IllegalStateException("Invalid game list");
-        }
+    public void setCollection(List<Game> gameList, Collection collection) {
 
         for(Game game : gameList) {
-            if(!gameRepository.existsById(game.getGameId())) {
-                throw new IllegalStateException("Game does not exist");
-            }
             game.setCollection(collection);
         }
 
@@ -134,5 +127,9 @@ public class GameService {
         }
 
         gameToDelete.ifPresent(gameRepository::delete);
+    }
+
+    public boolean existsById(UUID gameId) {
+        return gameRepository.existsById(gameId);
     }
 }

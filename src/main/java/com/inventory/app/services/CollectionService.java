@@ -36,6 +36,12 @@ public class CollectionService {
             throw new IllegalStateException("Invalid entry data");
         }
 
+        for(Game game : collectionDTO.getGameList()) {
+            if(!gameService.existsById(game.getGameId())) {
+                throw new IllegalStateException("Game does not exist");
+            }
+        }
+
         Collection newCollection = collectionFactoryInterface.createCollection(owner, collectionDTO);
         collectionRepository.save(newCollection);
         gameService.setCollection(collectionDTO.getGameList(), newCollection);
@@ -44,10 +50,6 @@ public class CollectionService {
 
     public boolean existsByOwner(Owner owner) {
         return collectionRepository.existsByOwner(owner);
-    }
-
-    public boolean existsById(UUID collectionId) {
-        return collectionRepository.existsById(collectionId);
     }
 
     public Optional<Collection> findById(UUID collectionID) {
