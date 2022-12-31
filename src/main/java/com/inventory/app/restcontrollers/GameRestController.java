@@ -84,7 +84,7 @@ public class GameRestController {
             HttpHeaders headers = new HttpHeaders();
             headers
                     .setLocation(ucBuilder.path("/games/{id}")
-                            .buildAndExpand(gameToEdit)
+                            .buildAndExpand(gameToEdit.get().getGameId())
                             .toUri());
 
             return ResponseEntity

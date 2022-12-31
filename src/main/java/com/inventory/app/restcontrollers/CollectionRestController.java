@@ -109,7 +109,7 @@ public class CollectionRestController {
         HttpHeaders headers = new HttpHeaders();
         headers
                 .setLocation(ucBuilder.path("/collections/{id}")
-                        .buildAndExpand(collection.get())
+                        .buildAndExpand(collection.get().getCollectionId())
                         .toUri());
 
         return ResponseEntity
@@ -141,7 +141,7 @@ public class CollectionRestController {
         HttpHeaders headers = new HttpHeaders();
         headers
                 .setLocation(ucBuilder.path("/collections/{id}")
-                        .buildAndExpand(collection.get())
+                        .buildAndExpand(collection.get().getCollectionId())
                         .toUri());
 
         return ResponseEntity
