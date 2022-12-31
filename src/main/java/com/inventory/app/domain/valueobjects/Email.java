@@ -21,11 +21,11 @@ public class Email {
     public static String createEmail(String email) {
 
         if (email == null || email.isEmpty() || email.isBlank()) {
-            throw new IllegalArgumentException("E-mail cannot be null or empty");
+            throw new IllegalStateException("E-mail cannot be null or empty");
         }
 
         if (!emailRegexPatternValidation(email)) {
-            throw new IllegalArgumentException("E-mail does not meet correct format");
+            throw new IllegalStateException("E-mail does not meet correct format");
         } else {
             return email;
         }

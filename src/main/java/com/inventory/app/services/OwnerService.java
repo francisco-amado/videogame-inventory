@@ -57,7 +57,7 @@ public class OwnerService implements UserDetailsService {
             throw new IllegalStateException("Owner already exists");
         }
 
-        if (password == null) {
+        if (password == null || password.length() < 10) {
             throw new IllegalStateException("Password not valid");
         }
 
