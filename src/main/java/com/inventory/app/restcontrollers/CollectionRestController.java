@@ -47,6 +47,12 @@ public class CollectionRestController {
 
         if (collectionFound.isPresent()) {
 
+            Link selfLink =
+                    linkTo(methodOn(CollectionRestController.class)
+                            .getCollection(collectionFound.get().getCollectionId()))
+                            .withSelfRel()
+                            .withType("GET");
+
             Link addGameLink =
                     linkTo(methodOn(CollectionRestController.class)
                             .addGameToCollection(collectionFound.get().getCollectionId(), null))
@@ -59,7 +65,7 @@ public class CollectionRestController {
                             .withRel("removeGame")
                             .withType("PATCH");
 
-            collectionFound.get().add(addGameLink, removeGameLink);
+            collectionFound.get().add(selfLink, addGameLink, removeGameLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
