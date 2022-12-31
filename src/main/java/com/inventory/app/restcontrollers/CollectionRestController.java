@@ -89,9 +89,12 @@ public class CollectionRestController {
     @PatchMapping(path = "/{collectionid}/game/{gameid}/add",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")UUID collectionId,
-                                                      @PathVariable(value="gameid") UUID gameId) {
+                                                      @PathVariable(value="gameid") UUID gameId,
+                                                      UriComponentsBuilder ucBuilder) {
 
-        if (!collectionService.existsById(collectionId)) {
+        Optional<Collection> collection = collectionService.findById(collectionId);
+
+        if (collection.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 
@@ -102,15 +105,28 @@ public class CollectionRestController {
         }
 
         collectionService.addGame(gameToAdd.get(), collectionId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers
+                .setLocation(ucBuilder.path("/collections/{id}")
+                        .buildAndExpand(collection.get())
+                        .toUri());
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .headers(headers)
+                .body("");
     }
 
     @PatchMapping(path = "/{collectionid}/game/{gameid}/remove",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> removeGameFromCollection(@PathVariable(value="collectionid") UUID collectionId,
-                                                      @PathVariable(value="gameid") UUID gameId) {
+                                                      @PathVariable(value="gameid") UUID gameId,
+                                                           UriComponentsBuilder ucBuilder) {
 
-        if (!collectionService.existsById(collectionId)) {
+        Optional<Collection> collection = collectionService.findById(collectionId);
+
+        if (collection.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collection does not exist");
         }
 
@@ -121,6 +137,16 @@ public class CollectionRestController {
         }
 
         collectionService.removeGame(gameToRemove.get(), collectionId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers
+                .setLocation(ucBuilder.path("/collections/{id}")
+                        .buildAndExpand(collection.get())
+                        .toUri());
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .headers(headers)
+                .body("");
     }
 }

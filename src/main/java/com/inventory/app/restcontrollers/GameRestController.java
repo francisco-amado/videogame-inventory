@@ -70,7 +70,8 @@ public class GameRestController {
 
     @PatchMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> editGame(@PathVariable(value=("id")) UUID gameId,
-                                           @RequestBody EditGameDTO editGameDTO) {
+                                           @RequestBody EditGameDTO editGameDTO,
+                                           UriComponentsBuilder ucBuilder) {
 
         Optional<Game> gameToEdit = gameService.findById(gameId);
 
@@ -79,7 +80,18 @@ public class GameRestController {
         }
         try {
             gameService.editGame(gameId, editGameDTO);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
+
+            HttpHeaders headers = new HttpHeaders();
+            headers
+                    .setLocation(ucBuilder.path("/games/{id}")
+                            .buildAndExpand(gameToEdit)
+                            .toUri());
+
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .headers(headers)
+                    .body("");
+
         } catch (NoSuchElementException nse) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(nse.getMessage());
         }
