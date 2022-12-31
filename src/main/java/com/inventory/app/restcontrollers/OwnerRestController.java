@@ -6,12 +6,16 @@ import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.dto.OwnerDTO;
 import com.inventory.app.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/owners")
@@ -30,13 +34,24 @@ public class OwnerRestController {
 
         Optional<Owner> ownerFound = ownerService.findByEmail(email);
 
-        return ownerFound.<ResponseEntity<Object>>map(
-                owner -> ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body(owner))
-                .orElseGet(() -> ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body("Owner does not exist"));
+        if(ownerFound.isPresent()) {
+
+            Link selfLink =
+                    linkTo(methodOn(CollectionRestController.class)
+                            .getCollection(ownerFound.get().getOwnerId()))
+                            .withSelfRel()
+                            .withType("GET");
+
+            ownerFound.get().add(selfLink);
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(ownerFound.get());
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("Owner does not exist");
     }
 
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
