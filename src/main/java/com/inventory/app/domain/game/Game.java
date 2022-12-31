@@ -8,6 +8,7 @@ import com.inventory.app.domain.valueobjects.Region;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -18,6 +19,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@ToString
 public class Game extends RepresentationModel<Game> implements Serializable {
 
     @Id

@@ -2,6 +2,7 @@ package com.inventory.app.domain.valueobjects;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @Embeddable
 @Component
+@ToString
 public class Name {
 
     private @Getter @Setter String name;

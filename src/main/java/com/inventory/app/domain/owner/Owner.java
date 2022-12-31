@@ -7,6 +7,7 @@ import com.inventory.app.domain.valueobjects.Name;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +21,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@ToString
 public class Owner extends RepresentationModel<Owner> implements Serializable, UserDetails {
 
     @Id

@@ -5,6 +5,7 @@ import com.inventory.app.domain.owner.Owner;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@ToString
 public class Collection extends RepresentationModel<Collection> implements Serializable {
 
     @Id
