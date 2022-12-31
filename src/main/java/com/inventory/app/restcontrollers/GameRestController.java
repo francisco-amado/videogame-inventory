@@ -42,12 +42,6 @@ public class GameRestController {
 
         if(gameFound.isPresent()) {
 
-            Link selfLink =
-                    linkTo(methodOn(GameRestController.class)
-                            .getGame(gameFound.get().getGameId()))
-                            .withSelfRel()
-                            .withType("GET");
-
             Link editGameLink =
                     linkTo(methodOn(GameRestController.class)
                             .editGame(gameFound.get().getGameId(), null))
@@ -60,7 +54,7 @@ public class GameRestController {
                             .withRel("deleteGame")
                             .withType("DELETE");
 
-            gameFound.get().add(selfLink, editGameLink, deleteGameLink);
+            gameFound.get().add(editGameLink, deleteGameLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
