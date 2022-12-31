@@ -6,7 +6,6 @@ import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 @Component
-@ToString
 public class OwnerDTO {
 
     private @Getter @Setter String userName;

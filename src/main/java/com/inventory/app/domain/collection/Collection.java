@@ -16,7 +16,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@ToString
 public class Collection extends RepresentationModel<Collection> implements Serializable {
 
     @Id

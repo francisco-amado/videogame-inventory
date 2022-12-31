@@ -17,7 +17,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@ToString
 public class ConfirmationToken extends RepresentationModel<ConfirmationToken> implements Serializable {
 
     @Id

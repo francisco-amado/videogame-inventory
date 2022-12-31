@@ -10,7 +10,6 @@ import java.util.Objects;
 
 @Embeddable
 @Component
-@ToString
 public class Region {
 
     private @Getter @Setter String regionDescription;

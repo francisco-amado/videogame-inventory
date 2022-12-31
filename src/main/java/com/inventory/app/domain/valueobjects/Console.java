@@ -10,7 +10,6 @@ import java.util.Objects;
 
 @Embeddable
 @Component
-@ToString
 public class Console {
 
     private @Getter @Setter String consoleDescription;

@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 @Embeddable
 @Component
-@ToString
 public class Email {
 
     private @Getter @Setter String email;

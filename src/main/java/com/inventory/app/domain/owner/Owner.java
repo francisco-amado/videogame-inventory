@@ -21,7 +21,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@ToString
 public class Owner extends RepresentationModel<Owner> implements Serializable, UserDetails {
 
     @Id

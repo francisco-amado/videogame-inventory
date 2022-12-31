@@ -19,7 +19,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@ToString
 public class Game extends RepresentationModel<Game> implements Serializable {
 
     @Id
