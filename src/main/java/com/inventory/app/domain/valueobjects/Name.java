@@ -30,6 +30,6 @@ public class Name {
             throw new NullPointerException("Null value cannot be passed");
         }
 
-        return new Name(name);
+        return new Name(name.trim());
     }
 }

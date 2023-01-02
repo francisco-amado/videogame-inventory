@@ -1,15 +1,12 @@
 package com.inventory.app.services;
 
-import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.factories.ConfirmationTokenFactoryInterface;
 import com.inventory.app.domain.factories.OwnerFactoryInterface;
-import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.owner.OwnerRole;
 import com.inventory.app.domain.token.ConfirmationToken;
 import com.inventory.app.domain.valueobjects.*;
 import com.inventory.app.dto.EditOwnerDTO;
-import com.inventory.app.dto.OwnerDTO;
 import com.inventory.app.email.EmailSender;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.repositories.OwnerRepository;
@@ -59,14 +56,20 @@ public class OwnerService implements UserDetailsService {
     @Transactional
     public String createOwner(Name userName, String email, String password) throws BusinessRulesException {
 
-        boolean validDetails = validateOwnerDetails(userName, email, password);
+        boolean validDetails = validateOwnerDetails(userName, email);
+        boolean validPassword = validatePassword(password);
 
         if(!validDetails) {
             throw new BusinessRulesException("Invalid user details");
         }
 
-        String encodedPassword =  bCryptPasswordEncoder.encode(password);
-        Owner newOwner = ownerFactoryInterface.createOwner(userName, email, password);
+        if(!validPassword) {
+            throw new BusinessRulesException("Invalid password");
+        }
+
+        String newPassword = password.trim();
+        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
+        Owner newOwner = ownerFactoryInterface.createOwner(userName, email.trim(), newPassword);
         newOwner.setOwnerRole(OwnerRole.USER);
         newOwner.setPassword(encodedPassword);
         ownerRepository.save(newOwner);
@@ -76,13 +79,28 @@ public class OwnerService implements UserDetailsService {
         return token;
     }
 
-    public boolean validateOwnerDetails(Name userName, String email, String password) {
+    public boolean validateOwnerDetails(Name userName, String email) {
 
-        boolean valid = !existsByEmail(email) && !existsByUsername(userName);
-        if(!valid) return false;
-
-        return password != null && password.length() >= 10;
+        return notExistsByUsername(userName) && notExistsByEmail(email);
     }
+
+    public boolean validatePassword(String password) {
+
+        int minPasswordLength = 10;
+        int maxPasswordLength = 25;
+
+        return password != null &&
+                password.length() >= minPasswordLength &&
+                password.length() <= maxPasswordLength;
+    }
+
+    public boolean validateOldPassword(String oldPassword, String email) {
+
+        Optional<Owner> ownerToEdit = findByEmail(email);
+
+        return ownerToEdit.filter(owner -> oldPassword.equals(owner.getPassword())).isPresent();
+    }
+
 
     public ConfirmationToken createConfirmationToken(Owner newOwner) {
 
@@ -99,12 +117,12 @@ public class OwnerService implements UserDetailsService {
         emailSender.send(email, emailSender.buildEmail(userName.getName(), link));
     }
 
-    public boolean existsByUsername(Name userName) {
-        return ownerRepository.existsByUserName(userName);
+    public boolean notExistsByUsername(Name userName) {
+        return !ownerRepository.existsByUserName(userName);
     }
 
-    public boolean existsByEmail(String email) {
-        return ownerRepository.existsByEmail(email);
+    public boolean notExistsByEmail(String email) {
+        return !ownerRepository.existsByEmail(email);
     }
 
     public Optional<Owner> findByEmail(String email) {
@@ -143,12 +161,12 @@ public class OwnerService implements UserDetailsService {
 
     public Owner changeUserDetails(EditOwnerDTO editOwnerDTO) throws BusinessRulesException, NoSuchElementException {
 
-        boolean validDetails = !existsByEmail(Email.createEmail(editOwnerDTO.getEmail())) &&
-                !existsByUsername(Name.createName(editOwnerDTO.getUserName()));
+        boolean validDetails = notExistsByEmail(Email.createEmail(editOwnerDTO.getEmail())) &&
+                notExistsByUsername(Name.createName(editOwnerDTO.getUserName()));
 
         if (!validDetails) throw new BusinessRulesException("Invalid user details");
 
-        Optional<Owner> ownerToEdit = ownerRepository.findByEmail(editOwnerDTO.getEmail());
+        Optional<Owner> ownerToEdit = findByEmail(editOwnerDTO.getEmail());
 
         if (ownerToEdit.isEmpty()) {
             throw new NoSuchElementException("The requested owner does not exist");
@@ -172,8 +190,30 @@ public class OwnerService implements UserDetailsService {
         return ownerToEdit.get();
     }
 
+    public Owner changePassword(String newPassword, String oldPassword, String email) {
+
+        if(!validateOldPassword(oldPassword, email)) {
+            throw new BusinessRulesException("The password provided is invalid");
+        }
+
+        if(!validatePassword(newPassword)) {
+            throw new BusinessRulesException("Password not valid");
+        }
+
+        Optional<Owner> ownerToEdit = findByEmail(email);
+
+        if(ownerToEdit.isPresent()) {
+            String encodedPassword = bCryptPasswordEncoder.encode(newPassword.trim());
+            ownerToEdit.get().setPassword(encodedPassword);
+            ownerRepository.save(ownerToEdit.get());
+            return ownerToEdit.get();
+        } else {
+            throw new NoSuchElementException("The requested owner does not exist");
+        }
+    }
+
     public void deleteOwner(String email) throws NoSuchElementException {
-        Optional<Owner> ownerToDelete = ownerRepository.findByEmail(email);
+        Optional<Owner> ownerToDelete = findByEmail(email);
         ownerRepository.delete(ownerToDelete
                 .orElseThrow(() -> new NoSuchElementException("User not found")));
     }

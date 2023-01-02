@@ -1,9 +1,9 @@
 package com.inventory.app.restcontrollers;
 
-import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
+import com.inventory.app.dto.ChangePasswordDTO;
 import com.inventory.app.dto.EditOwnerDTO;
 import com.inventory.app.dto.OwnerDTO;
 import com.inventory.app.exceptions.BusinessRulesException;
@@ -13,13 +13,11 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -89,6 +87,36 @@ public class OwnerRestController {
 
         try {
             Owner editedOwner = ownerService.changeUserDetails(editOwnerDTO);
+
+            Link selfLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .getOwner(editedOwner.getEmail()))
+                            .withSelfRel()
+                            .withType("GET");
+
+            Link deleteOwnerLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .deleteOwner(editedOwner.getEmail()))
+                            .withRel("deleteOwner")
+                            .withType("DELETE");
+
+            editedOwner.add(selfLink, deleteOwnerLink);
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(editedOwner);
+
+        } catch (BusinessRulesException | NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping(path = "/password", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+
+        try {
+            Owner editedOwner = ownerService.changePassword(changePasswordDTO.getNewPassword(),
+                    changePasswordDTO.getOldPassword(), changePasswordDTO.getEmail());
 
             Link selfLink =
                     linkTo(methodOn(OwnerRestController.class)
