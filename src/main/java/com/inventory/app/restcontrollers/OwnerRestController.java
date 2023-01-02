@@ -41,13 +41,38 @@ public class OwnerRestController {
 
         if(ownerFound.isPresent()) {
 
-            Link collection =
-                    linkTo(methodOn(CollectionRestController.class)
-                            .getCollection(ownerFound.get().getOwnerId()))
+            Link selfLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .getOwner(ownerFound.get().getEmail()))
                             .withSelfRel()
                             .withType("GET");
 
-            ownerFound.get().add(collection);
+            Link collectionLink =
+                    linkTo(methodOn(CollectionRestController.class)
+                            .getCollection(ownerFound.get().getOwnerId()))
+                            .withRel("collection")
+                            .withType("GET");
+
+            Link changeUserDetailsLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .changeUserDetails(ownerFound.get().getEmail(), null))
+                            .withRel("changeUserDetails")
+                            .withType("PATCH");
+
+            Link changePasswordLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .changePassword(ownerFound.get().getEmail(), null))
+                            .withRel("changePassword")
+                            .withType("PATCH");
+
+            Link deleteOwnerLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .deleteOwner(ownerFound.get().getEmail()))
+                            .withRel("deleteOwner")
+                            .withType("DELETE");
+
+            ownerFound.get()
+                    .add(selfLink, collectionLink, changeUserDetailsLink, changePasswordLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -66,15 +91,15 @@ public class OwnerRestController {
             String token = ownerService.createOwner(Name.createName(ownerDTO.getUserName()),
                     Email.createEmail(ownerDTO.getEmail()), ownerDTO.getPassword());
 
-            HttpHeaders headers = new HttpHeaders();
-            headers
+            HttpHeaders location = new HttpHeaders();
+            location
                     .setLocation(ucBuilder.path("/owners/{email}")
                             .buildAndExpand(ownerDTO.getEmail())
                             .toUri());
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .headers(headers)
+                    .headers(location)
                     .body(token);
 
         } catch (BusinessRulesException bre) {
@@ -99,13 +124,19 @@ public class OwnerRestController {
                             .withSelfRel()
                             .withType("GET");
 
+            Link changePasswordLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .changePassword(editedOwner.getEmail(), null))
+                            .withRel("changePassword")
+                            .withType("PATCH");
+
             Link deleteOwnerLink =
                     linkTo(methodOn(OwnerRestController.class)
                             .deleteOwner(editedOwner.getEmail()))
                             .withRel("deleteOwner")
                             .withType("DELETE");
 
-            editedOwner.add(selfLink, deleteOwnerLink);
+            editedOwner.add(selfLink, changePasswordLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -134,13 +165,19 @@ public class OwnerRestController {
                             .withSelfRel()
                             .withType("GET");
 
+            Link changeUserDetailsLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .changeUserDetails(editedOwner.getEmail(), null))
+                            .withRel("changeUserDetails")
+                            .withType("PATCH");
+
             Link deleteOwnerLink =
                     linkTo(methodOn(OwnerRestController.class)
                             .deleteOwner(editedOwner.getEmail()))
                             .withRel("deleteOwner")
                             .withType("DELETE");
 
-            editedOwner.add(selfLink, deleteOwnerLink);
+            editedOwner.add(selfLink, changeUserDetailsLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)

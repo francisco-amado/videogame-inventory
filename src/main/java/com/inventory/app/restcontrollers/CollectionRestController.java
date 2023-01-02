@@ -152,7 +152,14 @@ public class CollectionRestController {
                         .withSelfRel()
                         .withType("GET");
 
-        collection.get().add(selfLink);
+
+        Link removeGameLink =
+                linkTo(methodOn(CollectionRestController.class)
+                        .removeGameFromCollection(collection.get().getCollectionId(), gameToAdd.get().getGameId()))
+                        .withRel("removeGame")
+                        .withType("PATCH");
+
+        collection.get().add(selfLink, removeGameLink);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -184,7 +191,13 @@ public class CollectionRestController {
                         .withSelfRel()
                         .withType("GET");
 
-        collection.get().add(selfLink);
+        Link addGameLink =
+                linkTo(methodOn(CollectionRestController.class)
+                        .addGameToCollection(collection.get().getCollectionId(), gameToRemove.get().getGameId()))
+                        .withRel("addGame")
+                        .withType("PATCH");
+
+        collection.get().add(selfLink, addGameLink);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
