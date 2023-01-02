@@ -103,7 +103,7 @@ public class GameRestController {
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body("Game successfully created");
+                    .body(game);
 
         } catch (InvalidEntryDataException ide) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ide.getMessage());
