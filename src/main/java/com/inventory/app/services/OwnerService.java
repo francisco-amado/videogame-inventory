@@ -79,7 +79,6 @@ public class OwnerService implements UserDetailsService {
     }
 
     public boolean validateOwnerDetails(Name userName, String email) {
-
         return notExistsByUsername(userName) && notExistsByEmail(email);
     }
 
@@ -168,10 +167,32 @@ public class OwnerService implements UserDetailsService {
     public Owner changeUserDetails(EditOwnerDTO editOwnerDTO, String email)
             throws BusinessRulesException, NoSuchElementException {
 
-         if(!validateOwnerDetails(Name.createName(editOwnerDTO.getUserName()),
-                Email.createEmail(editOwnerDTO.getEmail()))) {
+        String username = "";
 
-             throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            username = SecurityContextHolder.getContext().getAuthentication().getName();
+        }
+
+        if (editOwnerDTO == null) {
+            throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
+        }
+
+        if(username.equals(editOwnerDTO.getUserName())) {
+            if(!notExistsByEmail(Email.createEmail(editOwnerDTO.getEmail()))) {
+                throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
+            }
+        }
+
+        if(email.equals(editOwnerDTO.getEmail())) {
+            if(!notExistsByUsername(Name.createName(username))) {
+                throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
+            }
+        }
+
+        if(!username.equals(editOwnerDTO.getUserName()) && !email.equals(editOwnerDTO.getEmail())) {
+            if(!validateOwnerDetails(Name.createName(username), Email.createEmail(editOwnerDTO.getEmail()))) {
+                throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
+            }
         }
 
         Optional<Owner> ownerToEdit = findByEmail(email);
