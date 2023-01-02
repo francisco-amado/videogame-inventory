@@ -8,6 +8,7 @@ import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.owner.OwnerRole;
 import com.inventory.app.domain.token.ConfirmationToken;
 import com.inventory.app.domain.valueobjects.*;
+import com.inventory.app.dto.EditOwnerDTO;
 import com.inventory.app.dto.OwnerDTO;
 import com.inventory.app.email.EmailSender;
 import com.inventory.app.exceptions.BusinessRulesException;
@@ -78,7 +79,6 @@ public class OwnerService implements UserDetailsService {
     public boolean validateOwnerDetails(Name userName, String email, String password) {
 
         boolean valid = !existsByEmail(email) && !existsByUsername(userName);
-
         if(!valid) return false;
 
         return password != null && password.length() >= 10;
@@ -141,34 +141,29 @@ public class OwnerService implements UserDetailsService {
         return TOKEN_RESPONSE;
     }
 
-    public Owner changeUserDetails(OwnerDTO ownerDTO) throws BusinessRulesException, NoSuchElementException {
+    public Owner changeUserDetails(EditOwnerDTO editOwnerDTO) throws BusinessRulesException, NoSuchElementException {
 
-        boolean validDetails = validateOwnerDetails(Name.createName(ownerDTO.getUserName()),
-                Email.createEmail(ownerDTO.getEmail()), ownerDTO.getPassword());
+        boolean validDetails = !existsByEmail(Email.createEmail(editOwnerDTO.getEmail())) &&
+                !existsByUsername(Name.createName(editOwnerDTO.getUserName()));
 
         if (!validDetails) throw new BusinessRulesException("Invalid user details");
 
-        Optional<Owner> ownerToEdit = ownerRepository.findByEmail(ownerDTO.getEmail());
+        Optional<Owner> ownerToEdit = ownerRepository.findByEmail(editOwnerDTO.getEmail());
 
         if (ownerToEdit.isEmpty()) {
             throw new NoSuchElementException("The requested owner does not exist");
         } else {
 
-            if (ownerDTO.getEmail() != null && !Objects.equals(ownerDTO.getEmail(), ownerToEdit.get().getEmail())) {
-                ownerToEdit.get().setEmail(ownerDTO.getEmail());
+            if (editOwnerDTO.getEmail() != null && !Objects.equals(editOwnerDTO.getEmail(),
+                    ownerToEdit.get().getEmail())) {
+
+                ownerToEdit.get().setEmail(editOwnerDTO.getEmail());
             }
 
-            if (ownerDTO.getUserName() != null && !Objects.equals(ownerDTO.getUserName(),
+            if (editOwnerDTO.getUserName() != null && !Objects.equals(editOwnerDTO.getUserName(),
                     ownerToEdit.get().getUsername())) {
 
-                ownerToEdit.get().setUserName(Name.createName(ownerDTO.getUserName()));
-            }
-
-            if (ownerDTO.getPassword() != null && !Objects.equals(ownerDTO.getPassword(),
-                    ownerToEdit.get().getPassword())) {
-
-                String encodedPassword =  bCryptPasswordEncoder.encode(ownerDTO.getPassword());
-                ownerToEdit.get().setPassword(encodedPassword);
+                ownerToEdit.get().setUserName(Name.createName(editOwnerDTO.getUserName()));
             }
 
             ownerRepository.save(ownerToEdit.get());

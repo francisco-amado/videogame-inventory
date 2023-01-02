@@ -4,6 +4,7 @@ import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
+import com.inventory.app.dto.EditOwnerDTO;
 import com.inventory.app.dto.OwnerDTO;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.services.OwnerService;
@@ -84,10 +85,10 @@ public class OwnerRestController {
     }
 
     @PatchMapping(path = "", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> changeUserDetails(@RequestBody OwnerDTO ownerDTO) {
+    public ResponseEntity<Object> changeUserDetails(@RequestBody EditOwnerDTO editOwnerDTO) {
 
         try {
-            Owner editedOwner = ownerService.changeUserDetails(ownerDTO);
+            Owner editedOwner = ownerService.changeUserDetails(editOwnerDTO);
 
             Link selfLink =
                     linkTo(methodOn(OwnerRestController.class)
