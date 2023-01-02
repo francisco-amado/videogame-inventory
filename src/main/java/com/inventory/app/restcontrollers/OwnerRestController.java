@@ -116,7 +116,7 @@ public class OwnerRestController {
         }
 
         try {
-            Owner editedOwner = ownerService.changeUserDetails(editOwnerDTO);
+            Owner editedOwner = ownerService.changeUserDetails(editOwnerDTO, email);
 
             Link selfLink =
                     linkTo(methodOn(OwnerRestController.class)

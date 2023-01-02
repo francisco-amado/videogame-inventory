@@ -104,7 +104,9 @@ public class OwnerService implements UserDetailsService {
            password = ownerToEdit.get().getPassword();
         }
 
-        return password.equals(oldPassword);
+        String encodedOldPassword = bCryptPasswordEncoder.encode(oldPassword);
+
+        return password.equals(encodedOldPassword);
     }
 
 
@@ -165,7 +167,7 @@ public class OwnerService implements UserDetailsService {
         return TOKEN_RESPONSE;
     }
 
-    public Owner changeUserDetails(EditOwnerDTO editOwnerDTO) throws BusinessRulesException, NoSuchElementException {
+    public Owner changeUserDetails(EditOwnerDTO editOwnerDTO, String email) throws BusinessRulesException, NoSuchElementException {
 
          if(!validateOwnerDetails(Name.createName(editOwnerDTO.getUserName()),
                 Email.createEmail(editOwnerDTO.getEmail()))) {
@@ -173,7 +175,7 @@ public class OwnerService implements UserDetailsService {
              throw new BusinessRulesException("Invalid user details");
         }
 
-        Optional<Owner> ownerToEdit = findByEmail(editOwnerDTO.getEmail());
+        Optional<Owner> ownerToEdit = findByEmail(email);
 
         if (ownerToEdit.isEmpty()) {
             throw new NoSuchElementException(OWNER_NOT_FOUND);
