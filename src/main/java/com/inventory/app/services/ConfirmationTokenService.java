@@ -1,5 +1,6 @@
 package com.inventory.app.services;
 
+import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.token.ConfirmationToken;
 import com.inventory.app.repositories.ConfirmationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,14 @@ public class ConfirmationTokenService {
 
     public void setConfirmed(String token) {
         confirmationTokenRepository.updateConfirmed(token, LocalDateTime.now());
+    }
+
+    public Optional<ConfirmationToken> findByOwner(Owner owner) {
+       return confirmationTokenRepository.findByOwner(owner);
+    }
+
+    public void delete(ConfirmationToken token) {
+        confirmationTokenRepository.delete(token);
     }
 
 }

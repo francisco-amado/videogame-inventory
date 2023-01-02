@@ -1,5 +1,7 @@
 package com.inventory.app.repositories;
 
+import antlr.Token;
+import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.token.ConfirmationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,4 +23,6 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
     @Modifying
     @Query("UPDATE ConfirmationToken c SET c.confirmed = ?2 WHERE c.token = ?1")
     void updateConfirmed(String token, LocalDateTime confirmed);
+
+    Optional<ConfirmationToken> findByOwner(Owner owner);
 }

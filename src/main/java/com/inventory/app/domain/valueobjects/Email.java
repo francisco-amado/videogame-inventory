@@ -1,5 +1,6 @@
 package com.inventory.app.domain.valueobjects;
 
+import com.inventory.app.exceptions.BusinessRulesException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -21,11 +22,11 @@ public class Email {
     public static String createEmail(String email) {
 
         if (email == null || email.isEmpty() || email.isBlank()) {
-            throw new IllegalStateException("E-mail cannot be null or empty");
+            throw new BusinessRulesException("E-mail cannot be null or empty");
         }
 
         if (!emailRegexPatternValidation(email)) {
-            throw new IllegalStateException("E-mail does not meet correct format");
+            throw new BusinessRulesException("E-mail does not meet correct format");
         } else {
             return email;
         }

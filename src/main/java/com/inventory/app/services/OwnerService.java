@@ -11,6 +11,7 @@ import com.inventory.app.email.EmailSender;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.repositories.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,7 +34,7 @@ public class OwnerService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
-    private final static String USER_NOT_FOUND = "User with email %s not found";
+    private final static String OWNER_NOT_FOUND = "The requested owner does not exist";
     private final static String TOKEN_RESPONSE = "Confirmed";
     private final static String EMAIL_LINK = "http://localhost:8080/api/v1/owners/confirm?token=";
 
@@ -97,8 +98,13 @@ public class OwnerService implements UserDetailsService {
     public boolean validateOldPassword(String oldPassword, String email) {
 
         Optional<Owner> ownerToEdit = findByEmail(email);
+        String password = "";
 
-        return ownerToEdit.filter(owner -> oldPassword.equals(owner.getPassword())).isPresent();
+        if(ownerToEdit.isPresent()) {
+           password = ownerToEdit.get().getPassword();
+        }
+
+        return password.equals(oldPassword);
     }
 
 
@@ -161,15 +167,16 @@ public class OwnerService implements UserDetailsService {
 
     public Owner changeUserDetails(EditOwnerDTO editOwnerDTO) throws BusinessRulesException, NoSuchElementException {
 
-        boolean validDetails = notExistsByEmail(Email.createEmail(editOwnerDTO.getEmail())) &&
-                notExistsByUsername(Name.createName(editOwnerDTO.getUserName()));
+         if(!validateOwnerDetails(Name.createName(editOwnerDTO.getUserName()),
+                Email.createEmail(editOwnerDTO.getEmail()))) {
 
-        if (!validDetails) throw new BusinessRulesException("Invalid user details");
+             throw new BusinessRulesException("Invalid user details");
+        }
 
         Optional<Owner> ownerToEdit = findByEmail(editOwnerDTO.getEmail());
 
         if (ownerToEdit.isEmpty()) {
-            throw new NoSuchElementException("The requested owner does not exist");
+            throw new NoSuchElementException(OWNER_NOT_FOUND);
         } else {
 
             if (editOwnerDTO.getEmail() != null && !Objects.equals(editOwnerDTO.getEmail(),
@@ -208,30 +215,41 @@ public class OwnerService implements UserDetailsService {
             ownerRepository.save(ownerToEdit.get());
             return ownerToEdit.get();
         } else {
-            throw new NoSuchElementException("The requested owner does not exist");
+            throw new NoSuchElementException(OWNER_NOT_FOUND);
         }
     }
 
+    @Transactional
     public void deleteOwner(String email) throws NoSuchElementException {
+
         Optional<Owner> ownerToDelete = findByEmail(email);
-        ownerRepository.delete(ownerToDelete
-                .orElseThrow(() -> new NoSuchElementException("User not found")));
+
+        if(ownerToDelete.isPresent()) {
+            Optional<ConfirmationToken> ownerToken = confirmationTokenService.findByOwner(ownerToDelete.get());
+            ownerToken.ifPresent(confirmationTokenService::delete);
+            ownerToDelete.ifPresent(ownerRepository::delete);
+        } else {
+            throw new NoSuchElementException(OWNER_NOT_FOUND);
+        }
     }
 
     public boolean notTheSameUser(String email) {
 
-        UserDetails userDetails = loadUserByUsername(email);
+        String username = "";
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            username = SecurityContextHolder.getContext().getAuthentication().getName();
+        }
+
         Owner owner = findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException("The requested owner does not exist"));
+                .orElseThrow(() -> new NoSuchElementException(OWNER_NOT_FOUND));
 
-        return !userDetails.getUsername().equals(owner.getUsername());
+        return !username.equals(owner.getUsername());
     }
-
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
+                .orElseThrow(() -> new UsernameNotFoundException(OWNER_NOT_FOUND));
     }
 }

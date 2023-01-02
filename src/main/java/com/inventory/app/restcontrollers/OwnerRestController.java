@@ -41,13 +41,13 @@ public class OwnerRestController {
 
         if(ownerFound.isPresent()) {
 
-            Link selfLink =
+            Link collection =
                     linkTo(methodOn(CollectionRestController.class)
                             .getCollection(ownerFound.get().getOwnerId()))
                             .withSelfRel()
                             .withType("GET");
 
-            ownerFound.get().add(selfLink);
+            ownerFound.get().add(collection);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -86,11 +86,11 @@ public class OwnerRestController {
     public ResponseEntity<Object> changeUserDetails(@PathVariable(value=("email")) String email,
                                                     @RequestBody EditOwnerDTO editOwnerDTO) {
 
-        try {
-            if (ownerService.notTheSameUser(email)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-            }
+        if (ownerService.notTheSameUser(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
 
+        try {
             Owner editedOwner = ownerService.changeUserDetails(editOwnerDTO);
 
             Link selfLink =
@@ -120,11 +120,11 @@ public class OwnerRestController {
     public ResponseEntity<Object> changePassword(@PathVariable(value=("email")) String email,
                                                  @RequestBody ChangePasswordDTO changePasswordDTO) {
 
-        try {
-            if (ownerService.notTheSameUser(email)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-            }
+        if (ownerService.notTheSameUser(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
 
+        try {
             Owner editedOwner = ownerService.changePassword(changePasswordDTO.getNewPassword(),
                     changePasswordDTO.getOldPassword(), changePasswordDTO.getEmail());
 
@@ -154,10 +154,11 @@ public class OwnerRestController {
     @DeleteMapping(path = "/{email}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> deleteOwner(@PathVariable(value=("email")) String email) {
 
+        if (ownerService.notTheSameUser(email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
         try {
-            if (ownerService.notTheSameUser(email)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-            }
             ownerService.deleteOwner(email);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
         } catch (NoSuchElementException nse) {

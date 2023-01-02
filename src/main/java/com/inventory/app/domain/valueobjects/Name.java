@@ -1,5 +1,6 @@
 package com.inventory.app.domain.valueobjects;
 
+import com.inventory.app.exceptions.BusinessRulesException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,12 +23,8 @@ public class Name {
 
     public static Name createName(String name) {
 
-        if (Objects.equals(name, "")) {
-            throw new IllegalArgumentException("Name field must not be empty");
-        }
-
-        if (name == null) {
-            throw new NullPointerException("Null value cannot be passed");
+        if (name == null || Objects.equals(name, "")) {
+            throw new BusinessRulesException("Name field must not be empty");
         }
 
         return new Name(name.trim());
