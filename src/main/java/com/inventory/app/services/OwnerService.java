@@ -101,9 +101,7 @@ public class OwnerService implements UserDetailsService {
            password = ownerToEdit.get().getPassword();
         }
 
-        String encodedOldPassword = bCryptPasswordEncoder.encode(oldPassword);
-
-        return password.equals(encodedOldPassword);
+        return bCryptPasswordEncoder.matches(oldPassword, password);
     }
 
 
