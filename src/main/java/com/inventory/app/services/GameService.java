@@ -11,11 +11,11 @@ import com.inventory.app.dto.GameDTO;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.repositories.GameRepository;
+import com.inventory.app.utils.ServiceResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -26,6 +26,7 @@ public class GameService {
 
     @Autowired
     public GameService(GameRepository gameRepository, GameFactoryInterface gameFactoryInterface) {
+
         this.gameRepository = gameRepository;
         this.gameFactoryInterface = gameFactoryInterface;
     }
@@ -33,14 +34,14 @@ public class GameService {
     public Game createGame(GameDTO gameDTO) throws InvalidEntryDataException {
 
         if (gameDTO == null) {
-            throw new InvalidEntryDataException("Invalid entry data");
+            throw new InvalidEntryDataException(ServiceResponses.getGAME_NOT_FOUND());
         }
 
         boolean anyParameterNull = gameDTO.getConsole() == null || gameDTO.getRegion() == null ||
                 gameDTO.getReleaseDate() == null || gameDTO.getName() == null;
 
         if (anyParameterNull) {
-            throw new InvalidEntryDataException("Invalid entry data");
+            throw new InvalidEntryDataException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
         Name name = Name.createName(gameDTO.getName());
@@ -75,7 +76,7 @@ public class GameService {
         Optional<Game> gameToEditOpt = gameRepository.findById(gameId);
 
         if (gameToEditOpt.isEmpty()) {
-            throw new NoSuchElementException("The requested game does not exist");
+            throw new NoSuchElementException(ServiceResponses.getGAME_NOT_FOUND());
         } else {
             Game gameToEdit = gameToEditOpt.get();
 
@@ -125,7 +126,7 @@ public class GameService {
         Optional<Game> gameToDelete = gameRepository.findById(gameId);
 
         if (gameToDelete.isPresent() && gameToDelete.get().getCollection() != null) {
-            throw new BusinessRulesException("Game cannot be deleted if it belongs to a collection");
+            throw new BusinessRulesException(ServiceResponses.getCANNOT_DELETE_GAME());
         }
 
         gameToDelete.ifPresent(gameRepository::delete);

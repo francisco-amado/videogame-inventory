@@ -10,6 +10,7 @@ import com.inventory.app.dto.EditOwnerDTO;
 import com.inventory.app.email.EmailSender;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.repositories.OwnerRepository;
+import com.inventory.app.utils.ServiceResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,9 +35,6 @@ public class OwnerService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
-    private final static String OWNER_NOT_FOUND = "The requested owner does not exist";
-    private final static String TOKEN_RESPONSE = "Confirmed";
-    private final static String EMAIL_LINK = "http://localhost:8080/api/v1/owners/confirm?token=";
 
     @Autowired
     public OwnerService(OwnerRepository ownerRepository,
@@ -61,11 +59,11 @@ public class OwnerService implements UserDetailsService {
         boolean validPassword = validatePassword(password);
 
         if(!validDetails) {
-            throw new BusinessRulesException("Invalid user details");
+            throw new BusinessRulesException(ServiceResponses.getINVALID_USER_DETAILS());
         }
 
         if(!validPassword) {
-            throw new BusinessRulesException("Invalid password");
+            throw new BusinessRulesException(ServiceResponses.getINVALID_PASSWORD());
         }
 
         String newPassword = password.trim();
@@ -121,7 +119,7 @@ public class OwnerService implements UserDetailsService {
     }
 
     public void sendEmail(String token, Name userName, String email) {
-        String link = EMAIL_LINK + token;
+        String link = ServiceResponses.getEMAIL_LINK() + token;
         emailSender.send(email, emailSender.buildEmail(userName.getName(), link));
     }
 
@@ -149,36 +147,37 @@ public class OwnerService implements UserDetailsService {
     public String confirmToken(String token) throws BusinessRulesException, NoSuchElementException {
 
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
-                        .orElseThrow(() -> new NoSuchElementException("Token not found"));
+                        .orElseThrow(() -> new NoSuchElementException(ServiceResponses.getTOKEN_NOT_FOUND()));
 
         if (confirmationToken.getConfirmed() != null) {
-            throw new BusinessRulesException("E-mail already confirmed");
+            throw new BusinessRulesException(ServiceResponses.getEMAIL_CONFIRMED());
         }
 
         LocalDateTime expired = confirmationToken.getExpires();
 
         if (expired.isBefore(LocalDateTime.now())) {
-            throw new BusinessRulesException("Token expired");
+            throw new BusinessRulesException(ServiceResponses.getTOKEN_EXPIRED());
         }
 
         confirmationTokenService.setConfirmed(token);
         enableOwner(confirmationToken.getOwner().getEmail());
 
-        return TOKEN_RESPONSE;
+        return ServiceResponses.getTOKEN_RESPONSE();
     }
 
-    public Owner changeUserDetails(EditOwnerDTO editOwnerDTO, String email) throws BusinessRulesException, NoSuchElementException {
+    public Owner changeUserDetails(EditOwnerDTO editOwnerDTO, String email)
+            throws BusinessRulesException, NoSuchElementException {
 
          if(!validateOwnerDetails(Name.createName(editOwnerDTO.getUserName()),
                 Email.createEmail(editOwnerDTO.getEmail()))) {
 
-             throw new BusinessRulesException("Invalid user details");
+             throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
         Optional<Owner> ownerToEdit = findByEmail(email);
 
         if (ownerToEdit.isEmpty()) {
-            throw new NoSuchElementException(OWNER_NOT_FOUND);
+            throw new NoSuchElementException(ServiceResponses.getOWNER_NOT_FOUND());
         } else {
 
             if (editOwnerDTO.getEmail() != null && !Objects.equals(editOwnerDTO.getEmail(),
@@ -202,11 +201,11 @@ public class OwnerService implements UserDetailsService {
     public Owner changePassword(String newPassword, String oldPassword, String email) {
 
         if(!validateOldPassword(oldPassword, email)) {
-            throw new BusinessRulesException("The password provided is invalid");
+            throw new BusinessRulesException(ServiceResponses.getINVALID_PASSWORD());
         }
 
         if(!validatePassword(newPassword)) {
-            throw new BusinessRulesException("Password not valid");
+            throw new BusinessRulesException(ServiceResponses.getINVALID_PASSWORD());
         }
 
         Optional<Owner> ownerToEdit = findByEmail(email);
@@ -217,7 +216,7 @@ public class OwnerService implements UserDetailsService {
             ownerRepository.save(ownerToEdit.get());
             return ownerToEdit.get();
         } else {
-            throw new NoSuchElementException(OWNER_NOT_FOUND);
+            throw new NoSuchElementException(ServiceResponses.getOWNER_NOT_FOUND());
         }
     }
 
@@ -231,7 +230,7 @@ public class OwnerService implements UserDetailsService {
             ownerToken.ifPresent(confirmationTokenService::delete);
             ownerToDelete.ifPresent(ownerRepository::delete);
         } else {
-            throw new NoSuchElementException(OWNER_NOT_FOUND);
+            throw new NoSuchElementException(ServiceResponses.getOWNER_NOT_FOUND());
         }
     }
 
@@ -244,7 +243,7 @@ public class OwnerService implements UserDetailsService {
         }
 
         Owner owner = findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException(OWNER_NOT_FOUND));
+                .orElseThrow(() -> new NoSuchElementException(ServiceResponses.getOWNER_NOT_FOUND()));
 
         return !username.equals(owner.getUsername());
     }
@@ -252,6 +251,6 @@ public class OwnerService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(OWNER_NOT_FOUND));
+                .orElseThrow(() -> new UsernameNotFoundException(ServiceResponses.getOWNER_NOT_FOUND()));
     }
 }

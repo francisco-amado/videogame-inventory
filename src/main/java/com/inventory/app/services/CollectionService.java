@@ -7,6 +7,7 @@ import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.dto.CollectionDTO;
 import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.repositories.CollectionRepository;
+import com.inventory.app.utils.ServiceResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,12 +37,12 @@ public class CollectionService {
             throws InvalidEntryDataException, NoSuchElementException {
 
         if (collectionDTO == null) {
-            throw new InvalidEntryDataException("Invalid entry data");
+            throw new InvalidEntryDataException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
         for(Game game : collectionDTO.getGameList()) {
             if(!gameService.existsById(game.getGameId())) {
-                throw new NoSuchElementException("Game does not exist");
+                throw new NoSuchElementException(ServiceResponses.getGAME_NOT_FOUND());
             }
         }
 
