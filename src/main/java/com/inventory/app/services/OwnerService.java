@@ -1,11 +1,12 @@
 package com.inventory.app.services;
 
+import com.inventory.app.domain.confirmationtoken.ConfirmationToken;
 import com.inventory.app.domain.factories.ConfirmationTokenFactoryInterface;
 import com.inventory.app.domain.factories.OwnerFactoryInterface;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.owner.OwnerRole;
-import com.inventory.app.domain.confirmationtoken.ConfirmationToken;
-import com.inventory.app.domain.valueobjects.*;
+import com.inventory.app.domain.valueobjects.Email;
+import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.dto.EditOwnerDTO;
 import com.inventory.app.email.EmailSender;
 import com.inventory.app.exceptions.BusinessRulesException;

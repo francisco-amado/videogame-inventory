@@ -1,9 +1,6 @@
 package com.inventory.app.restcontrollers;
 
 import com.inventory.app.domain.game.Game;
-import com.inventory.app.domain.valueobjects.Console;
-import com.inventory.app.domain.valueobjects.Name;
-import com.inventory.app.domain.valueobjects.Region;
 import com.inventory.app.dto.EditGameDTO;
 import com.inventory.app.dto.GameDTO;
 import com.inventory.app.exceptions.BusinessRulesException;
@@ -11,12 +8,10 @@ import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;

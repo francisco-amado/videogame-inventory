@@ -2,12 +2,10 @@ package com.inventory.app.domain.owner;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.app.domain.collection.Collection;
-import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.security.core.GrantedAuthority;

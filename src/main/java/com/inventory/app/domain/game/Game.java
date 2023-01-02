@@ -8,7 +8,6 @@ import com.inventory.app.domain.valueobjects.Region;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 

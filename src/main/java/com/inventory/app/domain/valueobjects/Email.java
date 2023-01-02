@@ -3,7 +3,6 @@ package com.inventory.app.domain.valueobjects;
 import com.inventory.app.exceptions.BusinessRulesException;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
