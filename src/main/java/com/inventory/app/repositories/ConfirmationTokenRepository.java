@@ -1,8 +1,7 @@
 package com.inventory.app.repositories;
 
-import antlr.Token;
 import com.inventory.app.domain.owner.Owner;
-import com.inventory.app.domain.token.ConfirmationToken;
+import com.inventory.app.domain.confirmationtoken.ConfirmationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

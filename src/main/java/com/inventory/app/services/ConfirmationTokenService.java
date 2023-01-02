@@ -1,7 +1,7 @@
 package com.inventory.app.services;
 
 import com.inventory.app.domain.owner.Owner;
-import com.inventory.app.domain.token.ConfirmationToken;
+import com.inventory.app.domain.confirmationtoken.ConfirmationToken;
 import com.inventory.app.repositories.ConfirmationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

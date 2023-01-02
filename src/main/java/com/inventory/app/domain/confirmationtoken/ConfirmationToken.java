@@ -1,12 +1,10 @@
-package com.inventory.app.domain.token;
+package com.inventory.app.domain.confirmationtoken;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.owner.Owner;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 

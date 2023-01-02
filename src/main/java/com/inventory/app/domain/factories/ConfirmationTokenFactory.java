@@ -1,7 +1,7 @@
 package com.inventory.app.domain.factories;
 
 import com.inventory.app.domain.owner.Owner;
-import com.inventory.app.domain.token.ConfirmationToken;
+import com.inventory.app.domain.confirmationtoken.ConfirmationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
