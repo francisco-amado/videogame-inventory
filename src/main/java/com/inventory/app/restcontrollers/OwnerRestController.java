@@ -53,10 +53,10 @@ public class OwnerRestController {
                             .withRel("collection")
                             .withType("GET");
 
-            Link changeUserDetailsLink =
+            Link changeOwnerDetailsLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .changeUserDetails(ownerFound.get().getEmail(), null))
-                            .withRel("changeUserDetails")
+                            .changeOwnerDetails(ownerFound.get().getEmail(), null))
+                            .withRel("changeOwnerDetails")
                             .withType("PATCH");
 
             Link changePasswordLink =
@@ -72,7 +72,7 @@ public class OwnerRestController {
                             .withType("DELETE");
 
             ownerFound.get()
-                    .add(selfLink, collectionLink, changeUserDetailsLink, changePasswordLink, deleteOwnerLink);
+                    .add(selfLink, collectionLink, changeOwnerDetailsLink, changePasswordLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -108,15 +108,15 @@ public class OwnerRestController {
     }
 
     @PatchMapping(path = "/{email}/details", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> changeUserDetails(@PathVariable(value=("email")) String email,
-                                                    @RequestBody EditOwnerDTO editOwnerDTO) {
+    public ResponseEntity<Object> changeOwnerDetails(@PathVariable(value=("email")) String email,
+                                                     @RequestBody EditOwnerDTO editOwnerDTO) {
 
         if (ownerService.notTheSameUser(email)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
         try {
-            Owner editedOwner = ownerService.changeUserDetails(editOwnerDTO, email);
+            Owner editedOwner = ownerService.changeOwnerDetails(editOwnerDTO, email);
 
             Link selfLink =
                     linkTo(methodOn(OwnerRestController.class)
@@ -165,10 +165,10 @@ public class OwnerRestController {
                             .withSelfRel()
                             .withType("GET");
 
-            Link changeUserDetailsLink =
+            Link changeOwnerDetailsLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .changeUserDetails(editedOwner.getEmail(), null))
-                            .withRel("changeUserDetails")
+                            .changeOwnerDetails(editedOwner.getEmail(), null))
+                            .withRel("changeOwnerDetails")
                             .withType("PATCH");
 
             Link deleteOwnerLink =
@@ -177,7 +177,7 @@ public class OwnerRestController {
                             .withRel("deleteOwner")
                             .withType("DELETE");
 
-            editedOwner.add(selfLink, changeUserDetailsLink, deleteOwnerLink);
+            editedOwner.add(selfLink, changeOwnerDetailsLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)

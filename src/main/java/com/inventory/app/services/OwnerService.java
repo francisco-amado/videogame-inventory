@@ -164,8 +164,7 @@ public class OwnerService implements UserDetailsService {
         return ServiceResponses.getTOKEN_RESPONSE();
     }
 
-    public Owner changeUserDetails(EditOwnerDTO editOwnerDTO, String email)
-            throws BusinessRulesException, NoSuchElementException {
+    public void validateOwnerDetailsToChange(EditOwnerDTO editOwnerDTO, String email) {
 
         String username = "";
 
@@ -177,23 +176,29 @@ public class OwnerService implements UserDetailsService {
             throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
-        if(username.equals(editOwnerDTO.getUserName())) {
-            if(!notExistsByEmail(Email.createEmail(editOwnerDTO.getEmail()))) {
+        if (username.equals(editOwnerDTO.getUserName())) {
+            if (!notExistsByEmail(Email.createEmail(editOwnerDTO.getEmail()))) {
                 throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
             }
         }
 
-        if(email.equals(editOwnerDTO.getEmail())) {
-            if(!notExistsByUsername(Name.createName(username))) {
+        if (email.equals(editOwnerDTO.getEmail())) {
+            if (!notExistsByUsername(Name.createName(username))) {
                 throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
             }
         }
 
-        if(!username.equals(editOwnerDTO.getUserName()) && !email.equals(editOwnerDTO.getEmail())) {
-            if(!validateOwnerDetails(Name.createName(username), Email.createEmail(editOwnerDTO.getEmail()))) {
+        if (!username.equals(editOwnerDTO.getUserName()) && !email.equals(editOwnerDTO.getEmail())) {
+            if (!validateOwnerDetails(Name.createName(username), Email.createEmail(editOwnerDTO.getEmail()))) {
                 throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
             }
         }
+    }
+
+    public Owner changeOwnerDetails(EditOwnerDTO editOwnerDTO, String email)
+            throws BusinessRulesException, NoSuchElementException {
+
+        validateOwnerDetailsToChange(editOwnerDTO, email);
 
         Optional<Owner> ownerToEdit = findByEmail(email);
 
