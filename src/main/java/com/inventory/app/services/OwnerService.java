@@ -185,11 +185,13 @@ public class OwnerService implements UserDetailsService {
             throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
-        if (existsByEmail(editOwnerDTO.getEmail())) {
+        if (existsByEmail(editOwnerDTO.getEmail()) && !Objects.equals(editOwnerDTO.getEmail(), email)) {
             throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
-        if (existsByStringUsername(editOwnerDTO.getUserName())) {
+        if (existsByStringUsername(editOwnerDTO.getUserName())
+                && !Objects.equals(editOwnerDTO.getUserName(), username)) {
+
             throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
