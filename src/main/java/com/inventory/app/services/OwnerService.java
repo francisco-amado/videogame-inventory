@@ -218,6 +218,17 @@ public class OwnerService implements UserDetailsService {
                 .orElseThrow(() -> new NoSuchElementException("User not found")));
     }
 
+    public boolean notTheSameUser(String email) {
+
+        UserDetails userDetails = loadUserByUsername(email);
+        Owner owner = findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("The requested owner does not exist"));
+
+        return !userDetails.getUsername().equals(owner.getUsername());
+    }
+
+
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return findByEmail(email)

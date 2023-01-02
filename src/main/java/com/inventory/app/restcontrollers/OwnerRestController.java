@@ -82,10 +82,15 @@ public class OwnerRestController {
         }
     }
 
-    @PatchMapping(path = "", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> changeUserDetails(@RequestBody EditOwnerDTO editOwnerDTO) {
+    @PatchMapping(path = "/{email}", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> changeUserDetails(@PathVariable(value=("email")) String email,
+                                                    @RequestBody EditOwnerDTO editOwnerDTO) {
 
         try {
+            if (ownerService.notTheSameUser(email)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            }
+
             Owner editedOwner = ownerService.changeUserDetails(editOwnerDTO);
 
             Link selfLink =
@@ -111,10 +116,15 @@ public class OwnerRestController {
         }
     }
 
-    @PatchMapping(path = "/password", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+    @PatchMapping(path = "/password/{email}", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> changePassword(@PathVariable(value=("email")) String email,
+                                                 @RequestBody ChangePasswordDTO changePasswordDTO) {
 
         try {
+            if (ownerService.notTheSameUser(email)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            }
+
             Owner editedOwner = ownerService.changePassword(changePasswordDTO.getNewPassword(),
                     changePasswordDTO.getOldPassword(), changePasswordDTO.getEmail());
 
@@ -145,6 +155,9 @@ public class OwnerRestController {
     public ResponseEntity<Object> deleteOwner(@PathVariable(value=("email")) String email) {
 
         try {
+            if (ownerService.notTheSameUser(email)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            }
             ownerService.deleteOwner(email);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
         } catch (NoSuchElementException nse) {
