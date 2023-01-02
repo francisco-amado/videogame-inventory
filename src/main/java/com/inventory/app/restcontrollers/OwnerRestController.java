@@ -82,7 +82,7 @@ public class OwnerRestController {
         }
     }
 
-    @PatchMapping(path = "/{email}", headers = "Accept=application/json", produces = "application/json")
+    @PatchMapping(path = "/{email}/details", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> changeUserDetails(@PathVariable(value=("email")) String email,
                                                     @RequestBody EditOwnerDTO editOwnerDTO) {
 
@@ -116,7 +116,7 @@ public class OwnerRestController {
         }
     }
 
-    @PatchMapping(path = "/password/{email}", headers = "Accept=application/json", produces = "application/json")
+    @PatchMapping(path = "/{email}/password", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> changePassword(@PathVariable(value=("email")) String email,
                                                  @RequestBody ChangePasswordDTO changePasswordDTO) {
 
