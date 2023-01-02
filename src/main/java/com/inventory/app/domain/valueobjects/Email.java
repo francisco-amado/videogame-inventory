@@ -28,7 +28,7 @@ public class Email {
         if (!emailRegexPatternValidation(email)) {
             throw new BusinessRulesException("E-mail does not meet correct format");
         } else {
-            return email;
+            return email.trim();
         }
     }
 

@@ -79,7 +79,7 @@ public class OwnerService implements UserDetailsService {
     }
 
     public boolean validateOwnerDetails(Name userName, String email) {
-        return notExistsByUsername(userName) && notExistsByEmail(email);
+        return !existsByUsername(userName) && !existsByEmail(email);
     }
 
     public boolean validatePassword(String password) {
@@ -120,12 +120,16 @@ public class OwnerService implements UserDetailsService {
         emailSender.send(email, emailSender.buildEmail(userName.getName(), link));
     }
 
-    public boolean notExistsByUsername(Name userName) {
-        return !ownerRepository.existsByUserName(userName);
+    public boolean existsByUsername(Name userName) {
+        return ownerRepository.existsByUserName(userName);
     }
 
-    public boolean notExistsByEmail(String email) {
-        return !ownerRepository.existsByEmail(email);
+    public boolean existsByStringUsername(String userName) {
+        return ownerRepository.existsByUserNameName(userName);
+    }
+
+    public boolean existsByEmail(String email) {
+        return ownerRepository.existsByEmail(email);
     }
 
     public Optional<Owner> findByEmail(String email) {
@@ -175,20 +179,24 @@ public class OwnerService implements UserDetailsService {
         }
 
         if (username.equals(editOwnerDTO.getUserName())) {
-            if (!notExistsByEmail(Email.createEmail(editOwnerDTO.getEmail()))) {
+            if (existsByEmail(editOwnerDTO.getEmail())) {
                 throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
             }
         }
 
         if (email.equals(editOwnerDTO.getEmail())) {
-            if (!notExistsByUsername(Name.createName(username))) {
+            if (existsByStringUsername(editOwnerDTO.getUserName())) {
                 throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
             }
         }
 
-        if (!username.equals(editOwnerDTO.getUserName()) && !email.equals(editOwnerDTO.getEmail())) {
-            if (!validateOwnerDetails(Name.createName(username), Email.createEmail(editOwnerDTO.getEmail()))) {
-                throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
+        if(editOwnerDTO.getUserName() != null && editOwnerDTO.getEmail() != null) {
+            if (!username.equals(editOwnerDTO.getUserName()) && !email.equals(editOwnerDTO.getEmail())) {
+                if (!validateOwnerDetails(Name.createName(editOwnerDTO.getUserName()),
+                        Email.createEmail(editOwnerDTO.getEmail()))) {
+
+                    throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
+                }
             }
         }
     }
@@ -207,7 +215,7 @@ public class OwnerService implements UserDetailsService {
             if (editOwnerDTO.getEmail() != null && !Objects.equals(editOwnerDTO.getEmail(),
                     ownerToEdit.get().getEmail())) {
 
-                ownerToEdit.get().setEmail(editOwnerDTO.getEmail());
+                ownerToEdit.get().setEmail(Email.createEmail(editOwnerDTO.getEmail()));
             }
 
             if (editOwnerDTO.getUserName() != null && !Objects.equals(editOwnerDTO.getUserName(),
