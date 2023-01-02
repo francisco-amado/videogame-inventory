@@ -3,10 +3,12 @@ package com.inventory.app.services;
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.factories.ConfirmationTokenFactoryInterface;
 import com.inventory.app.domain.factories.OwnerFactoryInterface;
+import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.owner.OwnerRole;
 import com.inventory.app.domain.token.ConfirmationToken;
 import com.inventory.app.domain.valueobjects.*;
+import com.inventory.app.dto.OwnerDTO;
 import com.inventory.app.email.EmailSender;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.repositories.OwnerRepository;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,12 +58,10 @@ public class OwnerService implements UserDetailsService {
     @Transactional
     public String createOwner(Name userName, String email, String password) throws BusinessRulesException {
 
-        if (existsByEmail(email) || existsByUsername(userName)) {
-            throw new BusinessRulesException("Owner already exists");
-        }
+        boolean validDetails = validateOwnerDetails(userName, email, password);
 
-        if (password == null || password.length() < 10) {
-            throw new BusinessRulesException("Password not valid");
+        if(!validDetails) {
+            throw new BusinessRulesException("Invalid user details");
         }
 
         String encodedPassword =  bCryptPasswordEncoder.encode(password);
@@ -72,6 +73,15 @@ public class OwnerService implements UserDetailsService {
         sendEmail(token, userName, email);
 
         return token;
+    }
+
+    public boolean validateOwnerDetails(Name userName, String email, String password) {
+
+        boolean valid = !existsByEmail(email) && !existsByUsername(userName);
+
+        if(!valid) return false;
+
+        return password != null && password.length() >= 10;
     }
 
     public ConfirmationToken createConfirmationToken(Owner newOwner) {
@@ -131,9 +141,51 @@ public class OwnerService implements UserDetailsService {
         return TOKEN_RESPONSE;
     }
 
+    public Owner changeUserDetails(OwnerDTO ownerDTO) throws BusinessRulesException, NoSuchElementException {
+
+        boolean validDetails = validateOwnerDetails(Name.createName(ownerDTO.getUserName()),
+                Email.createEmail(ownerDTO.getEmail()), ownerDTO.getPassword());
+
+        if (!validDetails) throw new BusinessRulesException("Invalid user details");
+
+        Optional<Owner> ownerToEdit = ownerRepository.findByEmail(ownerDTO.getEmail());
+
+        if (ownerToEdit.isEmpty()) {
+            throw new NoSuchElementException("The requested owner does not exist");
+        } else {
+
+            if (ownerDTO.getEmail() != null && !Objects.equals(ownerDTO.getEmail(), ownerToEdit.get().getEmail())) {
+                ownerToEdit.get().setEmail(ownerDTO.getEmail());
+            }
+
+            if (ownerDTO.getUserName() != null && !Objects.equals(ownerDTO.getUserName(),
+                    ownerToEdit.get().getUsername())) {
+
+                ownerToEdit.get().setUserName(Name.createName(ownerDTO.getUserName()));
+            }
+
+            if (ownerDTO.getPassword() != null && !Objects.equals(ownerDTO.getPassword(),
+                    ownerToEdit.get().getPassword())) {
+
+                String encodedPassword =  bCryptPasswordEncoder.encode(ownerDTO.getPassword());
+                ownerToEdit.get().setPassword(encodedPassword);
+            }
+
+            ownerRepository.save(ownerToEdit.get());
+        }
+
+        return ownerToEdit.get();
+    }
+
+    public void deleteOwner(String email) throws NoSuchElementException {
+        Optional<Owner> ownerToDelete = ownerRepository.findByEmail(email);
+        ownerRepository.delete(ownerToDelete
+                .orElseThrow(() -> new NoSuchElementException("User not found")));
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return findByEmail(email).orElseThrow(() ->
-                        new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
+        return findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
     }
 }

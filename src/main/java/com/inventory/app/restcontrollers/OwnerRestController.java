@@ -1,5 +1,6 @@
 package com.inventory.app.restcontrollers;
 
+import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
@@ -11,11 +12,13 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -54,7 +57,7 @@ public class OwnerRestController {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body("Owner does not exist");
+                .body("");
     }
 
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
@@ -77,6 +80,46 @@ public class OwnerRestController {
 
         } catch (BusinessRulesException bre) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bre.getMessage());
+        }
+    }
+
+    @PatchMapping(path = "", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> changeUserDetails(@RequestBody OwnerDTO ownerDTO) {
+
+        try {
+            Owner editedOwner = ownerService.changeUserDetails(ownerDTO);
+
+            Link selfLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .getOwner(editedOwner.getEmail()))
+                            .withSelfRel()
+                            .withType("GET");
+
+            Link deleteOwnerLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .deleteOwner(editedOwner.getEmail()))
+                            .withRel("deleteOwner")
+                            .withType("DELETE");
+
+            editedOwner.add(selfLink, deleteOwnerLink);
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(editedOwner);
+
+        } catch (BusinessRulesException | NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping(path = "/{email}", headers = "Accept=application/json", produces = "application/json")
+    public ResponseEntity<Object> deleteOwner(@PathVariable(value=("email")) String email) {
+
+        try {
+            ownerService.deleteOwner(email);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
+        } catch (NoSuchElementException nse) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(nse.getMessage());
         }
     }
 

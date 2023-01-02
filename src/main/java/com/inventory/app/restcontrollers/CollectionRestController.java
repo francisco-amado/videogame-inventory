@@ -78,7 +78,7 @@ public class CollectionRestController {
         return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body("Collection does not exist");
+                        .body("");
     }
 
     @PostMapping(path = "/{ownerId}", headers = "Accept=application/json", produces = "application/json")

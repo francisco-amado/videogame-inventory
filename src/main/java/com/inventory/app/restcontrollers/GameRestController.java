@@ -72,7 +72,7 @@ public class GameRestController {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body("Game does not exist");
+                .body("");
     }
 
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
