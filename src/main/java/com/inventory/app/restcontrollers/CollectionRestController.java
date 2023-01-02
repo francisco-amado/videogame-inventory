@@ -127,7 +127,7 @@ public class CollectionRestController {
         }
     }
 
-    @PatchMapping(path = "/{collectionid}/game/{gameid}/add",
+    @PatchMapping(path = "/{collectionid}/addgame/{gameid}",
             headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> addGameToCollection(@PathVariable(value="collectionid")UUID collectionId,
                                                       @PathVariable(value="gameid") UUID gameId) {
