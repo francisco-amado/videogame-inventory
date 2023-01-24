@@ -1,13 +1,13 @@
 package com.inventory.app.services;
 
 import com.inventory.app.domain.collection.Collection;
-import com.inventory.app.domain.factories.GameFactoryInterface;
+import com.inventory.app.domain.factories.GameFactory;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.valueobjects.Console;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.domain.valueobjects.Region;
 import com.inventory.app.dto.EditGameDTO;
-import com.inventory.app.dto.GameDTO;
+import com.inventory.app.dto.CreateGameDTO;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.repositories.GameRepository;
@@ -22,33 +22,33 @@ import java.util.*;
 public class GameService {
 
     private final GameRepository gameRepository;
-    private final GameFactoryInterface gameFactoryInterface;
+    private final GameFactory gameFactory;
 
     @Autowired
-    public GameService(GameRepository gameRepository, GameFactoryInterface gameFactoryInterface) {
+    public GameService(GameRepository gameRepository, GameFactory gameFactory) {
 
         this.gameRepository = gameRepository;
-        this.gameFactoryInterface = gameFactoryInterface;
+        this.gameFactory = gameFactory;
     }
 
-    public Game createGame(GameDTO gameDTO) throws InvalidEntryDataException {
+    public Game createGame(CreateGameDTO createGameDTO) throws InvalidEntryDataException {
 
-        if (gameDTO == null) {
+        if (createGameDTO == null) {
             throw new InvalidEntryDataException(ServiceResponses.getGAME_NOT_FOUND());
         }
 
-        boolean anyParameterNull = gameDTO.getConsole() == null || gameDTO.getRegion() == null ||
-                gameDTO.getReleaseDate() == null || gameDTO.getName() == null;
+        boolean anyParameterNull = createGameDTO.getConsole() == null || createGameDTO.getRegion() == null ||
+                createGameDTO.getReleaseDate() == null || createGameDTO.getName() == null;
 
         if (anyParameterNull) {
             throw new InvalidEntryDataException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
-        Name name = Name.createName(gameDTO.getName());
-        Console console = Console.createConsole(Console.ConsoleEnum.valueOf(gameDTO.getConsole()));
-        Region region = Region.createRegion(Region.RegionEnum.valueOf(gameDTO.getRegion()));
+        Name name = Name.createName(createGameDTO.getName());
+        Console console = Console.createConsole(Console.ConsoleEnum.valueOf(createGameDTO.getConsole()));
+        Region region = Region.createRegion(Region.RegionEnum.valueOf(createGameDTO.getRegion()));
 
-        Game game = gameFactoryInterface.createGame(name, console, gameDTO.getReleaseDate(), region);
+        Game game = gameFactory.createGame(name, console, createGameDTO.getReleaseDate(), region);
         gameRepository.save(game);
         return game;
     }

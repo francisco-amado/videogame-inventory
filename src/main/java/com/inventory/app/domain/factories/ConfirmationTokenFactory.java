@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-public class ConfirmationTokenFactory implements ConfirmationTokenFactoryInterface {
+public class ConfirmationTokenFactory {
 
     public ConfirmationToken createConfirmationToken(
             String token, LocalDateTime created, LocalDateTime expires, Owner owner) {

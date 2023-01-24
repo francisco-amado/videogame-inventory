@@ -1,4 +1,4 @@
-package com.inventory.app.domain.owner;
+package com.inventory.app.domain.valueobjects;
 
 public enum OwnerRole {
     USER,

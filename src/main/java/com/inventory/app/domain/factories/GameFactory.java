@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 @Service
-public class GameFactory implements GameFactoryInterface {
+public class GameFactory {
 
     public Game createGame(Name name, Console console, LocalDate releaseDate, Region region) {
 

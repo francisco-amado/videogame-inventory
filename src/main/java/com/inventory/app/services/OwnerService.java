@@ -1,10 +1,10 @@
 package com.inventory.app.services;
 
 import com.inventory.app.domain.confirmationtoken.ConfirmationToken;
-import com.inventory.app.domain.factories.ConfirmationTokenFactoryInterface;
-import com.inventory.app.domain.factories.OwnerFactoryInterface;
+import com.inventory.app.domain.factories.ConfirmationTokenFactory;
+import com.inventory.app.domain.factories.OwnerFactory;
 import com.inventory.app.domain.owner.Owner;
-import com.inventory.app.domain.owner.OwnerRole;
+import com.inventory.app.domain.valueobjects.OwnerRole;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.dto.EditOwnerDTO;
@@ -31,23 +31,23 @@ import java.util.UUID;
 public class OwnerService implements UserDetailsService {
 
     private final OwnerRepository ownerRepository;
-    private final OwnerFactoryInterface ownerFactoryInterface;
-    private final ConfirmationTokenFactoryInterface confirmationTokenFactoryInterface;
+    private final OwnerFactory ownerFactoryInterface;
+    private final ConfirmationTokenFactory confirmationTokenFactory;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
 
     @Autowired
     public OwnerService(OwnerRepository ownerRepository,
-                        OwnerFactoryInterface ownerFactoryInterface,
-                        ConfirmationTokenFactoryInterface confirmationTokenFactoryInterface,
+                        OwnerFactory ownerFactoryInterface,
+                        ConfirmationTokenFactory confirmationTokenFactory,
                         BCryptPasswordEncoder bCryptPasswordEncoder,
                         ConfirmationTokenService confirmationTokenService,
                         EmailSender emailSender) {
 
         this.ownerRepository = ownerRepository;
         this.ownerFactoryInterface = ownerFactoryInterface;
-        this.confirmationTokenFactoryInterface = confirmationTokenFactoryInterface;
+        this.confirmationTokenFactory = confirmationTokenFactory;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.confirmationTokenService = confirmationTokenService;
         this.emailSender = emailSender;
@@ -116,7 +116,7 @@ public class OwnerService implements UserDetailsService {
     public ConfirmationToken createConfirmationToken(Owner newOwner) {
 
         String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = confirmationTokenFactoryInterface.createConfirmationToken(
+        ConfirmationToken confirmationToken = confirmationTokenFactory.createConfirmationToken(
                 token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), newOwner);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 

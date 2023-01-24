@@ -2,7 +2,7 @@ package com.inventory.app.restcontrollers;
 
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.dto.EditGameDTO;
-import com.inventory.app.dto.GameDTO;
+import com.inventory.app.dto.CreateGameDTO;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.services.GameService;
@@ -71,10 +71,10 @@ public class GameRestController {
     }
 
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> createGame(@RequestBody GameDTO gameDTO) {
+    public ResponseEntity<Object> createGame(@RequestBody CreateGameDTO createGameDTO) {
 
         try{
-            Game game = gameService.createGame(gameDTO);
+            Game game = gameService.createGame(createGameDTO);
 
             Link selfLink =
                     linkTo(methodOn(GameRestController.class)

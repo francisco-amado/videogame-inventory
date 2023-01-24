@@ -1,10 +1,10 @@
 package com.inventory.app.services;
 
 import com.inventory.app.domain.collection.Collection;
-import com.inventory.app.domain.factories.CollectionFactoryInterface;
+import com.inventory.app.domain.factories.CollectionFactory;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
-import com.inventory.app.dto.CollectionDTO;
+import com.inventory.app.dto.CreateCollectionDTO;
 import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.repositories.CollectionRepository;
 import com.inventory.app.utils.ServiceResponses;
@@ -21,34 +21,34 @@ public class CollectionService {
 
     private final CollectionRepository collectionRepository;
     private final GameService gameService;
-    private final CollectionFactoryInterface collectionFactoryInterface;
+    private final CollectionFactory collectionFactory;
 
     @Autowired
     public CollectionService(CollectionRepository collectionRepository, GameService gameService,
-                             CollectionFactoryInterface collectionFactoryInterface) {
+                             CollectionFactory collectionFactory) {
 
         this.collectionRepository = collectionRepository;
         this.gameService = gameService;
-        this.collectionFactoryInterface = collectionFactoryInterface;
+        this.collectionFactory = collectionFactory;
     }
 
     @Transactional
-    public Collection createCollection(Owner owner, CollectionDTO collectionDTO)
+    public Collection createCollection(Owner owner, CreateCollectionDTO createCollectionDTO)
             throws InvalidEntryDataException, NoSuchElementException {
 
-        if (collectionDTO == null) {
+        if (createCollectionDTO == null) {
             throw new InvalidEntryDataException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
-        for(Game game : collectionDTO.getGameList()) {
+        for(Game game : createCollectionDTO.getGameList()) {
             if(!gameService.existsById(game.getGameId())) {
                 throw new NoSuchElementException(ServiceResponses.getGAME_NOT_FOUND());
             }
         }
 
-        Collection newCollection = collectionFactoryInterface.createCollection(owner, collectionDTO);
+        Collection newCollection = collectionFactory.createCollection(owner, createCollectionDTO);
         collectionRepository.save(newCollection);
-        gameService.setCollection(collectionDTO.getGameList(), newCollection);
+        gameService.setCollection(createCollectionDTO.getGameList(), newCollection);
         return newCollection;
     }
 

@@ -5,7 +5,7 @@ import com.inventory.app.domain.valueobjects.Name;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OwnerFactory implements OwnerFactoryInterface {
+public class OwnerFactory {
 
     public Owner createOwner(Name userName, String email, String password) {
 

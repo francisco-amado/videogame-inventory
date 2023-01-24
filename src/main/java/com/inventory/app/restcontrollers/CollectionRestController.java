@@ -3,7 +3,7 @@ package com.inventory.app.restcontrollers;
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
-import com.inventory.app.dto.CollectionDTO;
+import com.inventory.app.dto.CreateCollectionDTO;
 import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.services.CollectionService;
 import com.inventory.app.services.GameService;
@@ -81,7 +81,7 @@ public class CollectionRestController {
 
     @PostMapping(path = "/{ownerId}", headers = "Accept=application/json", produces = "application/json")
     public ResponseEntity<Object> createCollection(@PathVariable(value="ownerId") UUID ownerId,
-                                                   @RequestBody CollectionDTO collectionDTO) {
+                                                   @RequestBody CreateCollectionDTO createCollectionDTO) {
 
         Optional<Owner> owner = ownerService.findById(ownerId);
 
@@ -93,7 +93,7 @@ public class CollectionRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner does not exist");
         } else {
             try {
-                Collection collection = collectionService.createCollection(owner.get(), collectionDTO);
+                Collection collection = collectionService.createCollection(owner.get(), createCollectionDTO);
 
                 Link selfLink =
                         linkTo(methodOn(CollectionRestController.class)

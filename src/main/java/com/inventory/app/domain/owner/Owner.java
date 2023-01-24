@@ -3,6 +3,7 @@ package com.inventory.app.domain.owner;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.valueobjects.Name;
+import com.inventory.app.domain.valueobjects.OwnerRole;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,7 +44,8 @@ public class Owner extends RepresentationModel<Owner> implements Serializable, U
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private @Getter @Setter OwnerRole ownerRole;
+    private @Getter @Setter
+    OwnerRole ownerRole;
 
     @NotNull
     private boolean locked = false;

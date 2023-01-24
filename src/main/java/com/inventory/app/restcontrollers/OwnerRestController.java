@@ -5,7 +5,7 @@ import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.dto.ChangePasswordDTO;
 import com.inventory.app.dto.EditOwnerDTO;
-import com.inventory.app.dto.OwnerDTO;
+import com.inventory.app.dto.CreateOwnerDTO;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,16 +85,16 @@ public class OwnerRestController {
     }
 
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> createOwner(@RequestBody OwnerDTO ownerDTO, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<Object> createOwner(@RequestBody CreateOwnerDTO createOwnerDTO, UriComponentsBuilder ucBuilder) {
 
         try{
-            String token = ownerService.createOwner(Name.createName(ownerDTO.getUserName()),
-                    Email.createEmail(ownerDTO.getEmail()), ownerDTO.getPassword());
+            String token = ownerService.createOwner(Name.createName(createOwnerDTO.getUserName()),
+                    Email.createEmail(createOwnerDTO.getEmail()), createOwnerDTO.getPassword());
 
             HttpHeaders location = new HttpHeaders();
             location
                     .setLocation(ucBuilder.path("/owners/{email}")
-                            .buildAndExpand(ownerDTO.getEmail())
+                            .buildAndExpand(createOwnerDTO.getEmail())
                             .toUri());
 
             return ResponseEntity
