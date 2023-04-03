@@ -5,6 +5,7 @@ import lombok.Getter;
 public class ServiceResponses {
 
     @Getter private final static String OWNER_NOT_FOUND = "The requested owner does not exist";
+    @Getter private final static String COLLECTION_NOT_FOUND = "The requested collection does not exist";
     @Getter private final static String INVALID_ENTRY_DATA = "Invalid entry data";
     @Getter private final static String INVALID_USER_DETAILS = "Invalid user details";
     @Getter private final static String INVALID_PASSWORD = "Invalid password";
