@@ -2,12 +2,14 @@ package com.inventory.app.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Component
-public class GameDTO {
+public class GameDTO extends RepresentationModel<GameDTO> implements Serializable {
 
     private @Getter @Setter String name;
     private @Getter @Setter String console;

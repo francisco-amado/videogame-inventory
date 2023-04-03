@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Collection extends RepresentationModel<Collection> implements Serializable {
+public class Collection {
 
     @Id
     @Column(name = "uuid")
@@ -29,8 +29,6 @@ public class Collection extends RepresentationModel<Collection> implements Seria
     @OneToMany(mappedBy = "collection")
     @NotNull
     private @Getter @Setter List<Game> gameList;
-
-    private static final long serialVersionUID = 1L;
 
     public Collection(Owner owner, List<Game> gameList) {
         this.owner = owner;
