@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Game extends RepresentationModel<Game> implements Serializable {
+public class Game {
 
     @Id
     @Column(name = "uuid")
@@ -50,8 +50,6 @@ public class Game extends RepresentationModel<Game> implements Serializable {
     @JoinColumn(name = "collection", referencedColumnName = "uuid")
     @JsonIgnore
     private @Getter @Setter Collection collection;
-
-    private static final long serialVersionUID = 2L;
 
     public Game(Name name, Console console, LocalDate releaseDate,
                 Region region, String location, String localBought, Boolean wasGifted) {

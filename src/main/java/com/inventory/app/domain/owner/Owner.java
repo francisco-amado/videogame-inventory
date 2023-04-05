@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Owner extends RepresentationModel<Owner> implements Serializable, UserDetails {
+public class Owner implements UserDetails {
 
     @Id
     @Column(name = "uuid")
@@ -52,8 +52,6 @@ public class Owner extends RepresentationModel<Owner> implements Serializable, U
 
     @NotNull
     private boolean enabled = false;
-
-    private static final long serialVersionUID = 3L;
 
     public Owner(Name userName, String email, String password, Collection collection,
                  OwnerRole ownerRole, boolean locked, boolean enabled) {

@@ -3,6 +3,8 @@ package com.inventory.app.restcontrollers;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.dto.EditGameDTO;
 import com.inventory.app.dto.CreateGameDTO;
+import com.inventory.app.dto.GameDTO;
+import com.inventory.app.dto.mappers.GameDTOMapper;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.services.GameService;
@@ -26,10 +28,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class GameRestController {
 
     private final GameService gameService;
+    private final GameDTOMapper gameDTOMapper;
 
     @Autowired
-    public GameRestController(GameService gameService) {
+    public GameRestController(GameService gameService, GameDTOMapper gameDTOMapper) {
         this.gameService = gameService;
+        this.gameDTOMapper = gameDTOMapper;
     }
 
     @GetMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
@@ -39,30 +43,32 @@ public class GameRestController {
 
         if(gameFound.isPresent()) {
 
+            GameDTO gameDTO = gameDTOMapper.toDTO(gameFound.get());
+
             Link selfLink =
                     linkTo(methodOn(GameRestController.class)
-                            .getGame(gameFound.get().getGameId()))
+                            .getGame(gameDTO.getGameId()))
                             .withSelfRel()
                             .withType("GET");
 
             Link editGameLink =
                     linkTo(methodOn(GameRestController.class)
-                            .editGame(gameFound.get().getGameId(), null))
+                            .editGame(gameDTO.getGameId(), null))
                             .withRel("editGame")
                             .withType("PATCH");
 
             Link deleteGameLink =
                     linkTo(methodOn(GameRestController.class)
-                            .deleteGame(gameFound.get().getGameId()))
+                            .deleteGame(gameDTO.getGameId()))
                             .withRel("deleteGame")
                             .withType("DELETE");
 
-            gameFound.get().add(selfLink, editGameLink, deleteGameLink);
+            gameDTO.add(selfLink, editGameLink, deleteGameLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(gameFound.get());
+                    .body(gameDTO);
         }
 
         return ResponseEntity
@@ -76,29 +82,31 @@ public class GameRestController {
         try{
             Game game = gameService.createGame(createGameDTO);
 
+            GameDTO gameDTO = gameDTOMapper.toDTO(game);
+
             Link selfLink =
                     linkTo(methodOn(GameRestController.class)
-                            .getGame(game.getGameId()))
+                            .getGame(gameDTO.getGameId()))
                             .withSelfRel()
                             .withType("GET");
 
             Link editGameLink =
                     linkTo(methodOn(GameRestController.class)
-                            .editGame(game.getGameId(), null))
+                            .editGame(gameDTO.getGameId(), null))
                             .withRel("editGame")
                             .withType("PATCH");
 
             Link deleteGameLink =
                     linkTo(methodOn(GameRestController.class)
-                            .deleteGame(game.getGameId()))
+                            .deleteGame(gameDTO.getGameId()))
                             .withRel("deleteGame")
                             .withType("DELETE");
 
-            game.add(selfLink, editGameLink, deleteGameLink);
+            gameDTO.add(selfLink, editGameLink, deleteGameLink);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(game);
+                    .body(gameDTO);
 
         } catch (InvalidEntryDataException ide) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ide.getMessage());
@@ -117,23 +125,25 @@ public class GameRestController {
         try {
             gameService.editGame(gameId, editGameDTO);
 
+            GameDTO gameDTO = gameDTOMapper.toDTO(gameToEdit.get());
+
             Link selfLink =
                     linkTo(methodOn(GameRestController.class)
-                            .getGame(gameToEdit.get().getGameId()))
+                            .getGame(gameDTO.getGameId()))
                             .withSelfRel()
                             .withType("GET");
 
             Link deleteGameLink =
                     linkTo(methodOn(GameRestController.class)
-                            .deleteGame(gameToEdit.get().getGameId()))
+                            .deleteGame(gameDTO.getGameId()))
                             .withRel("deleteGame")
                             .withType("DELETE");
 
-            gameToEdit.get().add(selfLink, deleteGameLink);
+            gameDTO.add(selfLink, deleteGameLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(gameToEdit.get());
+                    .body(gameDTO);
 
         } catch (NoSuchElementException nse) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(nse.getMessage());

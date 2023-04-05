@@ -6,6 +6,8 @@ import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.dto.ChangePasswordDTO;
 import com.inventory.app.dto.EditOwnerDTO;
 import com.inventory.app.dto.CreateOwnerDTO;
+import com.inventory.app.dto.OwnerDTO;
+import com.inventory.app.dto.mappers.OwnerDTOMapper;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.persistence.OneToOne;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -28,10 +31,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class OwnerRestController {
 
     private final OwnerService ownerService;
+    private final OwnerDTOMapper ownerDTOMapper;
 
     @Autowired
-    public OwnerRestController(OwnerService ownerService) {
+    public OwnerRestController(OwnerService ownerService, OwnerDTOMapper ownerDTOMapper) {
         this.ownerService = ownerService;
+        this.ownerDTOMapper = ownerDTOMapper;
     }
 
     @GetMapping(path = "/{email}", headers = "Accept=application/json", produces = "application/json")
@@ -41,42 +46,44 @@ public class OwnerRestController {
 
         if(ownerFound.isPresent()) {
 
+            OwnerDTO ownerDTO = ownerDTOMapper.toDTO(ownerFound.get());
+
             Link selfLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .getOwner(ownerFound.get().getEmail()))
+                            .getOwner(ownerDTO.getEmail()))
                             .withSelfRel()
                             .withType("GET");
 
             Link collectionLink =
                     linkTo(methodOn(CollectionRestController.class)
-                            .getCollection(ownerFound.get().getOwnerId()))
+                            .getCollection(ownerDTO.getOwnerId()))
                             .withRel("collection")
                             .withType("GET");
 
             Link changeOwnerDetailsLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .changeOwnerDetails(ownerFound.get().getEmail(), null))
+                            .changeOwnerDetails(ownerDTO.getEmail(), null))
                             .withRel("changeOwnerDetails")
                             .withType("PATCH");
 
             Link changePasswordLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .changePassword(ownerFound.get().getEmail(), null))
+                            .changePassword(ownerDTO.getEmail(), null))
                             .withRel("changePassword")
                             .withType("PATCH");
 
             Link deleteOwnerLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .deleteOwner(ownerFound.get().getEmail()))
+                            .deleteOwner(ownerDTO.getEmail()))
                             .withRel("deleteOwner")
                             .withType("DELETE");
 
-            ownerFound.get()
+            ownerDTO
                     .add(selfLink, collectionLink, changeOwnerDetailsLink, changePasswordLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(ownerFound.get());
+                    .body(ownerDTO);
         }
 
         return ResponseEntity
@@ -118,29 +125,31 @@ public class OwnerRestController {
         try {
             Owner editedOwner = ownerService.changeOwnerDetails(editOwnerDTO, email);
 
+            OwnerDTO ownerDTO = ownerDTOMapper.toDTO(editedOwner);
+
             Link selfLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .getOwner(editedOwner.getEmail()))
+                            .getOwner(ownerDTO.getEmail()))
                             .withSelfRel()
                             .withType("GET");
 
             Link changePasswordLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .changePassword(editedOwner.getEmail(), null))
+                            .changePassword(ownerDTO.getEmail(), null))
                             .withRel("changePassword")
                             .withType("PATCH");
 
             Link deleteOwnerLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .deleteOwner(editedOwner.getEmail()))
+                            .deleteOwner(ownerDTO.getEmail()))
                             .withRel("deleteOwner")
                             .withType("DELETE");
 
-            editedOwner.add(selfLink, changePasswordLink, deleteOwnerLink);
+            ownerDTO.add(selfLink, changePasswordLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(editedOwner);
+                    .body(ownerDTO);
 
         } catch (BusinessRulesException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -159,29 +168,31 @@ public class OwnerRestController {
             Owner editedOwner = ownerService.changePassword(changePasswordDTO.getNewPassword(),
                     changePasswordDTO.getOldPassword(), changePasswordDTO.getEmail());
 
+            OwnerDTO ownerDTO = ownerDTOMapper.toDTO(editedOwner);
+
             Link selfLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .getOwner(editedOwner.getEmail()))
+                            .getOwner(ownerDTO.getEmail()))
                             .withSelfRel()
                             .withType("GET");
 
             Link changeOwnerDetailsLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .changeOwnerDetails(editedOwner.getEmail(), null))
+                            .changeOwnerDetails(ownerDTO.getEmail(), null))
                             .withRel("changeOwnerDetails")
                             .withType("PATCH");
 
             Link deleteOwnerLink =
                     linkTo(methodOn(OwnerRestController.class)
-                            .deleteOwner(editedOwner.getEmail()))
+                            .deleteOwner(ownerDTO.getEmail()))
                             .withRel("deleteOwner")
                             .withType("DELETE");
 
-            editedOwner.add(selfLink, changeOwnerDetailsLink, deleteOwnerLink);
+            ownerDTO.add(selfLink, changeOwnerDetailsLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(editedOwner);
+                    .body(ownerDTO);
 
         } catch (BusinessRulesException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

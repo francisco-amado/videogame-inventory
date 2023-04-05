@@ -7,10 +7,14 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Component
 public class GameDTO extends RepresentationModel<GameDTO> implements Serializable {
 
+    private static final long serialVersionUID = 2L;
+
+    private @Getter @Setter UUID gameId;
     private @Getter @Setter String name;
     private @Getter @Setter String console;
     private @Getter @Setter LocalDate releaseDate;

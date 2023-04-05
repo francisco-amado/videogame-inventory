@@ -13,6 +13,7 @@ public class OwnerDTOMapper {
 
         ownerDTO.setUserName(owner.getUsername());
         ownerDTO.setEmail(owner.getEmail());
+        ownerDTO.setOwnerId(owner.getOwnerId());
 
         return ownerDTO;
     }

@@ -11,6 +11,7 @@ public class GameDTOMapper {
 
         GameDTO gameDTO = new GameDTO();
 
+        gameDTO.setGameId(game.getGameId());
         gameDTO.setName(game.getName().getName());
         gameDTO.setConsole(game.getConsole().getConsoleDescription());
         gameDTO.setReleaseDate(game.getReleaseDate());
