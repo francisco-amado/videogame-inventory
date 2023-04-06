@@ -56,8 +56,12 @@ public class CollectionService {
         return collectionRepository.existsByOwner(owner);
     }
 
-    public Optional<Collection> findById(UUID collectionID) {
-        return collectionRepository.findById(collectionID);
+    public Optional<Collection> findByOwner(Owner owner) {
+        return collectionRepository.findByOwner(owner);
+    }
+
+    public Optional<Collection> findById(UUID collectionId) {
+        return collectionRepository.findById(collectionId);
     }
 
     @Transactional

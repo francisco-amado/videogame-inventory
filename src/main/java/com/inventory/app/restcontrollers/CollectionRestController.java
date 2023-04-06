@@ -45,38 +45,49 @@ public class CollectionRestController {
     }
 
     @GetMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> getCollection(@PathVariable(value="id") UUID collectionId) {
+    public ResponseEntity<Object> getCollection(@PathVariable(value="id") UUID ownerId) {
 
-        Optional<Collection> collectionFound = collectionService.findById(collectionId);
+        Optional<Owner> ownerFound = ownerService.findById(ownerId);
 
-        if (collectionFound.isPresent()) {
+        if (ownerFound.isPresent()) {
 
-            CollectionDTO collectionDTO = collectionDTOMapper.toDTO(collectionFound.get());
+            Optional<Collection> collectionFound = collectionService.findByOwner(ownerFound.get());
 
-            Link selfLink =
-                    linkTo(methodOn(CollectionRestController.class)
-                            .getCollection(collectionDTO.getCollectionID()))
-                            .withSelfRel()
-                            .withType("GET");
+            if (collectionFound.isPresent()) {
 
-            Link addGameLink =
-                    linkTo(methodOn(CollectionRestController.class)
-                            .addGameToCollection(collectionDTO.getCollectionID(), null))
-                            .withRel("addGame")
-                            .withType("PATCH");
+                CollectionDTO collectionDTO = collectionDTOMapper.toDTO(collectionFound.get());
 
-            Link removeGameLink =
-                    linkTo(methodOn(CollectionRestController.class)
-                            .removeGameFromCollection(collectionDTO.getCollectionID(), null))
-                            .withRel("removeGame")
-                            .withType("PATCH");
+                Link selfLink =
+                        linkTo(methodOn(CollectionRestController.class)
+                                .getCollection(collectionDTO.getCollectionID()))
+                                .withSelfRel()
+                                .withType("GET");
 
-            collectionDTO.add(selfLink, addGameLink, removeGameLink);
+                Link ownerLink =
+                        linkTo(methodOn(OwnerRestController.class)
+                                .getOwner(ownerFound.get().getEmail()))
+                                .withSelfRel()
+                                .withType("GET");
 
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(collectionDTO);
+                Link addGameLink =
+                        linkTo(methodOn(CollectionRestController.class)
+                                .addGameToCollection(collectionDTO.getCollectionID(), null))
+                                .withRel("addGame")
+                                .withType("PATCH");
+
+                Link removeGameLink =
+                        linkTo(methodOn(CollectionRestController.class)
+                                .removeGameFromCollection(collectionDTO.getCollectionID(), null))
+                                .withRel("removeGame")
+                                .withType("PATCH");
+
+                collectionDTO.add(selfLink, ownerLink, addGameLink, removeGameLink);
+
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(collectionDTO);
+            }
         }
 
         return ResponseEntity
@@ -109,6 +120,12 @@ public class CollectionRestController {
                                 .withSelfRel()
                                 .withType("GET");
 
+                Link ownerLink =
+                        linkTo(methodOn(OwnerRestController.class)
+                                .getOwner(owner.get().getEmail()))
+                                .withSelfRel()
+                                .withType("GET");
+
                 Link addGameLink =
                         linkTo(methodOn(CollectionRestController.class)
                                 .addGameToCollection(collectionDTO.getCollectionID(), null))
@@ -121,7 +138,7 @@ public class CollectionRestController {
                                 .withRel("removeGame")
                                 .withType("PATCH");
 
-                collectionDTO.add(selfLink, addGameLink, removeGameLink);
+                collectionDTO.add(selfLink, ownerLink, addGameLink, removeGameLink);
 
                 return ResponseEntity
                         .status(HttpStatus.CREATED)

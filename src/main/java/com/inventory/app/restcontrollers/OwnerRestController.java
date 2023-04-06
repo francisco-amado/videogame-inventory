@@ -54,11 +54,17 @@ public class OwnerRestController {
                             .withSelfRel()
                             .withType("GET");
 
+            Link createCollectionLink =
+                    linkTo(methodOn(CollectionRestController.class)
+                            .createCollection(ownerDTO.getOwnerId(), null))
+                            .withRel("createCollection")
+                            .withType("POST");
+
             Link collectionLink =
                     linkTo(methodOn(CollectionRestController.class)
-                            .getCollection(ownerDTO.getOwnerId()))
-                            .withRel("collection")
-                            .withType("GET");
+                            .getCollection(ownerFound.get().getOwnerId()))
+                            .withRel("createCollection")
+                            .withType("POST");
 
             Link changeOwnerDetailsLink =
                     linkTo(methodOn(OwnerRestController.class)
@@ -79,7 +85,8 @@ public class OwnerRestController {
                             .withType("DELETE");
 
             ownerDTO
-                    .add(selfLink, collectionLink, changeOwnerDetailsLink, changePasswordLink, deleteOwnerLink);
+                    .add(selfLink, createCollectionLink, collectionLink,
+                            changeOwnerDetailsLink, changePasswordLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
