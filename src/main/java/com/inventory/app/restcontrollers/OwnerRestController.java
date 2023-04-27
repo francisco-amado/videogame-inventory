@@ -3,10 +3,7 @@ package com.inventory.app.restcontrollers;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
-import com.inventory.app.dto.ChangePasswordDTO;
-import com.inventory.app.dto.EditOwnerDTO;
-import com.inventory.app.dto.CreateOwnerDTO;
-import com.inventory.app.dto.OwnerDTO;
+import com.inventory.app.dto.*;
 import com.inventory.app.dto.mappers.OwnerDTOMapper;
 import com.inventory.app.exceptions.BusinessRulesException;
 import com.inventory.app.services.OwnerService;
@@ -60,12 +57,6 @@ public class OwnerRestController {
                             .withRel("createCollection")
                             .withType("POST");
 
-            Link collectionLink =
-                    linkTo(methodOn(CollectionRestController.class)
-                            .getCollection(ownerFound.get().getOwnerId()))
-                            .withRel("createCollection")
-                            .withType("POST");
-
             Link changeOwnerDetailsLink =
                     linkTo(methodOn(OwnerRestController.class)
                             .changeOwnerDetails(ownerDTO.getEmail(), null))
@@ -84,9 +75,7 @@ public class OwnerRestController {
                             .withRel("deleteOwner")
                             .withType("DELETE");
 
-            ownerDTO
-                    .add(selfLink, createCollectionLink, collectionLink,
-                            changeOwnerDetailsLink, changePasswordLink, deleteOwnerLink);
+            ownerDTO.add(selfLink, createCollectionLink, changeOwnerDetailsLink, changePasswordLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -99,7 +88,8 @@ public class OwnerRestController {
     }
 
     @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> createOwner(@RequestBody CreateOwnerDTO createOwnerDTO, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<Object> createOwner(@RequestBody CreateOwnerDTO createOwnerDTO,
+                                              UriComponentsBuilder ucBuilder) {
 
         try{
             String token = ownerService.createOwner(Name.createName(createOwnerDTO.getUserName()),
@@ -111,10 +101,20 @@ public class OwnerRestController {
                             .buildAndExpand(createOwnerDTO.getEmail())
                             .toUri());
 
+            Link ownerLink =
+                    linkTo(methodOn(OwnerRestController.class)
+                            .getOwner(createOwnerDTO.getEmail()))
+                            .withRel("getOwner")
+                            .withType("GET");
+
+            TokenDTO tokenDTO = new TokenDTO();
+            tokenDTO.setToken(token);
+            tokenDTO.add(ownerLink);
+
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .headers(location)
-                    .body(token);
+                    .body(tokenDTO);
 
         } catch (BusinessRulesException bre) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bre.getMessage());

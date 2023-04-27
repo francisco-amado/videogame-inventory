@@ -11,5 +11,5 @@ import java.util.UUID;
 @Repository
 public interface GameRepository extends JpaRepository<Game, UUID> {
 
-    List<Game> findAllByCollection(Collection collection);
+    List<Game> findAllByCollection_CollectionId(UUID collectionId);
 }

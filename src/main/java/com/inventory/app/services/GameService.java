@@ -31,7 +31,7 @@ public class GameService {
         this.gameFactory = gameFactory;
     }
 
-    public Game createGame(CreateGameDTO createGameDTO) throws InvalidEntryDataException {
+    public Game createGame(CreateGameDTO createGameDTO, Collection collection) throws InvalidEntryDataException {
 
         if (createGameDTO == null) {
             throw new InvalidEntryDataException(ServiceResponses.getGAME_NOT_FOUND());
@@ -49,6 +49,7 @@ public class GameService {
         Region region = Region.createRegion(Region.RegionEnum.valueOf(createGameDTO.getRegion()));
 
         Game game = gameFactory.createGame(name, console, createGameDTO.getReleaseDate(), region);
+        game.setCollection(collection);
         gameRepository.save(game);
         return game;
     }
@@ -58,13 +59,14 @@ public class GameService {
     }
 
     @Transactional
-    public void setCollection(List<Game> gameList, Collection collection) {
+    public void setCollectionForGameList(List<Game> gameList, Collection collection) {
 
-        for(Game game : gameList) {
-            game.setCollection(collection);
+        if(gameList != null) {
+            for (Game gameInList : gameList) {
+                gameInList.setCollection(collection);
+                gameRepository.saveAll(gameList);
+            }
         }
-
-        gameRepository.saveAll(gameList);
     }
 
     public void save(Game game) {
@@ -121,15 +123,14 @@ public class GameService {
         }
     }
 
-    public void deleteGame(UUID gameId) throws BusinessRulesException {
-
+    public void deleteGame(UUID gameId) {
         Optional<Game> gameToDelete = gameRepository.findById(gameId);
-
-        if (gameToDelete.isPresent() && gameToDelete.get().getCollection() != null) {
-            throw new BusinessRulesException(ServiceResponses.getCANNOT_DELETE_GAME());
-        }
-
         gameToDelete.ifPresent(gameRepository::delete);
+    }
+
+    public void deleteGameList(UUID collectionId) {
+        List<Game> gamesToDelete = gameRepository.findAllByCollection_CollectionId(collectionId);
+        gameRepository.deleteAll(gamesToDelete);
     }
 
     public boolean existsById(UUID gameId) {

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,7 +49,7 @@ public class CollectionService {
 
         Collection newCollection = collectionFactory.createCollection(owner, createCollectionDTO);
         collectionRepository.save(newCollection);
-        gameService.setCollection(createCollectionDTO.getGameList(), newCollection);
+        gameService.setCollectionForGameList(createCollectionDTO.getGameList(), newCollection);
         return newCollection;
     }
 
@@ -56,25 +57,8 @@ public class CollectionService {
         return collectionRepository.existsByOwner(owner);
     }
 
-    public Optional<Collection> findByOwner(Owner owner) {
-        return collectionRepository.findByOwner(owner);
-    }
-
     public Optional<Collection> findById(UUID collectionId) {
         return collectionRepository.findById(collectionId);
-    }
-
-    @Transactional
-    public void addGame(Game game, UUID collectionId) {
-
-        Optional<Collection> collection = collectionRepository.findById(collectionId);
-
-        if (collection.isPresent()) {
-            collection.get().getGameList().add(game);
-            game.setCollection(collection.get());
-            gameService.save(game);
-            collectionRepository.save(collection.get());
-        }
     }
 
     @Transactional
@@ -85,8 +69,18 @@ public class CollectionService {
         if (collection.isPresent()) {
             collection.get().getGameList().remove(game);
             game.setCollection(null);
-            gameService.save(game);
+            gameService.deleteGame(game.getGameId());
             collectionRepository.save(collection.get());
+        }
+    }
+
+    public void deleteCollection(UUID collectionId) {
+
+        Optional<Collection> collection = collectionRepository.findById(collectionId);
+
+        if (collection.isPresent()) {
+            gameService.deleteGameList(collectionId);
+            collectionRepository.delete(collection.get());
         }
     }
 }

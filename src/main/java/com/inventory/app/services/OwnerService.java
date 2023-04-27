@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class OwnerService implements UserDetailsService {
@@ -35,6 +32,7 @@ public class OwnerService implements UserDetailsService {
     private final ConfirmationTokenFactory confirmationTokenFactory;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
+    private final CollectionService collectionService;
     private final EmailSender emailSender;
 
     @Autowired
@@ -43,13 +41,14 @@ public class OwnerService implements UserDetailsService {
                         ConfirmationTokenFactory confirmationTokenFactory,
                         BCryptPasswordEncoder bCryptPasswordEncoder,
                         ConfirmationTokenService confirmationTokenService,
-                        EmailSender emailSender) {
+                        CollectionService collectionService, EmailSender emailSender) {
 
         this.ownerRepository = ownerRepository;
         this.ownerFactoryInterface = ownerFactoryInterface;
         this.confirmationTokenFactory = confirmationTokenFactory;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.confirmationTokenService = confirmationTokenService;
+        this.collectionService = collectionService;
         this.emailSender = emailSender;
     }
 
@@ -269,6 +268,7 @@ public class OwnerService implements UserDetailsService {
 
         if(ownerToDelete.isPresent()) {
             Optional<ConfirmationToken> ownerToken = confirmationTokenService.findByOwner(ownerToDelete.get());
+            collectionService.deleteCollection(ownerToDelete.get().getCollection().getCollectionId());
             ownerToken.ifPresent(confirmationTokenService::delete);
             ownerToDelete.ifPresent(ownerRepository::delete);
         } else {

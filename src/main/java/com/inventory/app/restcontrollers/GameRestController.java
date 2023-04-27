@@ -51,19 +51,19 @@ public class GameRestController {
                             .withSelfRel()
                             .withType("GET");
 
+            Link collectionLink =
+                    linkTo(methodOn(CollectionRestController.class)
+                            .getCollection(gameFound.get().getCollection().getCollectionId()))
+                            .withRel("getCollection")
+                            .withType("GET");
+
             Link editGameLink =
                     linkTo(methodOn(GameRestController.class)
                             .editGame(gameDTO.getGameId(), null))
                             .withRel("editGame")
                             .withType("PATCH");
 
-            Link deleteGameLink =
-                    linkTo(methodOn(GameRestController.class)
-                            .deleteGame(gameDTO.getGameId()))
-                            .withRel("deleteGame")
-                            .withType("DELETE");
-
-            gameDTO.add(selfLink, editGameLink, deleteGameLink);
+            gameDTO.add(selfLink, collectionLink, editGameLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -74,43 +74,6 @@ public class GameRestController {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body("");
-    }
-
-    @PostMapping(path = "", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> createGame(@RequestBody CreateGameDTO createGameDTO) {
-
-        try{
-            Game game = gameService.createGame(createGameDTO);
-
-            GameDTO gameDTO = gameDTOMapper.toDTO(game);
-
-            Link selfLink =
-                    linkTo(methodOn(GameRestController.class)
-                            .getGame(gameDTO.getGameId()))
-                            .withSelfRel()
-                            .withType("GET");
-
-            Link editGameLink =
-                    linkTo(methodOn(GameRestController.class)
-                            .editGame(gameDTO.getGameId(), null))
-                            .withRel("editGame")
-                            .withType("PATCH");
-
-            Link deleteGameLink =
-                    linkTo(methodOn(GameRestController.class)
-                            .deleteGame(gameDTO.getGameId()))
-                            .withRel("deleteGame")
-                            .withType("DELETE");
-
-            gameDTO.add(selfLink, editGameLink, deleteGameLink);
-
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(gameDTO);
-
-        } catch (InvalidEntryDataException ide) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ide.getMessage());
-        }
     }
 
     @PatchMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
@@ -133,13 +96,7 @@ public class GameRestController {
                             .withSelfRel()
                             .withType("GET");
 
-            Link deleteGameLink =
-                    linkTo(methodOn(GameRestController.class)
-                            .deleteGame(gameDTO.getGameId()))
-                            .withRel("deleteGame")
-                            .withType("DELETE");
-
-            gameDTO.add(selfLink, deleteGameLink);
+            gameDTO.add(selfLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -147,22 +104,6 @@ public class GameRestController {
 
         } catch (NoSuchElementException nse) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(nse.getMessage());
-        }
-    }
-
-    @DeleteMapping(path = "/{id}", headers = "Accept=application/json", produces = "application/json")
-    public ResponseEntity<Object> deleteGame(@PathVariable(value=("id")) UUID gameId) {
-
-        Optional<Game> gameToDelete = gameService.findById(gameId);
-
-        if (gameToDelete.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game does not exist");
-        }
-        try{
-            gameService.deleteGame(gameId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
-        } catch (BusinessRulesException bre) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bre.getMessage());
         }
     }
 }
