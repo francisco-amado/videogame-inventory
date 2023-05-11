@@ -186,7 +186,7 @@ public class OwnerService implements UserDetailsService {
 
         if(editOwnerDTO.getUserName() != null) {
 
-           if (!username.equals(editOwnerDTO.getUserName())) {
+           if (username.equals(editOwnerDTO.getUserName())) {
                 throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
            }
 
