@@ -80,11 +80,11 @@ public class OwnerService implements UserDetailsService {
     }
 
     public boolean validateOwnerDetails(Name userName, String email) {
-        return !existsByUsername(userName) && !existsByEmail(email);
+        return notExistsByUsername(userName) && !existsByEmail(email);
     }
 
     public boolean validateUsername(Name userName) {
-        return !existsByUsername(userName);
+        return notExistsByUsername(userName);
     }
 
     public boolean validatePassword(String newPassword, String confirmPassword, String oldPassword) {
@@ -134,8 +134,8 @@ public class OwnerService implements UserDetailsService {
         emailSender.send(email, emailSender.buildEmail(userName.getName(), link));
     }
 
-    public boolean existsByUsername(Name userName) {
-        return ownerRepository.existsByUserName(userName);
+    public boolean notExistsByUsername(Name userName) {
+        return !ownerRepository.existsByUserName(userName);
     }
 
     public boolean existsByEmail(String email) {
