@@ -9,5 +9,6 @@ public class ChangePasswordDTO {
 
     @Getter @Setter String newPassword;
     @Getter @Setter String oldPassword;
+    @Getter @Setter String confirmPassword;
     @Getter @Setter String email;
 }

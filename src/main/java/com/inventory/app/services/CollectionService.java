@@ -5,17 +5,12 @@ import com.inventory.app.domain.factories.CollectionFactory;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.dto.CreateCollectionDTO;
-import com.inventory.app.exceptions.InvalidEntryDataException;
 import com.inventory.app.repositories.CollectionRepository;
-import com.inventory.app.utils.ServiceResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CollectionService {
@@ -34,27 +29,14 @@ public class CollectionService {
     }
 
     @Transactional
-    public Collection createCollection(Owner owner, CreateCollectionDTO createCollectionDTO)
-            throws InvalidEntryDataException, NoSuchElementException {
+    public void createCollection(Owner owner) {
 
-        if (createCollectionDTO == null) {
-            throw new InvalidEntryDataException(ServiceResponses.getINVALID_ENTRY_DATA());
-        }
-
-        for(Game game : createCollectionDTO.getGameList()) {
-            if(!gameService.existsById(game.getGameId())) {
-                throw new NoSuchElementException(ServiceResponses.getGAME_NOT_FOUND());
-            }
-        }
-
+        List<Game> gameList = new ArrayList<>();
+        CreateCollectionDTO createCollectionDTO = new CreateCollectionDTO();
+        createCollectionDTO.setGameList(gameList);
         Collection newCollection = collectionFactory.createCollection(owner, createCollectionDTO);
         collectionRepository.save(newCollection);
         gameService.setCollectionForGameList(createCollectionDTO.getGameList(), newCollection);
-        return newCollection;
-    }
-
-    public boolean existsByOwner(Owner owner) {
-        return collectionRepository.existsByOwner(owner);
     }
 
     public Optional<Collection> findById(UUID collectionId) {

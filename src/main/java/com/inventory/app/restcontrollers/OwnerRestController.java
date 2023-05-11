@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.OneToOne;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -51,11 +50,11 @@ public class OwnerRestController {
                             .withSelfRel()
                             .withType("GET");
 
-            Link createCollectionLink =
+            Link getCollection =
                     linkTo(methodOn(CollectionRestController.class)
-                            .createCollection(ownerDTO.getOwnerId(), null))
-                            .withRel("createCollection")
-                            .withType("POST");
+                            .getCollection(ownerFound.get().getCollection().getCollectionId()))
+                            .withSelfRel()
+                            .withType("GET");
 
             Link changeOwnerDetailsLink =
                     linkTo(methodOn(OwnerRestController.class)
@@ -75,7 +74,7 @@ public class OwnerRestController {
                             .withRel("deleteOwner")
                             .withType("DELETE");
 
-            ownerDTO.add(selfLink, createCollectionLink, changeOwnerDetailsLink, changePasswordLink, deleteOwnerLink);
+            ownerDTO.add(selfLink, getCollection, changeOwnerDetailsLink, changePasswordLink, deleteOwnerLink);
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -93,7 +92,8 @@ public class OwnerRestController {
 
         try{
             String token = ownerService.createOwner(Name.createName(createOwnerDTO.getUserName()),
-                    Email.createEmail(createOwnerDTO.getEmail()), createOwnerDTO.getPassword());
+                    Email.createEmail(createOwnerDTO.getEmail()), createOwnerDTO.getPassword(),
+                    createOwnerDTO.getConfirmPassword());
 
             HttpHeaders location = new HttpHeaders();
             location
@@ -173,7 +173,8 @@ public class OwnerRestController {
 
         try {
             Owner editedOwner = ownerService.changePassword(changePasswordDTO.getNewPassword(),
-                    changePasswordDTO.getOldPassword(), changePasswordDTO.getEmail());
+                    changePasswordDTO.getOldPassword(), changePasswordDTO.getConfirmPassword(),
+                    changePasswordDTO.getEmail());
 
             OwnerDTO ownerDTO = ownerDTOMapper.toDTO(editedOwner);
 

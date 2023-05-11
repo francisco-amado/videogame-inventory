@@ -8,5 +8,4 @@ import org.springframework.stereotype.Component;
 public class EditOwnerDTO {
 
     private @Getter @Setter String userName;
-    private @Getter @Setter String email;
 }

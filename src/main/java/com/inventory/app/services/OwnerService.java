@@ -5,7 +5,6 @@ import com.inventory.app.domain.factories.ConfirmationTokenFactory;
 import com.inventory.app.domain.factories.OwnerFactory;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.domain.valueobjects.OwnerRole;
-import com.inventory.app.domain.valueobjects.Email;
 import com.inventory.app.domain.valueobjects.Name;
 import com.inventory.app.dto.EditOwnerDTO;
 import com.inventory.app.email.EmailSender;
@@ -53,10 +52,11 @@ public class OwnerService implements UserDetailsService {
     }
 
     @Transactional
-    public String createOwner(Name userName, String email, String password) throws BusinessRulesException {
+    public String createOwner(Name userName, String email, String password, String confirmPassword)
+            throws BusinessRulesException {
 
         boolean validDetails = validateOwnerDetails(userName, email);
-        boolean validPassword = validatePassword(password, null);
+        boolean validPassword = validatePassword(password, confirmPassword, null);
 
         if(!validDetails) {
             throw new BusinessRulesException(ServiceResponses.getINVALID_USER_DETAILS());
@@ -72,6 +72,7 @@ public class OwnerService implements UserDetailsService {
         newOwner.setOwnerRole(OwnerRole.USER);
         newOwner.setPassword(encodedPassword);
         ownerRepository.save(newOwner);
+        collectionService.createCollection(newOwner);
         String token = createConfirmationToken(newOwner).getToken();
         sendEmail(token, userName, email);
 
@@ -82,17 +83,23 @@ public class OwnerService implements UserDetailsService {
         return !existsByUsername(userName) && !existsByEmail(email);
     }
 
-    public boolean validatePassword(String newPassword, String oldPassword) {
+    public boolean validateUsername(Name userName) {
+        return !existsByUsername(userName);
+    }
+
+    public boolean validatePassword(String newPassword, String confirmPassword, String oldPassword) {
 
         int minPasswordLength = 10;
         int maxPasswordLength = 25;
 
         if(oldPassword == null) {
             return newPassword != null &&
+                    Objects.equals(newPassword, confirmPassword) &&
                     newPassword.length() >= minPasswordLength &&
                     newPassword.length() <= maxPasswordLength;
         } else {
             return newPassword != null &&
+                    Objects.equals(newPassword, confirmPassword) &&
                     !Objects.equals(newPassword, oldPassword) &&
                     newPassword.length() >= minPasswordLength &&
                     newPassword.length() <= maxPasswordLength;
@@ -143,10 +150,6 @@ public class OwnerService implements UserDetailsService {
         return ownerRepository.findByEmail(email);
     }
 
-    public Optional<Owner> findById(UUID ownerId) {
-        return ownerRepository.findById(ownerId);
-    }
-
     public void enableOwner(String email) {
         ownerRepository.enableOwner(email);
     }
@@ -173,7 +176,7 @@ public class OwnerService implements UserDetailsService {
         return ServiceResponses.getTOKEN_RESPONSE();
     }
 
-    public void validateOwnerDetailsToChange(EditOwnerDTO editOwnerDTO, String email) {
+    public void validateOwnerDetailsToChange(EditOwnerDTO editOwnerDTO) {
 
         String username = "";
 
@@ -185,20 +188,15 @@ public class OwnerService implements UserDetailsService {
             throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
-        if (existsByEmail(editOwnerDTO.getEmail()) && !Objects.equals(editOwnerDTO.getEmail(), email)) {
-            throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
-        }
-
         if (existsByStringUsername(editOwnerDTO.getUserName())
                 && !Objects.equals(editOwnerDTO.getUserName(), username)) {
 
             throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
-        if(editOwnerDTO.getUserName() != null && editOwnerDTO.getEmail() != null) {
-            if (!username.equals(editOwnerDTO.getUserName()) && !email.equals(editOwnerDTO.getEmail())) {
-                if (!validateOwnerDetails(Name.createName(editOwnerDTO.getUserName()),
-                        Email.createEmail(editOwnerDTO.getEmail()))) {
+        if(editOwnerDTO.getUserName() != null) {
+            if (!username.equals(editOwnerDTO.getUserName())) {
+                if (!validateUsername(Name.createName(editOwnerDTO.getUserName()))) {
 
                     throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
                 }
@@ -209,19 +207,13 @@ public class OwnerService implements UserDetailsService {
     public Owner changeOwnerDetails(EditOwnerDTO editOwnerDTO, String email)
             throws BusinessRulesException, NoSuchElementException {
 
-        validateOwnerDetailsToChange(editOwnerDTO, email);
+        validateOwnerDetailsToChange(editOwnerDTO);
 
         Optional<Owner> ownerToEdit = findByEmail(email);
 
         if (ownerToEdit.isEmpty()) {
             throw new NoSuchElementException(ServiceResponses.getOWNER_NOT_FOUND());
         } else {
-
-            if (editOwnerDTO.getEmail() != null && !Objects.equals(editOwnerDTO.getEmail(),
-                    ownerToEdit.get().getEmail())) {
-
-                ownerToEdit.get().setEmail(Email.createEmail(editOwnerDTO.getEmail()));
-            }
 
             if (editOwnerDTO.getUserName() != null && !Objects.equals(editOwnerDTO.getUserName(),
                     ownerToEdit.get().getUsername())) {
@@ -235,7 +227,7 @@ public class OwnerService implements UserDetailsService {
         return ownerToEdit.get();
     }
 
-    public Owner changePassword(String newPassword, String oldPassword, String email) {
+    public Owner changePassword(String newPassword, String oldPassword, String confirmPassword, String email) {
 
         if (oldPassword == null) {
             throw new BusinessRulesException(ServiceResponses.getINVALID_PASSWORD());
@@ -245,7 +237,7 @@ public class OwnerService implements UserDetailsService {
             throw new BusinessRulesException(ServiceResponses.getINVALID_PASSWORD());
         }
 
-        if(!validatePassword(newPassword, oldPassword)) {
+        if(!validatePassword(newPassword, confirmPassword, oldPassword)) {
             throw new BusinessRulesException(ServiceResponses.getINVALID_PASSWORD());
         }
 
