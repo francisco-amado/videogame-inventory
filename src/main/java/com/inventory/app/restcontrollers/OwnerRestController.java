@@ -53,7 +53,7 @@ public class OwnerRestController {
             Link getCollection =
                     linkTo(methodOn(CollectionRestController.class)
                             .getCollection(ownerFound.get().getCollection().getCollectionId()))
-                            .withSelfRel()
+                            .withRel("getCollection")
                             .withType("GET");
 
             Link changeOwnerDetailsLink =

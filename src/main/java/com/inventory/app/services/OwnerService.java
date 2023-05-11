@@ -138,10 +138,6 @@ public class OwnerService implements UserDetailsService {
         return ownerRepository.existsByUserName(userName);
     }
 
-    public boolean existsByStringUsername(String userName) {
-        return ownerRepository.existsByUserNameName(userName);
-    }
-
     public boolean existsByEmail(String email) {
         return ownerRepository.existsByEmail(email);
     }
@@ -188,19 +184,15 @@ public class OwnerService implements UserDetailsService {
             throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
         }
 
-        if (existsByStringUsername(editOwnerDTO.getUserName())
-                && !Objects.equals(editOwnerDTO.getUserName(), username)) {
-
-            throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
-        }
-
         if(editOwnerDTO.getUserName() != null) {
-            if (!username.equals(editOwnerDTO.getUserName())) {
-                if (!validateUsername(Name.createName(editOwnerDTO.getUserName()))) {
 
-                    throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
-                }
-            }
+           if (!username.equals(editOwnerDTO.getUserName())) {
+                throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
+           }
+
+           if (!validateUsername(Name.createName(editOwnerDTO.getUserName()))) {
+               throw new BusinessRulesException(ServiceResponses.getINVALID_ENTRY_DATA());
+           }
         }
     }
 
