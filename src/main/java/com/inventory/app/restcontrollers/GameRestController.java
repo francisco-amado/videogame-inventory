@@ -41,7 +41,7 @@ public class GameRestController {
 
         Optional<Game> gameFound = gameService.findById(gameId);
 
-        if(gameFound.isPresent()) {
+        if (gameFound.isPresent()) {
 
             GameDTO gameDTO = gameDTOMapper.toDTO(gameFound.get());
 

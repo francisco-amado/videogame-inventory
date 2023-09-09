@@ -2,6 +2,7 @@ package com.inventory.app.services;
 
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.factories.GameFactory;
+import com.inventory.app.domain.factories.GameFactoryInterface;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.valueobjects.Console;
 import com.inventory.app.domain.valueobjects.Name;
@@ -22,13 +23,13 @@ import java.util.*;
 public class GameService {
 
     private final GameRepository gameRepository;
-    private final GameFactory gameFactory;
+    private final GameFactoryInterface gameFactoryInterface;
 
     @Autowired
-    public GameService(GameRepository gameRepository, GameFactory gameFactory) {
+    public GameService(GameRepository gameRepository, GameFactoryInterface gameFactoryInterface) {
 
         this.gameRepository = gameRepository;
-        this.gameFactory = gameFactory;
+        this.gameFactoryInterface = gameFactoryInterface;
     }
 
     public Game createGame(CreateGameDTO createGameDTO, Collection collection) throws InvalidEntryDataException {
@@ -48,7 +49,7 @@ public class GameService {
         Console console = Console.createConsole(Console.ConsoleEnum.valueOf(createGameDTO.getConsole()));
         Region region = Region.createRegion(Region.RegionEnum.valueOf(createGameDTO.getRegion()));
 
-        Game game = gameFactory.createGame(name, console, createGameDTO.getReleaseDate(), region);
+        Game game = gameFactoryInterface.createGame(name, console, createGameDTO.getReleaseDate(), region);
         game.setCollection(collection);
         gameRepository.save(game);
         return game;
@@ -67,10 +68,6 @@ public class GameService {
                 gameRepository.saveAll(gameList);
             }
         }
-    }
-
-    public void save(Game game) {
-        gameRepository.save(game);
     }
 
     public void editGame(UUID gameId, EditGameDTO editGameDTO) throws NoSuchElementException {
@@ -133,7 +130,4 @@ public class GameService {
         gameRepository.deleteAll(gamesToDelete);
     }
 
-    public boolean existsById(UUID gameId) {
-        return gameRepository.existsById(gameId);
-    }
 }

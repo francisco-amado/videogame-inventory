@@ -2,6 +2,7 @@ package com.inventory.app.services;
 
 import com.inventory.app.domain.collection.Collection;
 import com.inventory.app.domain.factories.CollectionFactory;
+import com.inventory.app.domain.factories.CollectionFactoryInterface;
 import com.inventory.app.domain.game.Game;
 import com.inventory.app.domain.owner.Owner;
 import com.inventory.app.dto.CreateCollectionDTO;
@@ -17,15 +18,15 @@ public class CollectionService {
 
     private final CollectionRepository collectionRepository;
     private final GameService gameService;
-    private final CollectionFactory collectionFactory;
+    private final CollectionFactoryInterface collectionFactoryInterface;
 
     @Autowired
     public CollectionService(CollectionRepository collectionRepository, GameService gameService,
-                             CollectionFactory collectionFactory) {
+                             CollectionFactoryInterface collectionFactoryInterface) {
 
         this.collectionRepository = collectionRepository;
         this.gameService = gameService;
-        this.collectionFactory = collectionFactory;
+        this.collectionFactoryInterface = collectionFactoryInterface;
     }
 
     @Transactional
@@ -34,7 +35,7 @@ public class CollectionService {
         List<Game> gameList = new ArrayList<>();
         CreateCollectionDTO createCollectionDTO = new CreateCollectionDTO();
         createCollectionDTO.setGameList(gameList);
-        Collection newCollection = collectionFactory.createCollection(owner, createCollectionDTO);
+        Collection newCollection = collectionFactoryInterface.createCollection(owner, createCollectionDTO);
         collectionRepository.save(newCollection);
         gameService.setCollectionForGameList(createCollectionDTO.getGameList(), newCollection);
     }
