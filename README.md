@@ -1,2 +1,2 @@
 # videogame-inventory
-Webapp, made with Spring Boot and React, to manage videogame collections.
+REST API, made with Spring Boot, to manage videogame collections.
